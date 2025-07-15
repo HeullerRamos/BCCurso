@@ -109,7 +109,7 @@
         </div>
     </footer>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/editor.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </body>
 
 </html>

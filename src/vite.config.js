@@ -7,16 +7,16 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/editor.js',
+                // 'resources/js/editor.js',
             ],
             refresh: true,
         }),
     ]
     ,server:{
     port:3000,
-    host: '0.0.0.0',
-    hmr: {
-        host: 'localhost',
-    },
+    // host: '0.0.0.0',
+    // hmr: {
+    //     host: 'localhost',
+    // },
 },
 });
