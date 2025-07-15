@@ -108,7 +108,7 @@ article > header > h1 {
                         @if (count($postagem->arquivos) > 0)
                         @foreach ($postagem->arquivos as $arquivo)
                         <div class="text-wrap">
-                            <a class="text-wrap" href="{{ URL::asset('storage') }}/{{ $arquivo->path }}" target="_blank" title="Arquivo">{{ $arquivo->nome }}</a>
+                            <a class="text-wrap app-link" href="{{ URL::asset('storage') }}/{{ $arquivo->path }}" target="_blank" title="Arquivo">{{ $arquivo->nome }}</a>
                         </div>
                         @endforeach
                         @else
