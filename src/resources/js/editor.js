@@ -1,5 +1,3 @@
-import './bootstrap';
-
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
@@ -32,9 +30,3 @@ document.addEventListener('DOMContentLoaded', function () {
         ]
     });
 });
-
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();

@@ -6,3 +6,18 @@
     background-color: white !important;
     color: black !important;
 }
+
+.note-image-dialog .note-group-image-upload {
+    display: none !important;
+}
+
+/* Regra para esconder completamente a seção de upload de imagens no modal do Summernote */
+.note-group-select-from-files {
+    display: none !important;
+}
+
+/* Suas outras regras de estilo, como .input-field */
+.input-field {
+    background-color: white !important;
+    color: black !important;
+}

@@ -3,6 +3,51 @@
 @section('title', 'Editar Postagem')
 
 @section('content')
+
+<style>
+    /* Estilos para títulos dentro do conteúdo do artigo */
+    .note-editable h1 {
+        font-size: 2.5rem; /* Exemplo: ajuste o tamanho conforme sua necessidade */
+        font-weight: bold;
+        margin-top: 1.5rem; /* Espaçamento acima do título */
+        margin-bottom: 0.5rem; /* Espaçamento abaixo do título */
+        line-height: 1.2;
+    }
+
+    .note-editable h2 {
+        font-size: 2rem; /* Exemplo: ajuste o tamanho conforme sua necessidade */
+        font-weight: bold;
+        margin-top: 1.2rem;
+        margin-bottom: 0.4rem;
+        line-height: 1.2;
+    }
+
+    /* Adicione regras para h3, h4, h5, h6 se necessário */
+    .note-editable h3 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Estilos para listas (ordenadas e não ordenadas) dentro do conteúdo do artigo */
+    .note-editable ul {
+        list-style: initial; /* Restaura o estilo padrão (disco para ul) */
+        margin-left: 20px;   /* Adiciona um recuo para os marcadores serem visíveis */
+        padding-left: 0;     /* Garante que não haja padding extra que esconde o marcador */
+    }
+
+    .note-editable ol {
+        list-style: decimal; /* Restaura o estilo padrão (numeração decimal para ol) */
+        margin-left: 20px;   /* Adiciona um recuo para os números serem visíveis */
+        padding-left: 0;     /* Garante que não haja padding extra que esconde o marcador */
+    }
+
+    /* Ajuste para itens de lista, se necessário */
+    .note-editable li {
+        margin-bottom: 0.5rem; /* Espaçamento entre os itens da lista */
+    }
+</style>
     <div class="custom-container">
         <div>
             <div>
@@ -38,6 +83,11 @@
                     </div>
                 @enderror
             </div>
+
+            <!-- <div class="form-group">
+                <label for="texto" class="form-label">Texto*:</label>
+                <textarea name="texto" id="texto" class="form-control" placeholder="Texto da postagem" required>{{ old('texto', isset($postagem) ? $postagem['texto'] : '') }}</textarea>
+            </div> -->
 
             <div class="form-group">
                 <label for="tipo_postagem" class="form-label">Tipo*:</label>
