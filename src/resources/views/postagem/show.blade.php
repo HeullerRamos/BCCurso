@@ -2,6 +2,58 @@
 @section('title', 'Ciência da Computação')
 @section('content')
 
+<style>
+
+article > header > h1 {
+    font-size: 3rem; /* Aumente o tamanho conforme desejar */
+    font-weight: bolder; /* Ou 'bold' */
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+    /* Estilos para títulos dentro do conteúdo do artigo */
+.card-text h1 {
+    font-size: 2.5rem; /* Exemplo: ajuste o tamanho conforme sua necessidade */
+    font-weight: bold;
+    margin-top: 1.5rem; /* Espaçamento acima do título */
+    margin-bottom: 0.5rem; /* Espaçamento abaixo do título */
+    line-height: 1.2;
+}
+
+.card-text h2 {
+    font-size: 2rem; /* Exemplo: ajuste o tamanho conforme sua necessidade */
+    font-weight: bold;
+    margin-top: 1.2rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+}
+
+/* Adicione regras para h3, h4, h5, h6 se necessário */
+.card-text h3 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+/* Estilos para listas (ordenadas e não ordenadas) dentro do conteúdo do artigo */
+.card-text ul {
+    list-style: initial; /* Restaura o estilo padrão (disco para ul) */
+    margin-left: 20px;   /* Adiciona um recuo para os marcadores serem visíveis */
+    padding-left: 0;     /* Garante que não haja padding extra que esconde o marcador */
+}
+
+.card-text ol {
+    list-style: decimal; /* Restaura o estilo padrão (numeração decimal para ol) */
+    margin-left: 20px;   /* Adiciona um recuo para os números serem visíveis */
+    padding-left: 0;     /* Garante que não haja padding extra que esconde o marcador */
+}
+
+/* Ajuste para itens de lista, se necessário */
+.card-text li {
+    margin-bottom: 0.5rem; /* Espaçamento entre os itens da lista */
+}
+</style>
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-lg-8">
@@ -22,7 +74,7 @@
                 @endif
 
                 <section class="mb-5">
-                    <div class="card-text text-wrap">{!! nl2br(str_replace(' ', '&nbsp;', e($postagem->texto))) !!}</div>
+                    <div class="card-text text-wrap">{!! $postagem->texto !!}</div>
                 </section>
             </article>
         </div>

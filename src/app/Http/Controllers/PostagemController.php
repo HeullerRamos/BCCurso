@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 class PostagemController extends Controller
 {
@@ -68,6 +70,11 @@ class PostagemController extends Controller
      */
     public function store(PostagemRequest $request)
     {
+
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $cleanText = $purifier->purify($request->texto);
+
         $postagem = new Postagem([
             'titulo' => $request->titulo,
             'texto' => $request->texto,
@@ -158,6 +165,10 @@ class PostagemController extends Controller
     public function update(PostagemRequest $request, string $id)
     {
         $postagem = Postagem::findOrFail($id);
+
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $cleanText = $purifier->purify($request->texto);
 
         $postagem->update([
             'titulo' => $request->titulo,
