@@ -1,3 +1,21 @@
+# Use the official node image for building
+FROM node:20 AS builder
+
+# Set the workind directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json first for better caching
+COPY package.json package-lock.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+#Copy the rest of the application
+COPY . .
+
+# Install Node.js dependencies and build frontend assets
+RUN npm run build
+
 # Use the official PHP image with FPM
 FROM php:8.2-fpm
 
@@ -28,6 +46,9 @@ COPY composer.json composer.lock ./
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts --prefer-dist
+
+# Copy built assets from the building stage
+COPY --from=builder /app/public/build public/build
 
 # Copy the rest of the application
 COPY . .
