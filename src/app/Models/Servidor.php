@@ -18,4 +18,9 @@ class Servidor extends Model
     public function user(){
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public function coordenador()
+    {
+        return $this->hasOne(Coordenador::class, 'professor_id', 'id');
+    }
 }
