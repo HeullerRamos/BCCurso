@@ -40,7 +40,6 @@ class ProfileController extends Controller
         $user = $request->user(); // Obtenha a instância do usuário
         $servidor = Servidor::where('user_id', $user->id)->first();
         $professor = Professor::where('servidor_id', $servidor->id)->first();
-        $area_prof = AreaProfessor::where('professor_id', $professor->id)->first();
         $professor->links()->delete();
         
         $user->update([
@@ -69,9 +68,9 @@ class ProfileController extends Controller
             ]);
         }
 
-        $area_prof->update([
-            'area' => $request->area,
-        ]);
+        AreaProfessor::updateOrCreate(
+        ['professor_id' => $professor->id],
+        ['area' => $request->area]   );
 
          //Currículo_Professor
          if ($request->input("links")) {
