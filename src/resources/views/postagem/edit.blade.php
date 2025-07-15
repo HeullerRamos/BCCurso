@@ -58,17 +58,24 @@
             </div>
 
             <div class="form-group">
-                <label for="tipo_postagem" class="form-label">Exibir na tela inicial com destaque? (necessário cadastrar imagem)</label>
-                <input type="checkbox" name="menu_inicial" id="menu_inicial" {{ $postagem->menu_inicial ? 'checked' : '' }}>
+                <label for="main-image" class="form-label">Capa da Postagem (2700 x 660)</label>
+                @if($postagem->menu_inicial)
+                    <img src="{{ asset('storage/'.$postagem->capa->imagem) }}" class="img-responsive"
+                        style="max-height:100px; max-width:100px;">
+                @endif
+                <input type="file" name="main_image" id="main_image" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="imagem" class="form-label">Imagens (caso for exibir na tela inicial, a primeira imagem deve ter a dimensão: 2700 x 660):</label>
-                @if (count($postagem->imagens) > 0)
-                    @foreach ($postagem->imagens as $img)
-                        <button class="btn text-danger" type="submit" form="deletar-imagens{{ $img->id }}">X</button>
-                        <img src="{{ URL::asset('storage') }}/{{ $img->imagem }}" class="img-responsive"
-                            style="max-height:100px; max-width:100px;">
+                <label for="imagens" class="form-label">Imagens:</label>
+                @if(count($postagem->imagens) > 0)
+                    @foreach($postagem->imagens as $img)
+                        <div class="mb-2">
+                            <button class="btn text-danger btn-sm" type="submit" form="deletar-imagens{{ $img->id }}">X</button>
+                            <img src="{{ asset('storage/'.$img->imagem) }}" 
+                                class="img-fluid" 
+                                style="max-height:100px; max-width:100px;">
+                        </div>
                     @endforeach
                 @endif
                 <input type="file" name="imagens[]" id="imagens" class="form-control" multiple>

@@ -12,11 +12,11 @@
                     <div class="badge bg-secondary text-decoration-none link-light text-wrap">{{ $tipo_postagem->nome }}</div>
                 </header>
 
-                @if (count($postagem->imagens) > 0 && $postagem->menu_inicial)
+                @if ($postagem->menu_inicial)
                 <figure class="mb-4">
-                    @php $firstImage = $postagem->imagens[0]; @endphp
-                    @if (Storage::disk('public')->exists($firstImage->imagem))
-                    <img class="img-fluid rounded" src="{{ URL::asset('storage') }}/{{ $firstImage->imagem }}" alt="{{ $postagem->titulo }}">
+                    @php $capa = $postagem->capa; @endphp
+                    @if (Storage::disk('public')->exists($capa->imagem))
+                    <img class="img-fluid rounded" src="{{ URL::asset('storage') }}/{{ $capa->imagem }}" alt="{{ $postagem->titulo }}">
                     @endif
                 </figure>
                 @endif
