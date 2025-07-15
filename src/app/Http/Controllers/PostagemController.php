@@ -51,8 +51,8 @@ class PostagemController extends Controller
                 $postagem = [
                     'titulo' => 'Convite TCC',
                     'texto' =>
-                        'Aluno: ' . $aluno->nome . "\n" .
-                        'Título: ' . old('titulo') . "\n" .
+                    'Aluno: ' . $aluno->nome . "\n" .
+                        'Título: ' . ('titulo') . "\n" .
                         'Orientador: ' . $professor->servidor->nome . "\n" .
                         'Data: ' . date('d/m/Y', strtotime($banca->data)) . "\n" .
                         'Local: ' . $banca->local
@@ -157,6 +157,11 @@ class PostagemController extends Controller
             }
 
             if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
+                //Apagar capaPostagem antiga
+                $oldCapaPostagem = $postagem->capa;
+                Storage::disk('public')->delete($oldCapaPostagem->imagem);
+                $oldCapaPostagem->delete();
+
                 $capaPostagem = new CapaPostagem();
                 $capaPostagem->postagem_id = $postagem->id;
                 $capaPostagem->imagem = $mainImage->store('CapaPostagem/' . $postagem->id, 'public');
@@ -208,12 +213,13 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
 
-         foreach ($postagem->imagens as $imagem) {
-             Storage::disk('public')->delete($imagem->imagem);
-         }
-         foreach ($postagem->arquivos as $arquivo) {
-             Storage::disk('public')->delete($arquivo->path);
-         }
+        foreach ($postagem->imagens as $imagem) {
+            Storage::disk('public')->delete($imagem->imagem);
+        }
+        foreach ($postagem->arquivos as $arquivo) {
+            Storage::disk('public')->delete($arquivo->path);
+        }
+        Storage::disk('public')->delete($postagem->capa->imagem);
 
         $postagem->delete();
         return back()->with('success', 'Postagem Excluída com Sucesso');
