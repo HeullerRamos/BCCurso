@@ -219,39 +219,44 @@ class PostagemController extends Controller
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
     }
 
-    public function togglepin(postagem $postagem)
+    public function togglePin(postagem $postagem)
     {
         $pinnedpost = PinnedPosts::find($postagem->id);
         $imagens = $postagem->imagens;
-        $sucess = true;
 
-        if ($imagens->isNotEmpty()) {
-            $imagem = $imagens->first();
-            $imagempath = $imagem->imagem;
+        if ($imagens->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "nenhuma imagem encontrada para essa postagem.",
+                'imagens' => $imagens,
+            ]);
+        }
 
+        $imagem = $imagens->first();
+        $imagempath = $imagem->imagem;
 
-            if (postagem::checkMainImageSize($imagempath)) {
-                if ($pinnedpost) {
-                    $pinnedpost->delete();
-                    $status = 'unpinned';
-                    $message = "postagem '{$postagem->titulo}' desfixada com sucesso.";
-                } else {
-                    pinnedposts::create(['postagem_id' => $postagem->id]);
-                    $status = 'pinned';
-                    $message = "postagem '{$postagem->titulo}' fixada com sucesso.";
-                }
-            } else {
-                $status = 'error';
-                $message = "a imagem principal não possui as dimensões necessárias.";
-            }
+        if (!postagem::checkMainImageSize($imagempath)) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "a imagem principal não possui as dimensões necessárias.",
+                'imagens' => $imagens,
+            ]);
+        }
+
+        if ($pinnedpost) {
+            $pinnedpost->delete();
+            $status = 'unpinned';
+            $message = "postagem '{$postagem->titulo}' desfixada com sucesso.";
         } else {
-            $status = 'error';
-            $message = "nenhuma imagem encontrada para essa postagem.";
-            $sucess = false;
+            pinnedposts::create(['postagem_id' => $postagem->id]);
+            $status = 'pinned';
+            $message = "postagem '{$postagem->titulo}' fixada com sucesso.";
         }
 
         return response()->json([
-            'success' => $sucess,
+            'success' => true,
             'status' => $status,
             'message' => $message,
             'imagens' => $imagens,
