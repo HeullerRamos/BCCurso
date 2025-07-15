@@ -34,6 +34,7 @@
                                     <th>Título</th>
                                     <th>Criação</th>
                                     <th>Ação</th>
+                                    <th>Fixar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -52,6 +53,14 @@
                                             <a href="{{ route('postagem.edit', $postagem->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
                                             <button type="submit" class="btn btn-danger btn-sm" title='Delete' onclick="return confirm('Deseja realmente excluir esse registro?')"><i class="fas fa-trash"></i></button>
                                         </form>
+                                    </td>
+                                    <td>
+                                        <div class="form-check d-flex">
+                                            <input class="form-check-input pin-post-checkbox" type="checkbox"
+                                                   id="pinPost{{ $postagem->id }}"
+                                                   data-post-id="{{ $postagem->id }}"
+                                                   {{ $postagem->isPinned() ? 'checked' : '' }}>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -74,6 +83,41 @@
                 // Excluindo a última coluna que é a de ação do filtro
                 var rowData = $(this).find("td:not(:last-child)").text().toLowerCase();
                 $(this).toggle(rowData.indexOf(searchText) > -1);
+            });
+        });
+    });
+
+    const checkboxes = document.querySelectorAll('.pin-post-checkbox');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const postId = this.dataset.postId;
+            const isChecked = this.checked;
+            const url = `{{ url('/postagens') }}/${postId}/toggle-pin`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                },
+                body: JSON.stringify({
+                    _token: '{{ csrf_token() }}',
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.success) {
+                    console.log(data.message);
+                } else {
+                    console.error('Erro ao alternar o status de fixação:', data.message);
+                    this.checked = !isChecked;
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                this.checked = !isChecked;
             });
         });
     });

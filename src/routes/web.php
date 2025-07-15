@@ -109,6 +109,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     Route::delete('/postagem/delete_imagem/{id}', [PostagemController::class, 'deleteImagem'])->name('postagem.delete_imagem');
     Route::delete('/postagem/delete_arquivo/{id}', [PostagemController::class, 'deleteArquivo'])->name('postagem.delete_arquivo');
+    Route::post('/postagens/{postagem}/toggle-pin', [PostagemController::class, 'togglePin'])->name('postagem.toggle-pin');
 
     //Banca
     Route::resource('banca', BancaController::class)->parameter('banca', 'id')->except(['show']);

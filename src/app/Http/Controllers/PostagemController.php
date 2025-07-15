@@ -10,6 +10,7 @@ use App\Models\ImagemPostagem;
 use App\Models\Postagem;
 use App\Models\Professor;
 use App\Models\TipoPostagem;
+use App\Models\PinnedPosts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
@@ -79,16 +80,7 @@ class PostagemController extends Controller
             if ($request->hasFile("imagens")) {
 
                 $imagens = $request->file("imagens");
-                $validacao = true; 
-                $dimensions = getimagesize($imagens[0]);
-                $largura = $dimensions[0];
-                $altura = $dimensions[1];
-
-                if ($largura !== 2700 || $altura !== 660) {
-                    $validacao = false;
-                }
-
-                if (!$validacao) {
+                if(!Postagem::checkMainImageSize($imagens[0])){
                     return redirect()->back()->withInput()->with('error', 'A primeira imagem para exibição no menu inicial deve ter as dimensões de 2700 x 660.');
                 }
             } else {
@@ -224,5 +216,42 @@ class PostagemController extends Controller
         $postagem =  Postagem::findOrFail($id);
         $tipo_postagem = TipoPostagem::findOrFail($postagem->tipo_postagem_id);
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
+    }
+
+    public function togglepin(postagem $postagem)
+    {
+        $pinnedpost = PinnedPosts::find($postagem->id);
+        $imagens = $postagem->imagens;
+
+        if ($imagens->items->isNotEmpty()) {
+            $imagem = $imagens->first();
+            $imagempath = $imagem->imagem;
+
+
+            if (postagem::checkMainImageSize($imagempath)) {
+                if ($pinnedpost) {
+                    $pinnedpost->delete();
+                    $status = 'unpinned';
+                    $message = "postagem '{$postagem->titulo}' desfixada com sucesso.";
+                } else {
+                    pinnedposts::create(['postagem_id' => $postagem->id]);
+                    $status = 'pinned';
+                    $message = "postagem '{$postagem->titulo}' fixada com sucesso.";
+                }
+            } else {
+                $status = 'error';
+                $message = "a imagem principal não possui as dimensões necessárias.";
+            }
+        } else {
+            $status = 'error';
+            $message = "nenhuma imagem encontrada para essa postagem.";
+        }
+
+        return response()->json([
+            'success' => true,
+            'status' => $status,
+            'message' => $message,
+            'imagens' => $imagens,
+        ]);
     }
 }
