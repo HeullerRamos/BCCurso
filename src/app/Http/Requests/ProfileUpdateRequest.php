@@ -28,7 +28,7 @@ class ProfileUpdateRequest extends FormRequest
         ];
     }
 
-    * mensagens de erro das validações dos campos.
+    /* mensagens de erro das validações dos campos.
     *
     * @return array<string, string>
     */
