@@ -112,7 +112,8 @@
                     console.log(data.message);
                 } else {
                     console.error('Erro ao alternar o status de fixação:', data.message);
-                    this.checked = !isChecked;
+                    this.checked = false;
+                    alert(data.message);
                 }
             })
             .catch(error => {

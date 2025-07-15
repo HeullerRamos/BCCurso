@@ -215,6 +215,7 @@ class PostagemController extends Controller
     {
         $postagem =  Postagem::findOrFail($id);
         $tipo_postagem = TipoPostagem::findOrFail($postagem->tipo_postagem_id);
+        dd($postagem->imagens->isEmpty());
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
     }
 
@@ -222,8 +223,9 @@ class PostagemController extends Controller
     {
         $pinnedpost = PinnedPosts::find($postagem->id);
         $imagens = $postagem->imagens;
+        $sucess = true;
 
-        if ($imagens->items->isNotEmpty()) {
+        if ($imagens->isNotEmpty()) {
             $imagem = $imagens->first();
             $imagempath = $imagem->imagem;
 
@@ -245,10 +247,11 @@ class PostagemController extends Controller
         } else {
             $status = 'error';
             $message = "nenhuma imagem encontrada para essa postagem.";
+            $sucess = false;
         }
 
         return response()->json([
-            'success' => true,
+            'success' => $sucess,
             'status' => $status,
             'message' => $message,
             'imagens' => $imagens,
