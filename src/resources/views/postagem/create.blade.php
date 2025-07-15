@@ -39,12 +39,12 @@
             </div>
 
             <div class="form-group">
-                <label for="tipo_postagem" class="form-label">Exibir na tela inicial com destaque? (necessário cadastrar imagem)</label>
-                <input type="checkbox" name="menu_inicial" id="menu_inicial" {{ old('menu_inicial') ? 'checked' : '' }}>
+                <label for="main-image" class="form-label">Capa da Postagem (2700 x 660)</label>
+                <input type="file" name="main_image" id="main_image" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="imagens" class="form-label">Imagens (caso for exibir na tela inicial, a primeira imagem deve ter a dimensão: 2700 x 660):</label>
+                <label for="imagens" class="form-label">Imagens:</label>
                 <input type="file" name="imagens[]" id="imagens" class="form-control" multiple>
                 
             </div>

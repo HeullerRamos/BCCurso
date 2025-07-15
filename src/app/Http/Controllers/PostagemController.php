@@ -7,6 +7,7 @@ use App\Models\Aluno;
 use App\Models\ArquivoPostagem;
 use App\Models\Banca;
 use App\Models\ImagemPostagem;
+use App\Models\CapaPostagem;
 use App\Models\Postagem;
 use App\Models\Professor;
 use App\Models\TipoPostagem;
@@ -73,32 +74,40 @@ class PostagemController extends Controller
             'titulo' => $request->titulo,
             'texto' => $request->texto,
             'tipo_postagem_id' => $request->tipo_postagem_id,
-            'menu_inicial' => $request->has('menu_inicial')
+            'menu_inicial' => false,
         ]);
 
-        if ($request->has('menu_inicial')) {
-            if ($request->hasFile("imagens")) {
-                $imagens = $request->file("imagens");
-                if(!Postagem::checkMainImageSize($imagens[0])){
-                    return redirect()->back()->withInput()->with('error', 'A primeira imagem para exibição no menu inicial deve ter as dimensões de 2700 x 660.');
-                }
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Foi solicitado que aparecesse na tela inicial com destaque, mas nenhuma imagem foi cadastrada.');
+        if ($request->hasFile("main_image")) {
+            $mainImage = $request->file("main_image");
+
+            if (!Postagem::checkMainImageSize($mainImage)) {
+                return redirect()->back()->withInput()->with('error', 'A imagem de capa deve ter as dimensões de 2700 x 660.');
             }
+
+            $postagem->menu_inicial = true;
         }
 
         $postagem->save();
 
+        if ($request->hasFile("main_image")) {
+            $mainImage = $request->file("main_image");
+
+            if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
+                $capaPostagem = new CapaPostagem();
+                $capaPostagem->postagem_id = $postagem->id;
+                $capaPostagem->imagem = $mainImage->store('CapaPostagem/' . $postagem->id, 'public');
+                $capaPostagem->save();
+            }
+        }
+
         if ($request->hasFile("imagens")) {
             $imagens = $request->file("imagens");
-
             foreach ($imagens as $imagem) {
                 if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
                     $imagemPostagem = new ImagemPostagem();
                     $imagemPostagem->postagem_id = $postagem->id;
                     $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
                     $imagemPostagem->save();
-                } else {
                 }
             }
         }
@@ -140,16 +149,31 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
 
+        if ($request->hasFile("main_image")) {
+            $mainImage = $request->file("main_image");
+
+            if (!Postagem::checkMainImageSize($mainImage)) {
+                return redirect()->back()->withInput()->with('error', 'A imagem de capa deve ter as dimensões de 2700 x 660.');
+            }
+
+            if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
+                $capaPostagem = new CapaPostagem();
+                $capaPostagem->postagem_id = $postagem->id;
+                $capaPostagem->imagem = $mainImage->store('CapaPostagem/' . $postagem->id, 'public');
+                $capaPostagem->save();
+            }
+            $postagem->menu_inicial = true;
+        }
+
         $postagem->update([
             'titulo' => $request->titulo,
             'texto' => $request->texto,
             'tipo_postagem_id' => $request->tipo_postagem_id,
-            'menu_inicial' => $request->has('menu_inicial')
+            'menu_inicial' => $postagem->menu_inicial ?? false
         ]);
 
         if ($request->hasFile("imagens")) {
             $imagens = $request->file("imagens");
-
             foreach ($imagens as $imagem) {
                 if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
                     $imagemPostagem = new ImagemPostagem();
@@ -229,36 +253,34 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
         $tipo_postagem = TipoPostagem::findOrFail($postagem->tipo_postagem_id);
-        dd($postagem->imagens->isEmpty());
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
     }
 
     public function togglePin(postagem $postagem)
     {
+        $capa = $postagem->capa;
+
+        if (!$capa) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "Nenhuma imagem encontrada para essa postagem.",
+            ]);
+        }
+
+        $imagem = $capa->imagem;
+        $imagePath = public_path('storage/' . $imagem);
+
+        if (!postagem::checkMainImageSize($imagePath)) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "A imagem principal não possui as dimensões necessárias.",
+
+            ]);
+        }
+
         $pinnedpost = PinnedPosts::find($postagem->id);
-        $imagens = $postagem->imagens;
-
-        if ($imagens->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'status' => 'error',
-                'message' => "nenhuma imagem encontrada para essa postagem.",
-                'imagens' => $imagens,
-            ]);
-        }
-
-        $imagem = $imagens->first();
-        $imagempath = $imagem->imagem;
-
-        if (!postagem::checkMainImageSize($imagempath)) {
-            return response()->json([
-                'success' => false,
-                'status' => 'error',
-                'message' => "a imagem principal não possui as dimensões necessárias.",
-                'imagens' => $imagens,
-            ]);
-        }
-
         if ($pinnedpost) {
             $pinnedpost->delete();
             $status = 'unpinned';
@@ -273,7 +295,6 @@ class PostagemController extends Controller
             'success' => true,
             'status' => $status,
             'message' => $message,
-            'imagens' => $imagens,
         ]);
     }
 }

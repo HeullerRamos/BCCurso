@@ -3,14 +3,14 @@
 @section('content')
 
 @php
-$imagensPostagens = [];
+$capasPostagens = [];
 foreach ($postagens as $postagem) {
     if ($postagem->isPinned()) {
-        $firstImage = $postagem->imagens->first();
-        if ($firstImage && Storage::disk('public')->exists($firstImage->imagem)) {
-            $imagensPostagens[] = [
+        $capa = $postagem->capa;
+        if ($capa && Storage::disk('public')->exists($capa->imagem)) {
+            $capasPostagens[] = [
                 'postagem' => $postagem,
-                'imagem' => $firstImage,
+                'imagem' => $capa,
             ];
         }
     }
@@ -20,24 +20,24 @@ foreach ($postagens as $postagem) {
 <div id="demo" class="container carousel slide" data-bs-ride="carousel" data-bs-interval="6000">
     <div class="carousel-indicators" id="carousel-indicators">
         <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
-        @foreach ($imagensPostagens as $index => $item)
-        <button type="button" data-bs-target="#demo" data-bs-slide-to="{{ $index + 1}}"></button>
+        @foreach ($capasPostagens as $index => $item)
+            <button type="button" data-bs-target="#demo" data-bs-slide-to="{{ $index + 1 }}"></button>
         @endforeach
     </div>
 
     <div class="carousel-inner" id="carousel-inner">
         <div class="carousel-item active">
-            <a href="{{ route('tcc.display')}}">
+            <a href="{{ route('tcc.display') }}">
                 <img src="{{ asset('images/convite_tcc.png') }}" alt="Image 1" class="carousel-image w-100 max-height-carousel">
             </a>
         </div>
 
-        @foreach ($imagensPostagens as $index => $item)
-        <div class="carousel-item">
-            <a href="{{ route('postagem.show', ['id' => $item['postagem']->id]) }}">
-                <img src="{{ URL::asset('storage') }}/{{ $item['imagem']->imagem }}" alt="Image {{ $index + 1 }}" class="carousel-image w-100 max-height-carousel">
-            </a>
-        </div>
+        @foreach ($capasPostagens as $index => $item)
+            <div class="carousel-item">
+                <a href="{{ route('postagem.show', ['id' => $item['postagem']->id]) }}">
+                    <img src="{{ URL::asset('storage') }}/{{ $item['imagem']->imagem }}" alt="Image {{ $index + 1 }}" class="carousel-image w-100 max-height-carousel">
+                </a>
+            </div>
         @endforeach
     </div>
 
@@ -59,36 +59,36 @@ foreach ($postagens as $postagem) {
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             @foreach($postagens_9 as $postagem)
-            <div class="col">
-                <div class="card shadow-sm h-100">
-                    @if (count($postagem->imagens) > 0)
-                    @php $firstImage = $postagem->imagens[0]; @endphp
-                    @if (Storage::disk('public')->exists($firstImage->imagem) && $postagem->menu_inicial )
-                    <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
-                        <img src="{{ URL::asset('storage') }}/{{ $firstImage->imagem }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
-                    </a>
-                    @else
-                    <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
-                        <img src="{{ asset('images/postagem.png') }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
-                    </a>
-                    @endif
-                    @else
-                    <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
-                        <img src="{{ asset('images/postagem.png') }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
-                    </a>
-                    @endif
+                <div class="col">
+                    <div class="card shadow-sm h-100">
+                        @if ($postagem->menu_inicial)
+                            @php $capa = $postagem->capa; @endphp
+                            @if (Storage::disk('public')->exists($capa->imagem) && $postagem->menu_inicial)
+                                <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
+                                    <img src="{{ URL::asset('storage') }}/{{ $capa->imagem }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
+                                </a>
+                            @else
+                                <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
+                                    <img src="{{ asset('images/postagem.png') }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
+                                </a>
+                            @endif
+                        @else
+                            <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}">
+                                <img src="{{ asset('images/postagem.png') }}" alt="{{ $postagem->titulo }}" class="bd-placeholder-img card-img-top" width="100%">
+                            </a>
+                        @endif
 
-                    <div class="card-body d-flex flex-column">
-                        <p class="card-text flex-grow-1">{{ $postagem->titulo }}</p>
-                        <div class="d-flex justify-content-between align-items-end">
-                            <div class="btn-group">
-                                <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}" class="btn btn-sm btn-outline-secondary">Visualizar</a>
+                        <div class="card-body d-flex flex-column">
+                            <p class="card-text flex-grow-1">{{ $postagem->titulo }}</p>
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div class="btn-group">
+                                    <a href="{{ route('postagem.show', ['id' => $postagem->id]) }}" class="btn btn-sm btn-outline-secondary">Visualizar</a>
+                                </div>
+                                <small class="text-body-secondary">{{ $postagem->created_at->format('d/m/Y H:i') }}</small>
                             </div>
-                            <small class="text-body-secondary">{{ $postagem->created_at->format('d/m/Y H:i') }}</small>
                         </div>
                     </div>
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
@@ -97,9 +97,9 @@ foreach ($postagens as $postagem) {
 @php
 $paginatorText = $postagens_9->onEachSide(1)->links('pagination::bootstrap-5')->toHtml();
 $translatedPaginatorText = str_replace(
-['Showing', 'to', 'of', 'results'],
-['Mostrando de', 'a', 'de', 'resultados'],
-$paginatorText
+    ['Showing', 'to', 'of', 'results'],
+    ['Mostrando de', 'a', 'de', 'resultados'],
+    $paginatorText
 );
 @endphp
 

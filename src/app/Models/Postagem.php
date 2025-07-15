@@ -19,6 +19,10 @@ class Postagem extends Model {
         return $this->hasMany(ImagemPostagem::class);
     }
 
+    public function capa(){
+        return $this->hasOne(CapaPostagem::class);
+    }
+
     public function arquivos(){
         return $this->hasMany(ArquivoPostagem::class);
     }
@@ -30,13 +34,7 @@ class Postagem extends Model {
 
     public static function checkMainImageSize($imagem)
     {
-        $filepath = public_path('storage/' . $imagem);
-
-        if (!file_exists($filepath)) {
-            return false;
-        }
-
-        $dimensions = getimagesize($filepath);
+        $dimensions = getimagesize($imagem);
         if ($dimensions === false) {
             return false;
         }
