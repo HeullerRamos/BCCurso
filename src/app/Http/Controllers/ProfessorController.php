@@ -7,10 +7,13 @@ use App\Models\CurriculoProfessor;
 use App\Models\Professor;
 use App\Models\Servidor;
 use App\Models\User;
+use App\Models\Coordenador;
+use App\Models\Curso;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB; 
 
 class ProfessorController extends Controller
 {
@@ -107,9 +110,10 @@ class ProfessorController extends Controller
 
     public function edit($servidor_id)
     {
-        $servidor = Servidor::where('id', $servidor_id)->first();
-        $usuario = User::where('id', $servidor->user_id)->first();
-        return view('professor.edit', ['usuario' => $usuario, 'servidor' => $servidor]);
+
+        $professor = Professor::where('servidor_id', $servidor_id)->with('coordenador')->firstOrFail();
+        $cursos = \App\Models\Curso::all();
+        return view('professor.edit', compact('professor', 'cursos'));
     }
 
     public function update(Request $request, $servidor_id)
@@ -121,11 +125,11 @@ class ProfessorController extends Controller
         $usuario = User::where('id', $servidor->user_id)->first();
 
         $usuarioExists = User::where('email', $request->email)
-            ->where('id', '!=', $usuario->id) // Não deve ser o mesmo usuário
+            ->where('id', '!=', $usuario->id) 
             ->exists();
 
         $servidorExists = Servidor::where('email', $request->email)
-            ->where('id', '!=', $servidor->id) // Não deve ser o mesmo servidor
+            ->where('id', '!=', $servidor->id)
             ->exists();
 
         if ($usuarioExists || $servidorExists) {
@@ -142,8 +146,36 @@ class ProfessorController extends Controller
             'nome' => $request->nome,
             'email' => strtolower($request->email),
         ]);
+         
+        $isCoordenador = $request->has('is_coordenador');
 
-        return redirect('/professor')->with('success', "Usuário atualizado com sucesso!");
+        DB::transaction(function () use ($isCoordenador, $request, $servidor) {
+            
+            if ($isCoordenador) {
+                $request->validate([
+                    'curso_id' => 'required|exists:curso,id',
+                    'horario_atendimento' => 'required|string|max:255',
+                    'email_contato' => 'required|email|max:255',
+                    'sala_atendimento' => 'required|string|max:255',
+                ]);
+                
+                Coordenador::updateOrCreate(
+                    ['professor_id' => $servidor->id], 
+                    [
+                        'curso_id' => $request->curso_id,
+                        'horario_atendimento' => $request->horario_atendimento,
+                        'email_contato' => $request->email_contato,
+                        'sala_atendimento' => $request->sala_atendimento,
+                    ]
+                );
+
+            } else {
+                $servidor->coordenador()->delete();
+            }
+        });
+
+
+        return redirect()->route('professor.index')->with('success', 'Professor atualizado com sucesso!');
     }
 
     public function destroy($servidor_id)
