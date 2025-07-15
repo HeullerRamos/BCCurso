@@ -5,13 +5,15 @@
 @php
 $imagensPostagens = [];
 foreach ($postagens as $postagem) {
-$firstImage = $postagem->imagens->first();
-if ($firstImage && Storage::disk('public')->exists($firstImage->imagem) && $postagem->menu_inicial) {
-$imagensPostagens[] = [
-'postagem' => $postagem,
-'imagem' => $firstImage,
-];
-}
+    if ($postagem->isPinned()) {
+        $firstImage = $postagem->imagens->first();
+        if ($firstImage && Storage::disk('public')->exists($firstImage->imagem)) {
+            $imagensPostagens[] = [
+                'postagem' => $postagem,
+                'imagem' => $firstImage,
+            ];
+        }
+    }
 }
 @endphp
 

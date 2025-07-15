@@ -10,6 +10,7 @@ use App\Models\ImagemPostagem;
 use App\Models\Postagem;
 use App\Models\Professor;
 use App\Models\TipoPostagem;
+use App\Models\PinnedPosts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
@@ -78,27 +79,7 @@ class PostagemController extends Controller
         if ($request->has('menu_inicial')) {
             if ($request->hasFile("imagens")) {
                 $imagens = $request->file("imagens");
-
-                if (!is_array($imagens) || empty($imagens) || !$imagens[0] instanceof \Illuminate\Http\UploadedFile || !$imagens[0]->isValid()) {
-                    return redirect()->back()->withInput()->with('error', 'O arquivo de imagem principal não foi enviado corretamente ou é inválido.');
-                }
-
-                $primeiraImagem = $imagens[0];
-
-                if (!$primeiraImagem->getMimeType() || !str_starts_with($primeiraImagem->getMimeType(), 'image/')) {
-                    return redirect()->back()->withInput()->with('error', 'O arquivo enviado para o menu inicial não é uma imagem válida. Por favor, envie um arquivo de imagem.');
-                }
-
-                $dimensions = getimagesize($primeiraImagem->getRealPath());
-
-                if ($dimensions === false) {
-                    return redirect()->back()->withInput()->with('error', 'Não foi possível ler as dimensões da imagem para o menu inicial. O arquivo pode estar corrompido ou não ser uma imagem válida.');
-                }
-
-                $largura = $dimensions[0];
-                $altura = $dimensions[1];
-
-                if ($largura !== 2700 || $altura !== 660) {
+                if(!Postagem::checkMainImageSize($imagens[0])){
                     return redirect()->back()->withInput()->with('error', 'A primeira imagem para exibição no menu inicial deve ter as dimensões de 2700 x 660.');
                 }
             } else {
@@ -248,6 +229,51 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
         $tipo_postagem = TipoPostagem::findOrFail($postagem->tipo_postagem_id);
+        dd($postagem->imagens->isEmpty());
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
+    }
+
+    public function togglePin(postagem $postagem)
+    {
+        $pinnedpost = PinnedPosts::find($postagem->id);
+        $imagens = $postagem->imagens;
+
+        if ($imagens->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "nenhuma imagem encontrada para essa postagem.",
+                'imagens' => $imagens,
+            ]);
+        }
+
+        $imagem = $imagens->first();
+        $imagempath = $imagem->imagem;
+
+        if (!postagem::checkMainImageSize($imagempath)) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => "a imagem principal não possui as dimensões necessárias.",
+                'imagens' => $imagens,
+            ]);
+        }
+
+        if ($pinnedpost) {
+            $pinnedpost->delete();
+            $status = 'unpinned';
+            $message = "postagem '{$postagem->titulo}' desfixada com sucesso.";
+        } else {
+            pinnedposts::create(['postagem_id' => $postagem->id]);
+            $status = 'pinned';
+            $message = "postagem '{$postagem->titulo}' fixada com sucesso.";
+        }
+
+        return response()->json([
+            'success' => true,
+            'status' => $status,
+            'message' => $message,
+            'imagens' => $imagens,
+        ]);
     }
 }
