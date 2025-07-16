@@ -25,8 +25,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $servidor = $user->servidor;
+        $professor = $servidor ? $servidor->professor : null;
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'professor' => $professor,
         ]);
     }
 
