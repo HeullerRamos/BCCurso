@@ -18,4 +18,8 @@ class Servidor extends Model
     public function user(){
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+    public function professor()
+    {
+        return $this->hasOne(Professor::class);
+    }
 }
