@@ -39,9 +39,16 @@
         <div class="mt-4">
         <x-input-label for="links" :value="__('Links')" style="color:black;"/>
             <div id="links-container">
-                <div class="link-input-group">
-                    <x-text-input class="block mt-1 w-full input-field" type="text" name="links[]" autocomplete="links" />
-                </div>
+                @forelse ($professor->links as $link)
+                    <div class="link-input-group mb-2">
+                        <x-text-input class="block mt-1 w-full input-field" type="text" name="links[]" :value="old('links.'.$loop->index, $link->link)" autocomplete="links" />
+                    </div>
+                @empty
+                    {{-- Se não houver links, exibe um campo vazio para adicionar o primeiro --}}
+                    <div class="link-input-group">
+                        <x-text-input class="block mt-1 w-full input-field" type="text" name="links[]" autocomplete="links" />
+                    </div>
+                @endforelse
             </div>
             <button type="button" class="add-link" style="color:black;">+</button>
             <x-input-error :messages="$errors->get('links')" class="mt-2" />
