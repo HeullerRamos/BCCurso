@@ -149,7 +149,7 @@ class ProfessorController extends Controller
 
         $isCoordenador = $request->has('is_coordenador');
 
-        DB::transaction(function () use ($isCoordenador, $request, $servidor, $usuario) {
+        DB::transaction(function () use ($isCoordenador, $request, $servidor, $usuario){
 
             if ($isCoordenador) {
                 $request->validate([
@@ -171,12 +171,22 @@ class ProfessorController extends Controller
 
                 $usuario->assignRole(['coordenador']);
             } else {
-                $servidor->coordenador->delete();
+                if ($servidor->coordenador && \App\Models\Coordenador::count() === 1) {
+                    return redirect()->back()->with('error', 'Não é possível remover o último coordenador do sistema.');
+                }
+
+            DB::transaction(function () use ($servidor) {
+                $servidor->coordenador()->delete();
+                $servidor->user->syncRoles(['professor']);
+            });
             }
         });
 
-
-        return redirect()->route('professor.index')->with('success', 'Professor atualizado com sucesso!');
+        if ($servidor->coordenador && \App\Models\Coordenador::count() === 1) {
+            return redirect()->back()->with('error', 'Não é possível remover o último coordenador do sistema.');
+        }else{
+            return redirect()->route('professor.index')->with('success', 'Professor atualizado com sucesso!');
+        }
     }
 
     public function destroy($servidor_id)
