@@ -182,11 +182,7 @@ class ProfessorController extends Controller
             }
         });
 
-        if ($servidor->coordenador && \App\Models\Coordenador::count() === 1) {
-            return redirect()->back()->with('error', 'Não é possível remover o último coordenador do sistema.');
-        }else{
-            return redirect()->route('professor.index')->with('success', 'Professor atualizado com sucesso!');
-        }
+        return redirect()->route('professor.index')->with('success', 'Professor atualizado com sucesso!');
     }
 
     public function destroy($servidor_id)
