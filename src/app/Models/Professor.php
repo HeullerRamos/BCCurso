@@ -33,7 +33,7 @@ class Professor extends Model
         return $this->hasMany(Projeto::class);
     }
 
-    public function links(){
+     public function curriculos(){
         return $this->hasMany(CurriculoProfessor::class);
     }
 }
