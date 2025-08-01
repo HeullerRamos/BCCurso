@@ -11,11 +11,18 @@ class Aluno extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nome'
+        'nome',
+        'matricula',
+        'user_id',
     ];
 
     public function projetos()
     {
         return $this->belongsToMany(Projeto::class, 'alunos_projetos', 'aluno_id', 'projeto_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }
