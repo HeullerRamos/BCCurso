@@ -76,15 +76,30 @@ class ProfileController extends Controller
         ['professor_id' => $professor->id],
         ['area' => $request->area]   );
         //nova forma de salvar os links na nova tabela LINK
-        if ($request->has('links')) {
         $curriculo = CurriculoProfessor::firstOrCreate(
         ['professor_id' => $professor->id]);
-            foreach ($request->input('links') as $linkUrl) {
-                if (!empty($linkUrl)) {
-                    $curriculo->links()->firstOrCreate(['link' => $linkUrl]);
-                }        
+
+        if ($request->has('links')) {
+            foreach ($request->input('links') as $linkId => $linkUrl) {
+                $link = \App\Models\Link::find($linkId);
+                if ($link && $link->curriculo_professor_id == $curriculo->id) {
+                //Se o usuário limpou o campo, apaga o link
+                    if (empty($linkUrl)) {
+                    $link->delete();
+                    }else{
+                        $link->update(['link' => $linkUrl]);
+                    }
+                }
             }
         }
+        //criando links
+        if($request->has('new_links')) {
+            foreach($request->input('new_links') as $linkUrl) {
+                if(!empty($linkUrl)) {
+                    $curriculo->links()->firstOrCreate(['link' => $linkUrl]);
+                }
+            }
+        } 
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
