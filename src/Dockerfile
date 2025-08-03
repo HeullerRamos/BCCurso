@@ -48,7 +48,7 @@ COPY composer.json composer.lock ./
 COPY . .
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts --prefer-dist
+RUN composer install --optimize-autoloader --no-scripts --prefer-dist
 
 # Copy built assets from the building stage
 COPY --from=builder /app/public/build public/build
