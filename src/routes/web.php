@@ -16,7 +16,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LinkController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -109,7 +109,8 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     Route::delete('/postagem/delete_imagem/{id}', [PostagemController::class, 'deleteImagem'])->name('postagem.delete_imagem');
     Route::delete('/postagem/delete_arquivo/{id}', [PostagemController::class, 'deleteArquivo'])->name('postagem.delete_arquivo');
-
+    //links
+    Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('links.destroy')->middleware('auth');
     //Banca
     Route::resource('banca', BancaController::class)->parameter('banca', 'id')->except(['show']);
 
