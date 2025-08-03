@@ -76,7 +76,8 @@ Route::get('/projeto/show/{id}', [ProjetoController::class, 'show'])->name('proj
 //Servidor
 Route::resource('servidor', ServidorController::class)->parameter('servidor', 'id')->except(['show', 'edit', 'update', 'destroy']);
 
-
+//links
+Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('links.destroy')->middleware('auth');
 
 
 //Informações dos Professores (Não Editável)
@@ -109,8 +110,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     Route::delete('/postagem/delete_imagem/{id}', [PostagemController::class, 'deleteImagem'])->name('postagem.delete_imagem');
     Route::delete('/postagem/delete_arquivo/{id}', [PostagemController::class, 'deleteArquivo'])->name('postagem.delete_arquivo');
-    //links
-    Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('links.destroy')->middleware('auth');
+    
     //Banca
     Route::resource('banca', BancaController::class)->parameter('banca', 'id')->except(['show']);
 
