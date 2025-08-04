@@ -50,8 +50,14 @@
                 @endif
             </div>
             <div id="new-links-container">  
+                @foreach (old('new_links', []) as $index => $oldLinkUrl)
+                <div class="link-input-group-new mb-2 flex items-center">
+                    <x-text-input class="block w-full" name="new_links[]" :value="$oldLinkUrl" />
+                    <button type="button" class="remove-new-link-btn ml-2 text-red-500 font-bold">X</button>
+                </div>
+                <x-input-error class="mt-2" :messages="$errors->get('new_links.' . $index)" />
+                @endforeach
             </div>
-
             <button type="button" id="add-link-btn" class="add-link mt-2" style="color:black;">+</button>
         </div>
 
