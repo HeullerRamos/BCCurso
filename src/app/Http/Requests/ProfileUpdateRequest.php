@@ -24,6 +24,7 @@ class ProfileUpdateRequest extends FormRequest
 
             'links' => ['nullable', 'array'],
             'links.*' => ['nullable', 'url', 'max:255'],
+            'new_links.*' => ['nullable', 'string', 'max:2048', 'url'],
             'area' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -38,6 +39,8 @@ class ProfileUpdateRequest extends FormRequest
             'biografia.max' => 'Sua biografia não pode exceder 255 caracteres.',
             'area.max'=>'O campo de área não pode ultrapassar 255 caracteres!',
             'links.max'=>'Um link não pode exceder 255 caracteres',
+            'links.*.url'  => 'O link deve ser um url. Por favor, inclua http:// ou https://',
+            'new_links.*.url' => 'O link deve ser um url. Por favor, inclua http:// ou https://',
         ];
     }
 }
