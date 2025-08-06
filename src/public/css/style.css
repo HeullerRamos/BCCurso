@@ -501,3 +501,14 @@ margin-top:60px;
   background-color: #c82333 !important;
   border-color: #bd2130 !important;
 }
+
+
+.note-image-dialog .note-group-image-upload {
+    display: none !important;
+}
+
+/* Regra para esconder completamente a seção de upload de imagens no modal do Summernote */
+.note-group-select-from-files {
+    display: none !important;
+}
+
