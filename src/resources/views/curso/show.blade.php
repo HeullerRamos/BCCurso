@@ -389,7 +389,7 @@
 
                 </ul>
 
-                <span><a href = "{{$curso->horario}}"> Veja os horários das disciplinas</a></span>
+                <a href = "{{ asset('storage/' . $curso->horario) }}" target="_blank"> Veja os horários das disciplinas </a>
 
                 <br>
                 <br>
