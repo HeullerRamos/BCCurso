@@ -13,9 +13,9 @@
 </div>
 <div class="container">
     <div class="row campo-busca">
-        <div class="col-md-12">
+        {{-- <div class="col-md-12">
             <input type="text" id="searchInput" class="form-control field-search" placeholder="Buscar em todos os campos" aria-label="Buscar">
-        </div>
+        </div> --}}
     </div>
     <div>
         <div class="col-md-12">
