@@ -306,7 +306,7 @@
                 <div class = "borda">
                   <span class = "title borda2">Calendário acadêmico</span>
                     <p>
-                        <a href = "{{$curso->calendario}}"> link para o calendário acadêmico</a>
+                        <a href = "{{ asset('storage/' . $curso->calendario) }}" target="_blank"> link para o calendário acadêmico </a>
                     </p>
                 </div>
 
