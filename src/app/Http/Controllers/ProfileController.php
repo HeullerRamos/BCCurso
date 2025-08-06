@@ -129,6 +129,16 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->hasRole('coordenador')) {
+        $coordinatorCount = \App\Models\User::role('coordenador')->count();
+            if ($coordinatorCount <= 1) {
+                return back()->withErrors(['password' => 'Você não pode excluir seu perfil porque é o único coordenador do
+                sistema. Por favor, nomeie outro coordenador antes de remover sua conta.'],
+                'userDeletion'
+                );
+            }
+        }
+
         Auth::logout();
 
         $user->delete();
@@ -136,7 +146,7 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('login');
+        return Redirect::to('noticias');
     }
 
     /**
