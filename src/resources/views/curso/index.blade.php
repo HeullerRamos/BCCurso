@@ -22,7 +22,7 @@
             <div class="card">
                 <div class="card-header text-white div-form">
                     Cursos
-                    <a href="{{ route('curso.create') }}" class="btn btn-success btn-sm float-end">Cadastrar</a>
+                    {{-- a href="{{ route('curso.create') }}" class="btn btn-success btn-sm float-end">Cadastrar</a> --}}
                 </div>
                 <div class="card-body">
 
