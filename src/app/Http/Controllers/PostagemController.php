@@ -229,7 +229,7 @@ class PostagemController extends Controller
         foreach ($postagem->arquivos as $arquivo) {
             Storage::disk('public')->delete($arquivo->path);
         }
-        Storage::disk('public')->delete($postagem->capa->imagem);
+        if ($postagem->capa) Storage::disk('public')->delete($postagem->capa->imagem);
 
         $postagem->delete();
         return back()->with('success', 'Postagem Excluída com Sucesso');
