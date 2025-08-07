@@ -39,12 +39,26 @@
         <div class="mt-4">
         <x-input-label for="links" :value="__('Links')" style="color:black;"/>
             <div id="links-container">
-                <div class="link-input-group">
-                    <x-text-input class="block mt-1 w-full input-field" type="text" name="links[]" autocomplete="links" />
-                </div>
+                @if($professor && $professor->curriculos->first())
+                    @forelse ($professor->curriculos->first()->links as $link)
+                        <div class="link-input-group mb-2 flex items-center">
+                            <x-text-input class="block w-full" type="text" name="links[{{ $link->id }}]" value="{{ $link->link }}" />
+                            <button type="button" class="delete-link-btn ml-2 text-red-500 font-bold" data-id="{{ $link->id }}">X</button>
+                        </div>
+                    @empty
+                    @endforelse
+                @endif
             </div>
-            <button type="button" class="add-link" style="color:black;">+</button>
-            <x-input-error :messages="$errors->get('links')" class="mt-2" />
+            <div id="new-links-container">  
+                @foreach (old('new_links', []) as $index => $oldLinkUrl)
+                <div class="link-input-group-new mb-2 flex items-center">
+                    <x-text-input class="block w-full" name="new_links[]" :value="$oldLinkUrl" />
+                    <button type="button" class="remove-new-link-btn ml-2 text-red-500 font-bold">X</button>
+                </div>
+                <x-input-error class="mt-2" :messages="$errors->get('new_links.' . $index)" />
+                @endforeach
+            </div>
+            <button type="button" id="add-link-btn" class="add-link mt-2" style="color:black;">+</button>
         </div>
 
         <div class="mt-4">
@@ -85,16 +99,53 @@
     @endif
 </section>
 
-<!-- Pequeno script js pra clonar o campo de link ao clicar no botão "+" -->
+<!-- script para adicionar links usando o botão +,excluir usando x , alterar mudando o link e também apagar apagando o link do campo-->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const addButton = document.querySelector(".add-link");
-        const container = document.querySelector("#links-container");
-
-        addButton.addEventListener("click", function () {
-            const linkGroup = document.querySelector(".link-input-group").cloneNode(true);
-            linkGroup.querySelector("input").value = "";
-            container.appendChild(linkGroup);
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('add-link-btn').addEventListener('click', function () {
+        const container = document.getElementById('new-links-container');
+        const newLinkGroupHTML = `
+            <div class="link-input-group-new mb-2 flex items-center">
+                <input class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full" type="text" name="new_links[]" placeholder="https://novo-link.com">
+                <button type="button" class="remove-new-link-btn ml-2 text-red-500 font-bold">X</button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', newLinkGroupHTML);
     });
+    document.querySelector('body').addEventListener('click', async function(event) {
+        if (event.target.classList.contains('delete-link-btn')) {
+            const button = event.target;
+            const linkId = button.dataset.id;
+            
+            if (!confirm('Tem certeza que deseja excluir este link permanentemente?')) return;
+
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                const response = await fetch(`/links/${linkId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    button.closest('.link-input-group').remove();
+                } else {
+                    alert('Erro ao excluir: ' + (data.message || 'Tente novamente.'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Ocorreu um erro de comunicação.');
+            }
+        }
+
+        if (event.target.classList.contains('remove-new-link-btn')) {
+            event.target.closest('.link-input-group-new').remove();
+        }
+    });
+});
 </script>

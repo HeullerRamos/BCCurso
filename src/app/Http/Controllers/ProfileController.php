@@ -25,8 +25,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $servidor = $user->servidor;
+        $professor = $servidor ? $servidor->professor : null;
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'professor' => $professor,
         ]);
     }
 
@@ -40,7 +44,7 @@ class ProfileController extends Controller
         $user = $request->user(); // Obtenha a instância do usuário
         $servidor = Servidor::where('user_id', $user->id)->first();
         $professor = Professor::where('servidor_id', $servidor->id)->first();
-        $professor->links()->delete();
+        
         
         $user->update([
             'curriculo_lattes' => $request->curriculo_lattes,
@@ -71,23 +75,31 @@ class ProfileController extends Controller
         AreaProfessor::updateOrCreate(
         ['professor_id' => $professor->id],
         ['area' => $request->area]   );
+        //nova forma de salvar os links na nova tabela LINK
+        $curriculo = CurriculoProfessor::firstOrCreate(
+        ['professor_id' => $professor->id]);
 
-         //Currículo_Professor
-         if ($request->input("links")) {
-            $links = $request->input("links");
-            $i=0;
-            foreach ($links as $link) {
-                $curriculoProfessor = new CurriculoProfessor();
-                $curriculoProfessor->curriculo = ' ';
-                $curriculoProfessor->link = $links[$i];
-                $curriculoProfessor->professor_id = $professor->id;
-                $curriculoProfessor->save();
-                unset($curriculoProfessor);
-                $i++;
+        if ($request->has('links')) {
+            foreach ($request->input('links') as $linkId => $linkUrl) {
+                $link = \App\Models\Link::find($linkId);
+                if ($link && $link->curriculo_professor_id == $curriculo->id) {
+                //Se o usuário limpou o campo, apaga o link
+                    if (empty($linkUrl)) {
+                    $link->delete();
+                    }else{
+                        $link->update(['link' => $linkUrl]);
+                    }
+                }
             }
-            unset($i);
         }
-
+        //criando links
+        if($request->has('new_links')) {
+            foreach($request->input('new_links') as $linkUrl) {
+                if(!empty($linkUrl)) {
+                    $curriculo->links()->firstOrCreate(['link' => $linkUrl]);
+                }
+            }
+        } 
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

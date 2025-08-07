@@ -16,7 +16,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LinkController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -76,7 +76,8 @@ Route::get('/projeto/show/{id}', [ProjetoController::class, 'show'])->name('proj
 //Servidor
 Route::resource('servidor', ServidorController::class)->parameter('servidor', 'id')->except(['show', 'edit', 'update', 'destroy']);
 
-
+//links
+Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('links.destroy')->middleware('auth');
 
 
 //Informações dos Professores (Não Editável)
@@ -110,7 +111,6 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::delete('/postagem/delete_imagem/{id}', [PostagemController::class, 'deleteImagem'])->name('postagem.delete_imagem');
     Route::delete('/postagem/delete_arquivo/{id}', [PostagemController::class, 'deleteArquivo'])->name('postagem.delete_arquivo');
     Route::post('/postagens/{postagem}/toggle-pin', [PostagemController::class, 'togglePin'])->name('postagem.toggle-pin');
-
     //Banca
     Route::resource('banca', BancaController::class)->parameter('banca', 'id')->except(['show']);
 
