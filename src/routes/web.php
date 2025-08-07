@@ -110,7 +110,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     Route::delete('/postagem/delete_imagem/{id}', [PostagemController::class, 'deleteImagem'])->name('postagem.delete_imagem');
     Route::delete('/postagem/delete_arquivo/{id}', [PostagemController::class, 'deleteArquivo'])->name('postagem.delete_arquivo');
-    
+    Route::post('/postagens/{postagem}/toggle-pin', [PostagemController::class, 'togglePin'])->name('postagem.toggle-pin');
     //Banca
     Route::resource('banca', BancaController::class)->parameter('banca', 'id')->except(['show']);
 
@@ -135,7 +135,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::resource('ata', AtaController::class)->parameter('ata', 'id')->except(['index']);
 
     //Aluno
-    Route::resource('aluno', AlunoController::class)->parameter('aluno', 'id')->only(['store']);
+    Route::resource('aluno', AlunoController::class);
 
     //Professor Externo
     Route::resource('professor-externo', ProfessorExternoController::class)->parameter('professor-externo', 'id')
@@ -163,5 +163,4 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::prefix('/curso/{cursoId}')->group(function () {
         Route::resource('/ppc', PpcController::class)->except(['show']);
     });
-
 });

@@ -1,3 +1,21 @@
+# Use the official node image for building
+FROM node:20 AS builder
+
+# Set the workind directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json first for better caching
+COPY package.json package-lock.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+#Copy the rest of the application
+COPY . .
+
+# Install Node.js dependencies and build frontend assets
+RUN npm run build
+
 # Use the official PHP image with FPM
 FROM php:8.2-fpm
 
@@ -26,11 +44,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy composer files first (for better caching)
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts --prefer-dist
-
 # Copy the rest of the application
 COPY . .
+
+# Install PHP dependencies
+RUN composer install --optimize-autoloader --no-scripts --prefer-dist
+
+# Copy built assets from the building stage
+COPY --from=builder /app/public/build public/build
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www \
@@ -41,4 +62,4 @@ RUN chown -R www-data:www-data /var/www \
 EXPOSE 8000
 
 # Start the application
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD sleep 10; php artisan migrate; php artisan serve --host=0.0.0.0 --port=8000;

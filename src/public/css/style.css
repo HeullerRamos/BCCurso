@@ -480,3 +480,35 @@ margin-top:60px;
     margin-top: 20px;
     font-size: 20px;
 }
+
+.app-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.app-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.btn-danger {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  border-color: #dc3545 !important;
+}
+
+.btn-danger:hover {
+  background-color: #c82333 !important;
+  border-color: #bd2130 !important;
+}
+
+
+.note-image-dialog .note-group-image-upload {
+    display: none !important;
+}
+
+/* Regra para esconder completamente a seção de upload de imagens no modal do Summernote */
+.note-group-select-from-files {
+    display: none !important;
+}
+

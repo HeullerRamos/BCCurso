@@ -13,16 +13,16 @@
 </div>
 <div class="container">
     <div class="row campo-busca">
-        <div class="col-md-12">
+        {{-- <div class="col-md-12">
             <input type="text" id="searchInput" class="form-control field-search" placeholder="Buscar em todos os campos" aria-label="Buscar">
-        </div>
+        </div> --}}
     </div>
     <div>
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header text-white div-form">
                     Cursos
-                    <a href="{{ route('curso.create') }}" class="btn btn-success btn-sm float-end">Cadastrar</a>
+                    {{-- a href="{{ route('curso.create') }}" class="btn btn-success btn-sm float-end">Cadastrar</a> --}}
                 </div>
                 <div class="card-body">
 
@@ -61,10 +61,10 @@
                                     <form method="POST" action="{{ route('curso.destroy', $curso->id) }}">
                                         @csrf
                                         <a class="btn btn-success btn-sm" href="{{ route('curso.show', ['id' => $curso->id]) }}"><i class="fa-solid fa-eye"></i></a>
-                                        <input name="_method" type="hidden" value="DELETE">
+                                        {{-- <input name="_method" type="hidden" value="DELETE"> --}}
                                         <a class="btn btn-primary btn-sm" href="{{ route('curso.edit', $curso->id) }}"><i class="fas fa-pencil-alt"></i></a>
-                                        <button type="submit" class="btn btn-danger btn-sm" title='Delete' onclick="return confirm('Deseja realmente excluir esse curso?')"><i class="fas fa-trash"></i></button>
-                                        <a class="btn btn-primary btn-sm" href="{{ route('curso.coordenador', $curso->id) }}">Coordenador</a>
+                                        {{-- <button type="submit" class="btn btn-danger btn-sm" title='Delete' onclick="return confirm('Deseja realmente excluir esse curso?')"><i class="fas fa-trash"></i></button>
+                                        <a class="btn btn-primary btn-sm" href="{{ route('curso.coordenador', $curso->id) }}">Coordenador</a> --}}
                                         <a href="{{ route('ppc.index', ['cursoId' => $curso->id]) }}" class="btn btn-primary">Ver PPCs</a>
                                     </form>
                                 </td>
