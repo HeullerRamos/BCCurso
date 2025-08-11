@@ -7,7 +7,7 @@ window.$ = window.jQuery = jQuery;
 import 'summernote/dist/summernote-lite.js';
 import 'summernote/dist/summernote-lite.css';
 
-// Inicializar o Summernote quando o DOM estiver pronto
+
 document.addEventListener('DOMContentLoaded', function() {
   // Certifique-se de que o seletor #texto aponte para o seu <textarea>
   $('#texto').summernote({
