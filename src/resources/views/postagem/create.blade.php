@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     hiddenInput.type = 'hidden';
                     hiddenInput.id = 'cropped_image_data';
                     hiddenInput.name = 'cropped_image_data';
-                    mainImageInput.parentNode.appendChild(hiddenInput);
+                   document.getElementById('postagemForm').appendChild(hiddenInput);
                 }
                 hiddenInput.value = base64Image;
 

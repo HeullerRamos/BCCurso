@@ -16,14 +16,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 
 class PostagemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $buscar = $request->buscar;
@@ -35,9 +33,6 @@ class PostagemController extends Controller
         return view('postagem.index', ['postagens' => $postagens, 'buscar' => $buscar]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $tipo_postagens = TipoPostagem::pluck('nome', 'id');
@@ -53,8 +48,8 @@ class PostagemController extends Controller
                 $postagem = [
                     'titulo' => 'Convite TCC',
                     'texto' =>
-                    'Aluno: ' . $aluno->nome . "\n" .
-                        'Título: ' . ('titulo') . "\n" .
+                        'Aluno: ' . $aluno->nome . "\n" .
+                        'Título: ' . old('titulo') . "\n" .
                         'Orientador: ' . $professor->servidor->nome . "\n" .
                         'Data: ' . date('d/m/Y', strtotime($banca->data)) . "\n" .
                         'Local: ' . $banca->local
@@ -67,80 +62,86 @@ class PostagemController extends Controller
         return view('postagem.create', compact('tipo_postagens', 'id', 'postagem'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(PostagemRequest $request)
     {
+        try {
+            $config = HTMLPurifier_Config::createDefault();
+            $purifier = new HTMLPurifier($config);
+            $cleanText = $purifier->purify($request->texto);
 
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
-        $cleanText = $purifier->purify($request->texto);
+            $postagem = new Postagem([
+                'titulo' => $request->titulo,
+                'texto' => $cleanText,
+                'tipo_postagem_id' => $request->tipo_postagem_id,
+                'menu_inicial' => false,
+            ]);
 
-        $postagem = new Postagem([
-            'titulo' => $request->titulo,
-            'texto' => $request->texto,
-            'tipo_postagem_id' => $request->tipo_postagem_id,
-            'menu_inicial' => false,
-        ]);
+            $postagem->save();
 
-        if ($request->hasFile("main_image")) {
-            $mainImage = $request->file("main_image");
+            if ($request->filled('cropped_image_data')) {
+                $imageData = $request->input('cropped_image_data');
 
-            if (!Postagem::checkMainImageSize($mainImage)) {
-                return redirect()->back()->withInput()->with('error', 'A imagem de capa deve ter as dimensões de 2700 x 660.');
-            }
+                if (strpos($imageData, 'data:image') !== false) {
+                    [, $imageData] = explode(',', $imageData);
+                }
 
-            $postagem->menu_inicial = true;
-        }
+                $decodedImage = base64_decode($imageData);
 
-        $postagem->save();
+                if (!$decodedImage) {
+                    throw new \Exception('Falha ao decodificar imagem base64');
+                }
 
-        if ($request->hasFile("main_image")) {
-            $mainImage = $request->file("main_image");
+                $directory = 'CapaPostagem/' . $postagem->id;
+                Storage::disk('public')->makeDirectory($directory);
 
-            if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
+                $fileName = uniqid('capa_') . '.jpg';
+                $fullPath = $directory . '/' . $fileName;
+
+                if (!Storage::disk('public')->put($fullPath, $decodedImage)) {
+                    throw new \Exception('Falha ao salvar arquivo de imagem');
+                }
+
                 $capaPostagem = new CapaPostagem();
                 $capaPostagem->postagem_id = $postagem->id;
-                $capaPostagem->imagem = $mainImage->store('CapaPostagem/' . $postagem->id, 'public');
+                $capaPostagem->imagem = $fullPath;
                 $capaPostagem->save();
-            }
-        }
 
-        if ($request->hasFile("imagens")) {
-            $imagens = $request->file("imagens");
-            foreach ($imagens as $imagem) {
-                if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
-                    $imagemPostagem = new ImagemPostagem();
-                    $imagemPostagem->postagem_id = $postagem->id;
-                    $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
-                    $imagemPostagem->save();
+                $postagem->menu_inicial = true;
+                $postagem->save();
+            }
+
+            if ($request->hasFile('imagens')) {
+                foreach ($request->file('imagens') as $imagem) {
+                    if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
+                        $imagemPostagem = new ImagemPostagem();
+                        $imagemPostagem->postagem_id = $postagem->id;
+                        $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
+                        $imagemPostagem->save();
+                    }
                 }
             }
-        }
 
-        if ($request->hasFile("arquivos")) {
-            $arquivos = $request->file("arquivos");
-
-            foreach ($arquivos as $arquivo) {
-                if ($arquivo->isValid()) {
-                    $arquivoPostagem = new ArquivoPostagem();
-                    $arquivoPostagem->postagem_id = $postagem->id;
-                    $arquivoPostagem->nome = $arquivo->getClientOriginalName();
-                    $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
-                    $arquivoPostagem->save();
-                } else {
-                    Log::warning('Arquivo inválido detectado no upload de postagem: ' . $arquivo->getClientOriginalName());
+            if ($request->hasFile('arquivos')) {
+                foreach ($request->file('arquivos') as $arquivo) {
+                    if ($arquivo->isValid()) {
+                        $arquivoPostagem = new ArquivoPostagem();
+                        $arquivoPostagem->postagem_id = $postagem->id;
+                        $arquivoPostagem->nome = $arquivo->getClientOriginalName();
+                        $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
+                        $arquivoPostagem->save();
+                    } else {
+                        Log::warning('Arquivo inválido detectado no upload de postagem: ' . $arquivo->getClientOriginalName());
+                    }
                 }
             }
-        }
 
-        return redirect('postagem')->with('success', 'Postagem Criada com Sucesso');
+            return redirect('postagem')->with('success', 'Postagem Criada com Sucesso');
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar postagem: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Erro ao criar a postagem: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $postagem = Postagem::findOrFail($id);
@@ -149,76 +150,89 @@ class PostagemController extends Controller
         return view('postagem.edit', ['postagem' => $postagem, 'tipo_postagens' => $tipo_postagens]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(PostagemRequest $request, string $id)
     {
-        $postagem = Postagem::findOrFail($id);
+        try {
+            $postagem = Postagem::findOrFail($id);
 
-        if ($request->hasFile("main_image")) {
-            $mainImage = $request->file("main_image");
+            if ($request->filled('cropped_image_data')) {
+                $imageData = $request->input('cropped_image_data');
 
-            if (!Postagem::checkMainImageSize($mainImage)) {
-                return redirect()->back()->withInput()->with('error', 'A imagem de capa deve ter as dimensões de 2700 x 660.');
-            }
+                if (strpos($imageData, 'data:image') !== false) {
+                    [, $imageData] = explode(',', $imageData);
+                }
 
-            if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
-                //Apagar capaPostagem antiga
+                $decodedImage = base64_decode($imageData);
+
+                if ($decodedImage === false) {
+                    throw new \Exception('Falha ao decodificar imagem base64');
+                }
+
                 $oldCapaPostagem = $postagem->capa;
-                Storage::disk('public')->delete($oldCapaPostagem->imagem);
-                $oldCapaPostagem->delete();
+                if ($oldCapaPostagem) {
+                    Storage::disk('public')->delete($oldCapaPostagem->imagem);
+                    $oldCapaPostagem->delete();
+                }
+
+                $directory = 'CapaPostagem/' . $postagem->id;
+                Storage::disk('public')->makeDirectory($directory);
+
+                $fileName = uniqid('capa_') . '.jpg';
+                $fullPath = $directory . '/' . $fileName;
+
+                if (!Storage::disk('public')->put($fullPath, $decodedImage)) {
+                    throw new \Exception('Falha ao salvar arquivo de imagem');
+                }
 
                 $capaPostagem = new CapaPostagem();
                 $capaPostagem->postagem_id = $postagem->id;
-                $capaPostagem->imagem = $mainImage->store('CapaPostagem/' . $postagem->id, 'public');
+                $capaPostagem->imagem = $fullPath;
                 $capaPostagem->save();
+
+                $postagem->menu_inicial = true;
             }
-            $postagem->menu_inicial = true;
-        }
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
-        $cleanText = $purifier->purify($request->texto);
 
-        $postagem->update([
-            'titulo' => $request->titulo,
-            'texto' => $request->texto,
-            'tipo_postagem_id' => $request->tipo_postagem_id,
-            'menu_inicial' => $postagem->menu_inicial ?? false
-        ]);
+            $config = HTMLPurifier_Config::createDefault();
+            $purifier = new HTMLPurifier($config);
+            $cleanText = $purifier->purify($request->texto);
 
-        if ($request->hasFile("imagens")) {
-            $imagens = $request->file("imagens");
-            foreach ($imagens as $imagem) {
-                if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
-                    $imagemPostagem = new ImagemPostagem();
-                    $imagemPostagem->postagem_id = $postagem->id;
-                    $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
-                    $imagemPostagem->save();
+            $postagem->update([
+                'titulo' => $request->titulo,
+                'texto' => $cleanText,
+                'tipo_postagem_id' => $request->tipo_postagem_id,
+                'menu_inicial' => $postagem->menu_inicial ?? false
+            ]);
+
+            if ($request->hasFile('imagens')) {
+                foreach ($request->file('imagens') as $imagem) {
+                    if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
+                        $imagemPostagem = new ImagemPostagem();
+                        $imagemPostagem->postagem_id = $postagem->id;
+                        $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
+                        $imagemPostagem->save();
+                    }
                 }
             }
-        }
 
-        if ($request->hasFile("arquivos")) {
-            $arquivos = $request->file("arquivos");
-
-            foreach ($arquivos as $arquivo) {
-                if ($arquivo->isValid()) {
-                    $arquivoPostagem = new ArquivoPostagem();
-                    $arquivoPostagem->postagem_id = $postagem->id;
-                    $arquivoPostagem->nome = $arquivo->getClientOriginalName();
-                    $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
-                    $arquivoPostagem->save();
+            if ($request->hasFile('arquivos')) {
+                foreach ($request->file('arquivos') as $arquivo) {
+                    if ($arquivo->isValid()) {
+                        $arquivoPostagem = new ArquivoPostagem();
+                        $arquivoPostagem->postagem_id = $postagem->id;
+                        $arquivoPostagem->nome = $arquivo->getClientOriginalName();
+                        $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
+                        $arquivoPostagem->save();
+                    }
                 }
             }
-        }
 
-        return redirect('postagem')->with('success', 'Postagem Alterada com Sucesso');
+            return redirect('postagem')->with('success', 'Postagem Alterada com Sucesso');
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar postagem: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Erro ao atualizar a postagem: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $postagem = Postagem::findOrFail($id);
@@ -229,7 +243,9 @@ class PostagemController extends Controller
         foreach ($postagem->arquivos as $arquivo) {
             Storage::disk('public')->delete($arquivo->path);
         }
-        if ($postagem->capa) Storage::disk('public')->delete($postagem->capa->imagem);
+        if ($postagem->capa) {
+            Storage::disk('public')->delete($postagem->capa->imagem);
+        }
 
         $postagem->delete();
         return back()->with('success', 'Postagem Excluída com Sucesso');
@@ -272,7 +288,7 @@ class PostagemController extends Controller
         return view('postagem.show', ['postagem' => $postagem, 'tipo_postagem' => $tipo_postagem]);
     }
 
-    public function togglePin(postagem $postagem)
+    public function togglePin(Postagem $postagem)
     {
         $capa = $postagem->capa;
 
@@ -287,12 +303,11 @@ class PostagemController extends Controller
         $imagem = $capa->imagem;
         $imagePath = public_path('storage/' . $imagem);
 
-        if (!postagem::checkMainImageSize($imagePath)) {
+        if (!Postagem::checkMainImageSize($imagePath)) {
             return response()->json([
                 'success' => false,
                 'status' => 'error',
                 'message' => "A imagem principal não possui as dimensões necessárias.",
-
             ]);
         }
 
@@ -300,11 +315,11 @@ class PostagemController extends Controller
         if ($pinnedpost) {
             $pinnedpost->delete();
             $status = 'unpinned';
-            $message = "postagem '{$postagem->titulo}' desfixada com sucesso.";
+            $message = "Postagem '{$postagem->titulo}' desfixada com sucesso.";
         } else {
-            pinnedposts::create(['postagem_id' => $postagem->id]);
+            PinnedPosts::create(['postagem_id' => $postagem->id]);
             $status = 'pinned';
-            $message = "postagem '{$postagem->titulo}' fixada com sucesso.";
+            $message = "Postagem '{$postagem->titulo}' fixada com sucesso.";
         }
 
         return response()->json([
