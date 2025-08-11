@@ -512,3 +512,404 @@ margin-top:60px;
     display: none !important;
 }
 
+
+
+/* Efeito Paper do MUI */
+.form-section-paper {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Botão de Upload Customizado */
+.custom-file-button {
+    background-color: #1c2c4c;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.custom-file-button:hover {
+    background-color: #324c81;
+}
+
+/* Esconde o input de arquivo padrão */
+.hidden-file-input {
+    display: none;
+}
+
+/* Container para pré-visualização de arquivos e imagens */
+.preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    gap: 15px;
+}
+
+/* Estilo para cada item de pré-visualização */
+.preview-item {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f7f7f7;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Estilo para pré-visualização de arquivos (não imagens) */
+.file-preview-item {
+    position: relative; /* Adicione esta linha */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+}
+
+.file-preview-item .file-icon {
+    font-size: 24px;
+    color: #555;
+}
+
+.file-preview-item .file-info {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* Botão para remover item da pré-visualização */
+.remove-preview-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* Modal de Visualização de Imagem */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.image-modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+/* Modal de Recorte */
+#cropper-modal img {
+    max-width: 100%;
+}
+
+.form-container-main {
+    margin-top: 30px;
+}
+
+
+/* Estilização do Summernote */
+
+/* Contêiner principal do editor */
+.note-editor.note-frame {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Barra de ferramentas */
+.note-toolbar {
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 8px 5px;
+}
+
+/* Área de edição */
+.note-editing-area .note-editable {
+    background-color: #ffffff;
+}
+
+/* Barra de status (inferior) */
+.note-statusbar {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background-color: #f5f5f5;
+}
+
+/* Ajusta pop-ups do editor (ex: inserir link) */
+.note-popover .popover-content, .note-modal-content {
+    border-radius: 8px;
+}
+
+/* Cria a máscara escura sobre a área que NÃO será cortada */
+/* Estilos do Cropper */
+.cropper-container {
+    direction: ltr;
+    font-size: 0;
+    line-height: 0;
+    position: relative;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    max-width: 100%;
+}
+
+.cropper-container img {
+    display: block;
+    height: 100%;
+    image-orientation: 0deg;
+    max-height: none !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    width: 100%;
+}
+
+.cropper-canvas,
+.cropper-drag-box,
+.cropper-crop-box,
+.cropper-modal {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.cropper-drag-box {
+    background-color: #fff;
+    opacity: 0;
+}
+
+.cropper-modal {
+    background-color: #000;
+    opacity: 0.5;
+}
+
+.cropper-crop-box {
+    height: 100%;
+    width: 100%;
+}
+
+.cropper-wrap-box {
+    background-color: #f8f9fa;
+}
+
+.cropper-view-box {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+    outline: 2px solid #1c2c4c;
+    outline-color: rgba(28, 44, 76, 0.85);
+}
+
+/* Modal de Recorte */
+#cropper-modal {
+    z-index: 1050;
+}
+
+#cropper-modal .modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+
+#cropper-modal .modal-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+#cropper-modal .modal-body {
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+/* Container do Cropper */
+#cropper-modal {
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+}
+
+#cropper-modal .crop-container {
+    height: 400px;
+    margin: 0;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+#cropper-modal .modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+
+#cropper-modal .modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#cropper-modal .modal-body {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+#cropper-modal .crop-instructions {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+#cropper-modal img {
+    max-width: 100%;
+    height: auto;
+}
+
+.cropper-view-box {
+    outline: 2px solid #1c2c4c !important;
+    outline-color: rgba(28, 44, 76, 0.75) !important;
+}
+
+.cropper-point {
+    background-color: #1c2c4c !important;
+    width: 6px !important;
+    height: 6px !important;
+}
+
+.cropper-line {
+    background-color: #1c2c4c !important;
+}
+
+.cropper-view-box {
+    outline: 2px solid #1c2c4c;
+    outline-color: rgba(28, 44, 76, 0.75);
+}
+
+#cropper-modal .modal-body {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    overflow: hidden;
+}
+
+.cropper-face {
+    background-color: transparent !important;
+}
+
+.cropper-dashed {
+    border-color: rgba(28, 44, 76, 0.3);
+}
+
+.cropper-center:before,
+.cropper-center:after {
+    background-color: rgba(28, 44, 76, 0.5);
+}
+
+.cropper-line {
+    background-color: #1c2c4c;
+}
+
+.cropper-point {
+    width: 6px;
+    height: 6px;
+    background-color: #1c2c4c;
+    opacity: 0.8;
+}
+
+.cropper-point:hover {
+    opacity: 1;
+}
+
+/* Botões do modal */
+#cropper-modal .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+#cropper-modal .btn-confirmar,
+#cropper-modal .btn-cancelar {
+    padding: 0.375rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+#cropper-modal .btn-confirmar {
+    background-color: #1c2c4c;
+    color: #ffffff;
+    border: none;
+}
+
+#cropper-modal .btn-confirmar:hover {
+    background-color: #324c81;
+}
+
+#cropper-modal .btn-cancelar {
+    background-color: #ffffff;
+    color: #1c2c4c;
+    border: 1px solid #1c2c4c;
+    margin-right: 0.5rem;
+}
+
+#cropper-modal .btn-cancelar:hover {
+    background-color: #f8f9fa;
+}
+
+/* Instruções de recorte */
+.crop-instructions {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
