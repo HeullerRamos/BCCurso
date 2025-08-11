@@ -17,6 +17,11 @@ class Professor extends Model
         'foto',
     ];
 
+    public function coordenador()
+    {
+        return $this->hasOne(Coordenador::class, 'professor_id', 'id');
+    }
+
     public function servidor(){
         return $this->hasOne(Servidor::class, 'id', 'servidor_id');
     }
@@ -33,7 +38,7 @@ class Professor extends Model
         return $this->hasMany(Projeto::class);
     }
 
-    public function links(){
+     public function curriculos(){
         return $this->hasMany(CurriculoProfessor::class);
     }
 }

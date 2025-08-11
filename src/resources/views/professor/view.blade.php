@@ -54,6 +54,20 @@
                             </div>
                         </div>
                         <hr>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Função:</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                @if($professor->coordenador)
+                                    <strong class="text-success">Coordenador de Curso</strong>
+                                @else
+                                    Professor
+                                @endif
+                            </div>
+                        </div>
+                        <hr>
                         <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">E-mail:</h6>
@@ -68,7 +82,7 @@
                                 <h6 class="mb-0">Links:</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                @foreach ($curriculos as $curriculo)
+                                @foreach ($professor->curriculos->first()->links ?? [] as $link)
                                     <a href="{{$curriculo->link}}" target="_blank">{{ $curriculo->link }}</a><br>
                                 @endforeach
                             </div>

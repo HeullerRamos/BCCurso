@@ -60,6 +60,7 @@
         }
     </style>
 
+    @vite(['resources/js/app.js'])
 
 </head>
 
@@ -68,6 +69,8 @@
         @include('layouts.authenticated-header')
     @elseif(auth()->check() && auth()->user()->hasRole('professor'))
         @include('layouts.authenticated-header-professor')
+    @elseif(auth()->check() && auth()->user()->hasRole('aluno'))
+        @include('layouts.authenticated-header-aluno')
     @else
         @include('layouts.header')
     @endif
@@ -108,7 +111,6 @@
             </div>
         </div>
     </footer>
-
 
 </body>
 

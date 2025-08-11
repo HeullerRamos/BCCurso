@@ -278,17 +278,35 @@
                   <p>{{$curso->carga_horaria}} horas .</p>
                 </div>
 
-                <div class = "borda">
-                  <span class = "title borda2">Matriz curricular</span>
-                    <p>
-                      <a href = "#">link para o documento sobre a matriz curricular</a>
-                    </p>
-                </div>
+                @if($curso->ppc && $curso->ppc->count() > 0)
+                    <div class = "borda">
+                        <span class = "title borda2">PPC - Projeto Pedagógico de Curso</span>
+                            <p>
+                            <a href = "{{ asset('storage/' . $curso->ppc[0]->path) }}" target="_blank"> link para o Projeto Pedagógico de Curso </a>
+                        </p>
+                    </div>
+
+                    <div class = "borda">
+                        <span class = "title borda2">Matriz curricular</span>
+                            <p>
+                                <a href = "{{ asset('storage/' . $curso->ppc[0]->matriz->path) }}" target="_blank">link para o documento sobre a matriz curricular</a>
+                            </p>
+                    </div>
+                @else
+                    <div class = "borda">
+                        <span class = "title borda2">PPC - Projeto Pedagógico de Curso</span>
+                        <p>Nenhum documento disponível.</p>
+                    </div>
+                    <div class = "borda">
+                        <span class = "title borda2">Matriz curricular</span>
+                        <p>Nenhum documento disponível.</p>
+                    </div>
+                @endif
 
                 <div class = "borda">
                   <span class = "title borda2">Calendário acadêmico</span>
                     <p>
-                        <a href = "{{$curso->calendario}}"> link para o calendário acadêmico</a>
+                        <a href = "{{ asset('storage/' . $curso->calendario) }}" target="_blank"> link para o calendário acadêmico </a>
                     </p>
                 </div>
 
@@ -371,7 +389,7 @@
 
                 </ul>
 
-                <span><a href = "{{$curso->horario}}"> Veja os horários das disciplinas</a></span>
+                <a href = "{{ asset('storage/' . $curso->horario) }}" target="_blank"> Veja os horários das disciplinas </a>
 
                 <br>
                 <br>
