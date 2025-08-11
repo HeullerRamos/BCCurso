@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-sm-9 text-secondary">
                                 @foreach ($professor->curriculos->first()->links ?? [] as $link)
-                                    <a href="{{$curriculo->link}}" target="_blank">{{ $curriculo->link }}</a><br>
+                                    <a href="{{$link->link}}" target="_blank">{{$link->link}}</a><br>
                                 @endforeach
                             </div>
                         </div>
