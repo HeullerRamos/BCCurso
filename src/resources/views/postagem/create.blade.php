@@ -73,9 +73,56 @@
     </form>
 </div>
 
-<div id="image-viewer-modal" class="image-modal" onclick="this.style.display='none'">
+<div id="image-viewer-modal" class="image-modal">
     <img id="modal-image-content" class="image-modal-content">
+    <span class="close-modal">&times;</span>
 </div>
+
+<style>
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.image-modal {
+    cursor: pointer;
+}
+
+.image-modal img {
+    cursor: default;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('image-viewer-modal');
+    const closeBtn = modal.querySelector('.close-modal');
+    
+    // Close on clicking the modal background
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Close on clicking the close button
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // Close on pressing Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
 
 <!-- Modal de Recorte -->
 <div class="modal" id="cropper-modal" tabindex="-1" role="dialog">
@@ -111,32 +158,41 @@
     window.removeMainImage = function() {
         const mainImageInput = document.getElementById('main_image');
         const container = document.getElementById('upload-container');
-        mainImageInput.value = '';
-        container.innerHTML = '<label for="main_image" class="custom-file-button">Procurar Capa</label>';
+        if (mainImageInput && container) {
+            mainImageInput.value = '';
+            container.innerHTML = '<label for="main_image" class="custom-file-button">Procurar Capa</label>';
+            // Reattach the change event listener
+            mainImageInput.addEventListener('change', handleMainImageChange);
+        }
     };
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- VARIÁVEIS GLOBAIS ---
-        const mainImageInput = document.getElementById('main_image');
-        const imagesInput = document.getElementById('imagens');
-        const filesInput = document.getElementById('arquivos');
-        const mainImagePreviewContainer = document.getElementById('upload-container');
-        const imagesPreviewContainer = document.getElementById('imagens-preview-container');
-        const filesPreviewContainer = document.getElementById('arquivos-preview-container');
-        const imageViewerModal = document.getElementById('image-viewer-modal');
-        const modalImageContent = document.getElementById('modal-image-content');
-        const cropperModalElement = document.getElementById('cropper-modal');
-        const cropperContainer = document.getElementById('cropper-container');
-        const cropperImage = document.getElementById('cropper-image');
-        const cropButton = document.getElementById('crop-button');
+// Global variables to store DataTransfer instances
+let dataTransferImages;
+let dataTransferFiles;
 
-        const dataTransferImages = new DataTransfer();
-        const dataTransferFiles = new DataTransfer();
-        
-        // --- MANIPULADORES DE EVENTOS DO CROPPER ---
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize DataTransfer instances
+    dataTransferImages = new DataTransfer();
+    dataTransferFiles = new DataTransfer();
+    
+    // --- VARIÁVEIS GLOBAIS ---
+    let mainImageInput = document.getElementById('main_image');
+    const imagesInput = document.getElementById('imagens');
+    const filesInput = document.getElementById('arquivos');
+    const mainImagePreviewContainer = document.getElementById('upload-container');
+    const imagesPreviewContainer = document.getElementById('imagens-preview-container');
+    const filesPreviewContainer = document.getElementById('arquivos-preview-container');
+    const imageViewerModal = document.getElementById('image-viewer-modal');
+    const modalImageContent = document.getElementById('modal-image-content');
+    const cropperModalElement = document.getElementById('cropper-modal');
+    const cropperContainer = document.getElementById('cropper-container');
+    const cropperImage = document.getElementById('cropper-image');
+    const cropButton = document.getElementById('crop-button');
+
+    // --- MANIPULADORES DE EVENTOS DO CROPPER ---
         
         // 1. QUANDO O USUÁRIO SELECIONA A IMAGEM DE CAPA
-        mainImageInput.addEventListener('change', function(event) {
+        function handleMainImageChange(event) {
             const file = event.target.files[0];
             if (!file) return;
 
@@ -152,7 +208,13 @@
             };
             
             reader.readAsDataURL(file);
-        });
+        }
+
+        // Remove existing event listener before adding a new one
+        mainImageInput.removeEventListener('change', handleMainImageChange);
+        
+        // Add the new event listener
+        mainImageInput.addEventListener('change', handleMainImageChange);
 
         // 2. QUANDO O MODAL DE RECORTE É MOSTRADO
         cropperModalElement.addEventListener('shown.bs.modal', function () {
@@ -174,7 +236,7 @@
                 guides: true,
                 center: true,
                 highlight: false,
-                cropBoxMovable: false,
+                cropBoxMovable: true,
                 cropBoxResizable: true,
                 toggleDragModeOnDblclick: false,
                 wheelZoomRatio: 0.1,
@@ -228,70 +290,90 @@
                     throw new Error('Failed to create canvas');
                 }
 
-                canvas.toBlob(
-                    (blob) => {
-                        if (!blob || !originalFile) {
-                            throw new Error('Failed to create blob or missing original file');
+                // Converter a imagem recortada para base64
+                const base64Image = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Criar ou atualizar campo hidden com a imagem recortada
+                let hiddenInput = document.getElementById('cropped_image_data');
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.id = 'cropped_image_data';
+                    hiddenInput.name = 'cropped_image_data';
+                    mainImageInput.parentNode.appendChild(hiddenInput);
+                }
+                hiddenInput.value = base64Image;
+
+                // Criar preview da imagem com recursos interativos
+                const container = document.getElementById('upload-container');
+                if (container) {
+                    // Create elements separately for better control
+                    const label = document.createElement('label');
+                    label.htmlFor = 'main_image';
+                    label.className = 'custom-file-button';
+                    label.textContent = 'Alterar Capa';
+
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'preview-item mt-3';
+
+                    const img = document.createElement('img');
+                    img.src = base64Image;
+                    img.alt = 'Preview';
+                    img.style.cursor = 'pointer';
+                    img.onclick = function() {
+                        const modal = document.getElementById('image-viewer-modal');
+                        const modalImg = document.getElementById('modal-image-content');
+                        if (modal && modalImg) {
+                            modalImg.src = this.src;
+                            modal.style.display = 'flex';
                         }
+                    };
 
-                        const newFile = new File([blob], originalFile.name, { type: originalFile.type });
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(newFile);
-                        
-                        if (mainImageInput) {
-                            mainImageInput.files = dataTransfer.files;
-                        }
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'remove-preview-btn';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        removeMainImage();
+                    };
 
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const container = document.getElementById('upload-container');
-                            if (container) {
-                                container.innerHTML = `
-                                    <label for="main_image" class="custom-file-button">Procurar Capa</label>
-                                    <div class="preview-item mt-3">
-                                        <img src="${e.target.result}" alt="Preview">
-                                        <button type="button" class="remove-preview-btn" onclick="removeMainImage()">&times;</button>
-                                    </div>
-                                `;
-                            }
+                    // Clear and rebuild container
+                    container.innerHTML = '';
+                    container.appendChild(label);
+                    
+                    previewDiv.appendChild(img);
+                    previewDiv.appendChild(removeBtn);
+                    container.appendChild(previewDiv);
+                }
 
-                            // Limpa o cropper
-                            if (cropper) {
-                                cropper.destroy();
-                                cropper = null;
-                            }
+                // Fechar o modal de recorte
+                const modal = bootstrap.Modal.getInstance(cropperModalElement);
+                if (modal) {
+                    modal.hide();
+                }
 
-                            // Fecha o modal
-                            const modal = bootstrap.Modal.getInstance(cropperModalElement);
-                            if (modal) {
-                                modal.hide();
-                            }
+                // Limpa o cropper
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
 
-                            // Restaura o scroll e limpa estilos
-                            document.body.classList.remove('modal-open');
-                            document.body.style.overflow = '';
-                            document.body.style.paddingRight = '';
-                            document.documentElement.style.overflow = '';
+                // Limpa estilos e backdrop do modal
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                document.documentElement.style.overflow = '';
+                
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
 
-                            // Remove backdrop
-                            const backdrop = document.querySelector('.modal-backdrop');
-                            if (backdrop) {
-                                backdrop.remove();
-                            }
-
-                            // Força atualização do scroll
-                            setTimeout(() => {
-                                window.scrollTo(window.scrollX, window.scrollY);
-                            }, 100);
-                        };
-
-                        reader.readAsDataURL(newFile);
-                    },
-                    originalFile.type,
-                    0.8
-                );
             } catch (error) {
-                console.error('Error during crop:', error);
+                console.error('Erro ao recortar imagem:', error);
+                alert('Ocorreu um erro ao recortar a imagem. Por favor, tente novamente.');
                 
                 // Cleanup em caso de erro
                 if (cropper) {
@@ -361,13 +443,25 @@
                 };
                 previewItem.appendChild(img);
             } else {
+                // Criar um link para o arquivo
+                const fileLink = document.createElement('a');
+                fileLink.href = URL.createObjectURL(Array.from(inputElement.files).find(file => file.name === fileName));
+                fileLink.target = '_blank'; // Abrir em nova aba
+                fileLink.style.textDecoration = 'none'; // Remover sublinhado
+                fileLink.style.color = 'inherit'; // Manter a cor original
+                fileLink.style.display = 'flex';
+                fileLink.style.alignItems = 'center';
+                fileLink.style.gap = '10px';
+                
                 const icon = document.createElement('i');
                 icon.className = 'fas fa-file-alt file-icon';
                 const info = document.createElement('span');
                 info.className = 'file-info';
                 info.textContent = fileName;
-                previewItem.appendChild(icon);
-                previewItem.appendChild(info);
+                
+                fileLink.appendChild(icon);
+                fileLink.appendChild(info);
+                previewItem.appendChild(fileLink);
             }
             
             const removeBtn = document.createElement('button');

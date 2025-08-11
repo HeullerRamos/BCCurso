@@ -575,12 +575,12 @@ margin-top:60px;
 
 /* Estilo para pré-visualização de arquivos (não imagens) */
 .file-preview-item {
-    position: relative; /* Adicione esta linha */
+    position: relative;
     width: 100%;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px;
+    padding: 10px 35px 10px 10px; /* Added right padding to accommodate the remove button */
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f7f7f7;
@@ -589,6 +589,7 @@ margin-top:60px;
 .file-preview-item .file-icon {
     font-size: 24px;
     color: #555;
+    flex-shrink: 0;
 }
 
 .file-preview-item .file-info {
@@ -597,7 +598,6 @@ margin-top:60px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 
 /* Botão para remover item da pré-visualização */
 .remove-preview-btn {
@@ -615,6 +615,21 @@ margin-top:60px;
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    z-index: 10;
+    padding: 0;
+    font-size: 18px;
+    transition: background-color 0.2s ease;
+}
+
+.remove-preview-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* For file preview items, keep the button centered vertically */
+.file-preview-item .remove-preview-btn {
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
 }
 
 /* Modal de Visualização de Imagem */
@@ -653,34 +668,110 @@ margin-top:60px;
 }
 
 
-/* Estilização do Summernote */
+/* Estilização do Summernote - Material Design */
 
 /* Contêiner principal do editor */
 .note-editor.note-frame {
     border-radius: 8px;
     border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 24px;
+}
+
+.note-editor.note-frame:focus-within {
+    box-shadow: 0 6px 16px rgba(28, 44, 76, 0.15);
+    border-color: #1c2c4c;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(28, 44, 76, 0.25);
 }
 
 /* Barra de ferramentas */
 .note-toolbar {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     border-bottom: 1px solid #e0e0e0;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    padding: 8px 5px;
+    padding: 12px 10px;
+    transition: background-color 0.2s ease;
+}
+
+.note-toolbar .note-btn {
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin: 2px;
+    border-color: #e0e0e0;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.note-toolbar .note-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #1c2c4c;
+}
+
+.note-toolbar .note-btn.active {
+    background-color: #1c2c4c;
+    color: #ffffff;
+    border-color: #1c2c4c;
 }
 
 /* Área de edição */
 .note-editing-area .note-editable {
     background-color: #ffffff;
+    padding: 20px;
+    color: #333333;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    min-height: 300px;
+}
+
+.note-editing-area .note-editable:focus {
+    outline: none;
 }
 
 /* Barra de status (inferior) */
 .note-statusbar {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+}
+
+.note-statusbar .note-resizebar {
+    height: 10px;
+}
+
+/* Dropdowns e Popovers */
+.note-popover .popover-content, .panel-heading.note-toolbar .dropdown-menu {
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+}
+
+.note-popover .popover-content .note-color .dropdown-menu,
+.panel-heading.note-toolbar .note-color .dropdown-menu {
+    min-width: 350px;
+}
+
+/* Links e botões dentro dos dropdowns */
+.note-popover .popover-content .dropdown-item,
+.panel-heading.note-toolbar .dropdown-item {
+    padding: 8px 16px;
+    color: #333333;
+    transition: background-color 0.2s ease;
+}
+
+.note-popover .popover-content .dropdown-item:hover,
+.panel-heading.note-toolbar .dropdown-item:hover {
     background-color: #f5f5f5;
+    color: #1c2c4c;
+}
+
+/* Modais */
+.note-modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* Ajusta pop-ups do editor (ex: inserir link) */
