@@ -149,12 +149,18 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <button type="button" id="selectAll" class="btn btn-outline-primary btn-sm">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="d-flex flex-wrap mb-2">
+                                <button type="button" id="selectAll" class="btn btn-outline-primary btn-sm mb-1 me-1">
                                     <i class="fas fa-check-square"></i> Selecionar Todas
                                 </button>
-                                <button type="button" id="unselectAll" class="btn btn-outline-secondary btn-sm ms-2">
+                                <button type="button" id="selectEven" class="btn btn-outline-info btn-sm mb-1 me-1">
+                                    <i class="fas fa-check-square"></i> Períodos Pares
+                                </button>
+                                <button type="button" id="selectOdd" class="btn btn-outline-info btn-sm mb-1 me-1">
+                                    <i class="fas fa-check-square"></i> Períodos Ímpares
+                                </button>
+                                <button type="button" id="unselectAll" class="btn btn-outline-secondary btn-sm mb-1">
                                     <i class="fas fa-square"></i> Limpar Seleção
                                 </button>
                             </div>
@@ -184,6 +190,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('input[name="disciplinas[]"]');
     const selectAllBtn = document.getElementById('selectAll');
+    const selectEvenBtn = document.getElementById('selectEven');
+    const selectOddBtn = document.getElementById('selectOdd');
     const unselectAllBtn = document.getElementById('unselectAll');
     const countSelected = document.getElementById('countSelected');
 
@@ -206,6 +214,76 @@ document.addEventListener('DOMContentLoaded', function() {
         checkboxes.forEach(function(checkbox) {
             checkbox.checked = true;
         });
+        updateCount();
+    });
+
+    // Botão selecionar períodos pares
+    selectEvenBtn.addEventListener('click', function() {
+        // Limpa todas as seleções primeiro
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        
+        // Seleciona checkboxes nos períodos pares (2, 4, 6, 8, 10)
+        document.querySelectorAll('table').forEach(function(table, tableIndex) {
+            table.querySelectorAll('th').forEach(function(th, thIndex) {
+                const periodoText = th.innerText;
+                const periodoMatch = periodoText.match(/(\d+)º/);
+                
+                if (periodoMatch) {
+                    const periodo = parseInt(periodoMatch[1]);
+                    // Se é um período par
+                    if (periodo % 2 === 0) {
+                        // Seleciona todos os checkboxes nesta coluna
+                        const cellIndex = thIndex;
+                        table.querySelectorAll('tbody tr').forEach(function(tr) {
+                            const td = tr.querySelectorAll('td')[cellIndex];
+                            if (td) {
+                                td.querySelectorAll('input[name="disciplinas[]"]').forEach(function(cb) {
+                                    cb.checked = true;
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
+        updateCount();
+    });
+
+    // Botão selecionar períodos ímpares
+    selectOddBtn.addEventListener('click', function() {
+        // Limpa todas as seleções primeiro
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        
+        // Seleciona checkboxes nos períodos ímpares (1, 3, 5, 7, 9)
+        document.querySelectorAll('table').forEach(function(table, tableIndex) {
+            table.querySelectorAll('th').forEach(function(th, thIndex) {
+                const periodoText = th.innerText;
+                const periodoMatch = periodoText.match(/(\d+)º/);
+                
+                if (periodoMatch) {
+                    const periodo = parseInt(periodoMatch[1]);
+                    // Se é um período ímpar
+                    if (periodo % 2 !== 0) {
+                        // Seleciona todos os checkboxes nesta coluna
+                        const cellIndex = thIndex;
+                        table.querySelectorAll('tbody tr').forEach(function(tr) {
+                            const td = tr.querySelectorAll('td')[cellIndex];
+                            if (td) {
+                                td.querySelectorAll('input[name="disciplinas[]"]').forEach(function(cb) {
+                                    cb.checked = true;
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
         updateCount();
     });
 
