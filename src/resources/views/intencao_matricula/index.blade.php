@@ -44,6 +44,27 @@
                         @forelse($intencoes as $intencao)
                             <tr>
                                 <td>{{ $intencao->id }}</td>
+
+<style>
+.btn-report {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #17a2b8;
+    color: white;
+    transition: all 0.3s ease;
+    margin-right: 5px;
+}
+
+.btn-report:hover {
+    background-color: #138496;
+    color: white;
+    transform: scale(1.1);
+}
+</style>
                                 <td>{{ $intencao->numero_periodo }}º</td>
                                 <td>{{ $intencao->ano }}</td>
                                 <td>{{ $intencao->disciplinas->count() }}</td>
@@ -51,6 +72,9 @@
                                     <div class="action-buttons">
                                         <a href="{{ route('intencao_matricula.show', $intencao->id) }}" class="btn-view" title="Visualizar">
                                             <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('intencao_matricula.relatorio', $intencao->id) }}" class="btn-report" title="Relatório">
+                                            <i class="fas fa-chart-bar"></i>
                                         </a>
                                         <form action="{{ route('intencao_matricula.destroy', $intencao->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
