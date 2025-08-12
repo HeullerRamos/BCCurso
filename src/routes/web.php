@@ -16,6 +16,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
 use App\Http\Controllers\DisciplinaController;
+use App\Http\Controllers\IntencaoMatriculaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LinkController;
 /*
@@ -167,4 +168,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     //Disciplina
     Route::resource('disciplina', DisciplinaController::class);
+
+    // Intencao Matricula
+    Route::resource('intencao_matricula', IntencaoMatriculaController::class);
 });
