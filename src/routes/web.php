@@ -171,6 +171,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     // Intencao Matricula
     Route::resource('intencao_matricula', IntencaoMatriculaController::class);
+    Route::get('intencao_matricula/{intencao_matricula}/relatorio', [IntencaoMatriculaController::class, 'relatorio'])->name('intencao_matricula.relatorio');
 });
 
 // Rota para alunos declararem intenção de matrícula
