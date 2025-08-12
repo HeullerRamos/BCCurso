@@ -22,6 +22,7 @@ return new class extends Migration
             $table->id();
             $table->integer('numero_periodo')->unsigned();
             $table->integer('ano')->unsigned();
+            $table->unique(['numero_periodo', 'ano']);
             $table->timestamps();
         });
     }
