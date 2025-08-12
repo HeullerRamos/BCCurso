@@ -25,6 +25,7 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alerts.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/index-pages.css') }}" rel="stylesheet">
     
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -67,23 +68,23 @@
 
                         <!-- Navigation Menu - Desktop Only -->
                         <div class="d-none d-lg-flex align-items-center gap-2" id="desktopNav">
-                            <a class="nav-link modern-nav-link" href="{{ route('postagem.display') }}">
+                            <a class="nav-link modern-nav-link {{ request()->routeIs('postagem.display') ? 'active' : '' }}" href="{{ route('postagem.display') }}">
                                 <i class="fas fa-home"></i>
                                 <span>Início</span>
                             </a>
-                            <a class="nav-link modern-nav-link" href="{{ route('curso.show', ['id' => '1']) }}">
+                            <a class="nav-link modern-nav-link {{ request()->routeIs('curso.show') ? 'active' : '' }}" href="{{ route('curso.show', ['id' => '1']) }}">
                                 <i class="fas fa-graduation-cap"></i>
                                 <span>Curso</span>
                             </a>
-                            <a class="nav-link modern-nav-link" href="{{ route('professor.display') }}">
+                            <a class="nav-link modern-nav-link {{ request()->routeIs('professor.display') ? 'active' : '' }}" href="{{ route('professor.display') }}">
                                 <i class="fas fa-chalkboard-teacher"></i>
                                 <span>Professores</span>
                             </a>
-                            <a class="nav-link modern-nav-link" href="{{ route('projetos.view') }}">
+                            <a class="nav-link modern-nav-link {{ request()->routeIs('projetos.view') ? 'active' : '' }}" href="{{ route('projetos.view') }}">
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Projeto</span>
                             </a>
-                            <a class="nav-link modern-nav-link" href="{{ route('tcc.display') }}">
+                            <a class="nav-link modern-nav-link {{ request()->routeIs('tcc.display') ? 'active' : '' }}" href="{{ route('tcc.display') }}">
                                 <i class="fas fa-graduation-cap"></i>
                                 <span>TCC</span>
                             </a>
@@ -92,40 +93,40 @@
                             @auth
                                 @if((method_exists(Auth::user(), 'hasRole') && Auth::user()->hasRole('coordenador')) || Auth::user()->id == 1)
                                     <div class="dropdown">
-                                        <a class="nav-link modern-nav-link dropdown-toggle admin-menu" href="#" role="button" data-bs-toggle="dropdown">
+                                        <a class="nav-link modern-nav-link dropdown-toggle admin-menu {{ request()->is('*/curso*') || request()->is('*/tcc*') || request()->is('*/aluno*') || request()->is('*/banca*') || request()->is('*/projeto*') || request()->is('*/tipo-postagem*') || request()->is('*/disciplina*') || request()->is('*/intencao_matricula*') || request()->is('*/postagem*') || request()->is('*/professor*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                                             <i class="fas fa-cogs"></i>
                                             <span>Administrar</span>
                                         </a>
                                         <ul class="dropdown-menu modern-dropdown admin-dropdown">
                                             <li class="dropdown-header">Gerenciar Sistema</li>
-                                            <li><a class="dropdown-item" href="{{ route('curso.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('curso.index') ? 'active' : '' }}" href="{{ route('curso.index') }}">
                                                 <i class="fa-solid fa-scroll"></i> Curso
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('tcc.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('tcc.index') ? 'active' : '' }}" href="{{ route('tcc.index') }}">
                                                 <i class="fas fa-graduation-cap"></i> TCC
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('aluno.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('aluno.index') ? 'active' : '' }}" href="{{ route('aluno.index') }}">
                                                 <i class="fas fa-user-graduate"></i> Aluno
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('banca.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('banca.index') ? 'active' : '' }}" href="{{ route('banca.index') }}">
                                                 <i class="fas fa-users"></i> Banca
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('projeto.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('projeto.index') ? 'active' : '' }}" href="{{ route('projeto.index') }}">
                                                 <i class="fas fa-project-diagram"></i> Projeto
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('tipo-postagem.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('tipo-postagem.index') ? 'active' : '' }}" href="{{ route('tipo-postagem.index') }}">
                                                 <i class="fas fa-tags"></i> Tipo Postagem
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('disciplina.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('disciplina.index') ? 'active' : '' }}" href="{{ route('disciplina.index') }}">
                                                 <i class="fas fa-book"></i> Disciplinas
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('intencao_matricula.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('intencao_matricula.index') ? 'active' : '' }}" href="{{ route('intencao_matricula.index') }}">
                                                 <i class="fas fa-clipboard-list"></i> Intenção de Matrícula
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('postagem.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('postagem.index') ? 'active' : '' }}" href="{{ route('postagem.index') }}">
                                                 <i class="fas fa-newspaper"></i> Postagens
                                             </a></li>
-                                            <li><a class="dropdown-item" href="{{ route('professor.index') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('professor.index') ? 'active' : '' }}" href="{{ route('professor.index') }}">
                                                 <i class="fas fa-chalkboard-teacher"></i> Professores
                                             </a></li>
                                         </ul>
@@ -141,7 +142,7 @@
                                         <span>{{ Auth::user()->name }}</span>
                                     </a>
                                     <ul class="dropdown-menu modern-dropdown user-dropdown">
-                                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                        <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                             <i class="fas fa-user-edit"></i> Perfil
                                         </a></li>
                                         <li><hr class="dropdown-divider"></li>
@@ -156,7 +157,7 @@
                                     </ul>
                                 </div>
                             @else
-                                <a class="nav-link modern-nav-link" href="{{ route('login') }}">
+                                <a class="nav-link modern-nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
                                     <i class="fas fa-sign-in-alt"></i>
                                     <span>Entrar</span>
                                 </a>
@@ -167,31 +168,31 @@
                         <div class="collapse navbar-collapse d-lg-none" id="navbarNav">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link modern-nav-link" href="{{ route('postagem.display') }}">
+                                    <a class="nav-link modern-nav-link {{ request()->routeIs('postagem.display') ? 'active' : '' }}" href="{{ route('postagem.display') }}">
                                         <i class="fas fa-home"></i>
                                         <span>Início</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link modern-nav-link" href="{{ route('curso.show', ['id' => '1']) }}">
+                                    <a class="nav-link modern-nav-link {{ request()->routeIs('curso.show') ? 'active' : '' }}" href="{{ route('curso.show', ['id' => '1']) }}">
                                         <i class="fas fa-graduation-cap"></i>
                                         <span>Curso</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link modern-nav-link" href="{{ route('professor.display') }}">
+                                    <a class="nav-link modern-nav-link {{ request()->routeIs('professor.display') ? 'active' : '' }}" href="{{ route('professor.display') }}">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                         <span>Professores</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link modern-nav-link" href="{{ route('projetos.view') }}">
+                                    <a class="nav-link modern-nav-link {{ request()->routeIs('projetos.view') ? 'active' : '' }}" href="{{ route('projetos.view') }}">
                                         <i class="fas fa-project-diagram"></i>
                                         <span>Projeto</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link modern-nav-link" href="{{ route('tcc.display') }}">
+                                    <a class="nav-link modern-nav-link {{ request()->routeIs('tcc.display') ? 'active' : '' }}" href="{{ route('tcc.display') }}">
                                         <i class="fas fa-graduation-cap"></i>
                                         <span>TCC</span>
                                     </a>
@@ -201,36 +202,40 @@
                                 @auth
                                     @if((method_exists(Auth::user(), 'hasRole') && Auth::user()->hasRole('coordenador')) || Auth::user()->id == 1)
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link modern-nav-link dropdown-toggle admin-menu" href="#" role="button" data-bs-toggle="dropdown">
+                                            <a class="nav-link modern-nav-link dropdown-toggle admin-menu {{ request()->is('*/curso*') || request()->is('*/tcc*') || request()->is('*/aluno*') || request()->is('*/banca*') || request()->is('*/projeto*') || request()->is('*/tipo-postagem*') || request()->is('*/disciplina*') || request()->is('*/intencao_matricula*') || request()->is('*/postagem*') || request()->is('*/professor*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                                                 <i class="fas fa-cogs"></i>
                                                 <span>Administrar</span>
-                                            </a>                                            <ul class="dropdown-menu modern-dropdown admin-dropdown">
+                                            </a>
+                                            <ul class="dropdown-menu modern-dropdown admin-dropdown">
                                                 <li class="dropdown-header">Gerenciar Sistema</li>
-                                                <li><a class="dropdown-item" href="{{ route('tcc.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('curso.index') ? 'active' : '' }}" href="{{ route('curso.index') }}">
+                                                    <i class="fa-solid fa-scroll"></i> Curso
+                                                </a></li>
+                                                <li><a class="dropdown-item {{ request()->routeIs('tcc.index') ? 'active' : '' }}" href="{{ route('tcc.index') }}">
                                                     <i class="fas fa-graduation-cap"></i> TCC
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('aluno.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('aluno.index') ? 'active' : '' }}" href="{{ route('aluno.index') }}">
                                                     <i class="fas fa-user-graduate"></i> Aluno
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('banca.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('banca.index') ? 'active' : '' }}" href="{{ route('banca.index') }}">
                                                     <i class="fas fa-users"></i> Banca
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('projeto.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('projeto.index') ? 'active' : '' }}" href="{{ route('projeto.index') }}">
                                                     <i class="fas fa-project-diagram"></i> Projeto
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('tipo-postagem.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('tipo-postagem.index') ? 'active' : '' }}" href="{{ route('tipo-postagem.index') }}">
                                                     <i class="fas fa-tags"></i> Tipo Postagem
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('disciplina.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('disciplina.index') ? 'active' : '' }}" href="{{ route('disciplina.index') }}">
                                                     <i class="fas fa-book"></i> Disciplinas
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('intencao_matricula.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('intencao_matricula.index') ? 'active' : '' }}" href="{{ route('intencao_matricula.index') }}">
                                                     <i class="fas fa-clipboard-list"></i> Intenção de Matrícula
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('postagem.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('postagem.index') ? 'active' : '' }}" href="{{ route('postagem.index') }}">
                                                     <i class="fas fa-newspaper"></i> Postagens
                                                 </a></li>
-                                                <li><a class="dropdown-item" href="{{ route('professor.index') }}">
+                                                <li><a class="dropdown-item {{ request()->routeIs('professor.index') ? 'active' : '' }}" href="{{ route('professor.index') }}">
                                                     <i class="fas fa-chalkboard-teacher"></i> Professores
                                                 </a></li>
                                             </ul>
@@ -246,7 +251,7 @@
                                             <span>{{ Auth::user()->name }}</span>
                                         </a>
                                         <ul class="dropdown-menu modern-dropdown user-dropdown">
-                                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                            <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                                 <i class="fas fa-user-edit"></i> Perfil
                                             </a></li>
                                             <li><hr class="dropdown-divider"></li>
@@ -262,7 +267,7 @@
                                     </li>
                                 @else
                                     <li class="nav-item">
-                                        <a class="nav-link modern-nav-link" href="{{ route('login') }}">
+                                        <a class="nav-link modern-nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
                                             <i class="fas fa-sign-in-alt"></i>
                                             <span>Entrar</span>
                                         </a>
