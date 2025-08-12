@@ -62,17 +62,60 @@
                     <label class="form-label">Selecione as Disciplinas por Período</label>
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <!-- Primeira linha: Períodos 1-5 -->
                             <thead class="table-light">
                                 <tr>
-                                    @for($periodo = 1; $periodo <= 10; $periodo++)
-                                        <th class="text-center">{{ $periodo }}º Período</th>
+                                    @for($periodo = 1; $periodo <= 5; $periodo++)
+                                        <th class="text-center" style="width: 20%">{{ $periodo }}º Período</th>
                                     @endfor
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr style="vertical-align: top;">
-                                    @for($periodo = 1; $periodo <= 10; $periodo++)
-                                        <td style="min-width: 200px; padding: 15px;">
+                                    @for($periodo = 1; $periodo <= 5; $periodo++)
+                                        <td style="width: 20%; padding: 15px;">
+                                            @php
+                                                $disciplinasDoPeriodo = $disciplinas->where('periodo', $periodo);
+                                            @endphp
+                                            
+                                            @if($disciplinasDoPeriodo->count() > 0)
+                                                @foreach($disciplinasDoPeriodo as $disciplina)
+                                                    <div class="form-check mb-2">
+                                                        <input type="checkbox" 
+                                                               class="form-check-input" 
+                                                               name="disciplinas[]" 
+                                                               id="disciplina_{{ $disciplina->id }}" 
+                                                               value="{{ $disciplina->id }}" 
+                                                               {{ in_array($disciplina->id, old('disciplinas', [])) ? 'checked' : '' }}>
+                                                        <label for="disciplina_{{ $disciplina->id }}" class="form-check-label small">
+                                                            {{ $disciplina->nome }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="text-muted text-center small">
+                                                    <i>Nenhuma disciplina cadastrada</i>
+                                                </div>
+                                            @endif
+                                        </td>
+                                    @endfor
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Segunda linha: Períodos 6-10 -->
+                        <table class="table table-bordered" style="margin-top: 0;">
+                            <thead class="table-light">
+                                <tr>
+                                    @for($periodo = 6; $periodo <= 10; $periodo++)
+                                        <th class="text-center" style="width: 20%">{{ $periodo }}º Período</th>
+                                    @endfor
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="vertical-align: top;">
+                                    @for($periodo = 6; $periodo <= 10; $periodo++)
+                                        <td style="width: 20%; padding: 15px;">
                                             @php
                                                 $disciplinasDoPeriodo = $disciplinas->where('periodo', $periodo);
                                             @endphp
@@ -210,23 +253,32 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .table-responsive {
-    max-height: 500px;
-    overflow-y: auto;
+    overflow-x: hidden; /* Removendo scroll horizontal */
+    max-height: none; /* Removendo a altura máxima para evitar cortes */
 }
 
-.selected-count .badge {
-    font-size: 0.8rem;
+.table {
+    margin-bottom: 0; /* Removendo o espaço entre as tabelas */
+    table-layout: fixed; /* Garante tamanho uniforme das colunas */
+    width: 100%;
+}
+
+.table th, .table td {
+    width: 20%; /* Cada coluna ocupa exatamente 20% da largura */
 }
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
     .table th, .table td {
-        min-width: 150px;
         font-size: 0.85rem;
     }
     
     .form-check-label {
         font-size: 0.8rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto; /* Permitir scroll horizontal apenas em telas muito pequenas */
     }
 }
 </style>
