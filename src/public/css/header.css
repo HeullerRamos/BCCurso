@@ -1,8 +1,3 @@
-/* ==============================
-   HEADER SIMPLIFICADO COM MENU INTEGRADO - VERSÃO ÚNICA
-   ============================== */
-
-/* Ocultar headers antigos que possam aparecer */
 .header-1,
 .header-2,
 .container-1,
@@ -13,7 +8,6 @@
   display: none !important;
 }
 
-/* Header principal - único ativo */
 .modern-header-simple {
   position: sticky;
   top: 0;
@@ -23,7 +17,6 @@
   border-bottom: 3px solid var(--primary-blue);
 }
 
-/* Barra Única do Header */
 .header-single {
   padding: 1rem 0;
   background: var(--text-light);
@@ -87,64 +80,54 @@
   margin: 0;
 }
 
-/* Menu Integrado ao Perfil */
 .navbar-nav-right {
   display: flex;
   align-items: center;
   margin-left: auto;
 }
 
-/* Desktop Navigation - Controle completo de visibilidade */
 #desktopNav {
   gap: 0.3rem;
 }
 
-/* Desktop: Menu desktop sempre visível */
 @media (min-width: 992px) {
   #desktopNav {
     display: flex !important;
   }
 }
 
-/* Mobile: Menu desktop sempre oculto */
 @media (max-width: 991.98px) {
   #desktopNav {
     display: none !important;
   }
 }
 
-/* Mobile Menu Toggle - Controle completo de visibilidade */
 .custom-menu-toggle {
   display: none;
 }
 
-/* Desktop: Toggle button sempre oculto */
 @media (min-width: 992px) {
   .custom-menu-toggle {
     display: none !important;
   }
 }
 
-/* Mobile: Toggle button visível */
 @media (max-width: 991.98px) {
   .custom-menu-toggle {
     display: block !important;
   }
 }
 
-/* Mobile Navigation Collapse - Controle completo de visibilidade */
 .modern-header-simple .navbar-collapse {
   display: none;
 }
 
-/* Desktop: Menu mobile sempre oculto */
 @media (min-width: 992px) {
   .modern-header-simple .navbar-collapse {
     display: none !important;
   }
 }
 
-/* Mobile: Menu móvel controlado por JavaScript */
 @media (max-width: 991.98px) {
   .modern-header-simple .navbar-collapse.show {
     display: block !important;
@@ -167,6 +150,20 @@
   white-space: nowrap;
 }
 
+.modern-nav-link.active {
+  background-color: var(--primary-blue);
+  color: var(--text-light) !important;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  transition: all var(--transition-normal);
+}
+
+.modern-nav-link.active:hover {
+  background-color: var(--secondary-blue);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
 .modern-nav-link::before {
   content: "";
   position: absolute;
@@ -174,8 +171,8 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--secondary-blue), var(--light-blue));
-  transition: left var(--transition-slow);
+  background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+  transition: left var(--transition-normal);
   z-index: -1;
 }
 
@@ -189,6 +186,10 @@
   left: 0;
 }
 
+.modern-nav-link.active:hover::before {
+  left: -100%;
+}
+
 .modern-nav-link i {
   font-size: 0.9rem;
   transition: transform var(--transition-normal);
@@ -199,7 +200,6 @@
   transform: scale(1.1) rotate(5deg);
 }
 
-/* Botão de Perfil Especial */
 .user-profile-btn {
   background: rgba(28, 44, 76, 0.05) !important;
   border: 1px solid rgba(28, 44, 76, 0.15) !important;
@@ -212,7 +212,6 @@
   border-color: var(--primary-blue) !important;
 }
 
-/* Dropdown Moderno */
 .modern-dropdown {
   border: none;
   box-shadow: var(--shadow-xl);
@@ -235,11 +234,38 @@
   gap: 0.7rem;
 }
 
+.modern-dropdown .dropdown-item.active {
+  background: linear-gradient(90deg, rgba(70, 130, 180, 0.2), transparent);
+  border-left-color: var(--primary-blue);
+  color: var(--primary-blue);
+  font-weight: 600;
+  position: relative;
+}
+
+.modern-dropdown .dropdown-item.active::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  box-shadow: 0 0 6px var(--light-blue);
+}
+
 .modern-dropdown .dropdown-item:hover {
   background: linear-gradient(90deg, rgba(70, 130, 180, 0.1), transparent);
   border-left-color: var(--secondary-blue);
   color: var(--secondary-blue);
   transform: translateX(5px);
+}
+
+.modern-dropdown .dropdown-item.active:hover {
+  background: linear-gradient(90deg, rgba(70, 130, 180, 0.3), transparent);
+  border-left-color: var(--secondary-blue);
+  color: var(--primary-blue);
 }
 
 .modern-dropdown .dropdown-item i {
@@ -248,7 +274,6 @@
   font-size: 0.9rem;
 }
 
-/* Dropdown do Usuário */
 .user-dropdown {
   right: 0;
   left: auto !important;
@@ -271,7 +296,6 @@
   border-left-color: #dc3545 !important;
 }
 
-/* Menu Toggle Customizado - Apenas em mobile */
 .custom-menu-toggle {
   border: none;
   background: none;
@@ -302,7 +326,6 @@
   transform: rotate(90deg);
 }
 
-/* Menu Mobile - Configurações específicas */
 .modern-header-simple .navbar-collapse {
   position: absolute;
   top: 100%;
@@ -342,9 +365,7 @@
   padding-top: 0.5rem;
 }
 
-/* Força a visibilidade correta dos menus - Sobrescreve Bootstrap */
 @media (min-width: 992px) {
-  /* Desktop: Menu desktop forçado visível, mobile oculto */
   .d-none.d-lg-flex {
     display: flex !important;
   }
@@ -359,7 +380,6 @@
 }
 
 @media (max-width: 991.98px) {
-  /* Mobile: Menu mobile controlado, desktop oculto */
   .d-none.d-lg-flex {
     display: none !important;
   }
@@ -377,7 +397,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 992px) {
   .header-single .container-fluid {
     padding-left: 1rem;
@@ -442,7 +461,6 @@
   }
 }
 
-/* Animação de Entrada */
 @keyframes slideInFromTop {
   from {
     opacity: 0;
@@ -458,7 +476,6 @@
   animation: slideInFromTop 0.3s ease-out;
 }
 
-/* Hover Effects para Mobile */
 @media (hover: none) and (pointer: coarse) {
   .modern-nav-link:hover {
     transform: none;
@@ -469,7 +486,6 @@
   }
 }
 
-/* Dropdown em Desktop */
 @media (min-width: 992px) {
   .modern-header-simple .dropdown:hover .dropdown-menu {
     display: block;
