@@ -120,7 +120,49 @@
 
                     <hr class="my-4">
 
-                    
+                    <div class="row">
+                        {{-- Area para profs internos --}}
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Membros Internos</h6>
+                            <div class="mb-3">
+                                <label for="presidente" class="form-label">Presidente*:</label>
+                                <select name="presidente" id="presidente" class="form-select" required>
+                                    <option value="" disabled selected>Selecione um presidente</option>
+                                    @foreach ($professores_internos as $professor)
+                                        <option value="{{ $professor->id }}" data-professor-id="{{ $professor->id }}"> {{ $professor->nome }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Avaliadores Internos:</label>
+                                <div class="p-2 border rounded" style="max-height: 150px; overflow-y: auto;">
+                                    @foreach ($professores_internos as $professor_interno)
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="professores_internos[]" id="professor_{{$professor_interno->id}}" value="{{$professor_interno->id}}">
+                                        <label for="professor_{{$professor_interno->id}}" class="form-check-label">{{$professor_interno->nome}}</label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Area para externos --}}
+                        <div class="col-md-6">
+                             <h6 class="mb-3">Membros Externos</h6>
+                             <div class="mb-3">
+                                <label class="form-label">Avaliadores Externos:</label>
+                                <div class="p-2 border rounded" style="max-height: 220px; overflow-y: auto;">
+                                @foreach ($professores_externos as $professor_externo)
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="professores_externos[]" id="professor_externo_{{$professor_externo->id}}" value="{{$professor_externo->id}}">
+                                        <label for="professor_externo_{{$professor_externo->id}}" class="form-check-label">{{$professor_externo->nome}} - {{$professor_externo->filiacao}}</label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
