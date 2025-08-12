@@ -21,12 +21,6 @@
 </div>
 
 <div class="container">
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="content-card">
         <div class="card-header">
             <span>Intenções de Matrícula</span>
