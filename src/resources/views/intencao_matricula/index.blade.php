@@ -52,9 +52,6 @@
                                         <a href="{{ route('intencao_matricula.show', $intencao->id) }}" class="btn-view" title="Visualizar">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('intencao_matricula.edit', $intencao->id) }}" class="btn-edit" title="Editar">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
                                         <form action="{{ route('intencao_matricula.destroy', $intencao->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
