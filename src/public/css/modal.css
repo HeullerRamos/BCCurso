@@ -49,3 +49,59 @@
 .invalid-feedback {
   display: block;
 }
+
+/* Modal com fundo azul escuro */
+.modal-blue {
+  background-color: var(--primary-blue);
+  color: var(--text-light);
+}
+
+.modal-blue .modal-body {
+  background-color: #0f2257;
+  color: var(--text-light);
+}
+
+.modal-blue .modal-footer {
+  background-color: #0f2257;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-blue .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-light);
+}
+
+.modal-blue .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--light-blue);
+  color: var(--text-light);
+  box-shadow: 0 0 0 0.2rem rgba(102, 153, 204, 0.25);
+}
+
+.modal-blue .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-blue .form-label {
+  color: var(--text-light);
+}
+
+.modal-blue .modal-title {
+  color: var(--text-light);
+}
+
+.modal-blue #modalErrorContainer {
+  background-color: rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: var(--text-light);
+}
+
+.modal-blue .form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.modal-blue .invalid-feedback {
+  color: #ff8c8c;
+}
