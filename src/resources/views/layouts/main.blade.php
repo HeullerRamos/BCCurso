@@ -145,6 +145,11 @@
                                         <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                             <i class="fas fa-user-edit"></i> Perfil
                                         </a></li>
+                                        @if(Auth::user()->hasRole('aluno'))
+                                        <li><a class="dropdown-item {{ request()->routeIs('declaracao_intencao_matricula.selecionar_disciplinas') ? 'active' : '' }}" href="{{ route('declaracao_intencao_matricula.selecionar_disciplinas') }}">
+                                            <i class="fas fa-clipboard-list"></i> Declarar Intenção de Matrícula
+                                        </a></li>
+                                        @endif
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}" class="d-inline">
@@ -254,6 +259,11 @@
                                             <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                                 <i class="fas fa-user-edit"></i> Perfil
                                             </a></li>
+                                            @if(Auth::user()->aluno)
+                                            <li><a class="dropdown-item {{ request()->routeIs('declaracao_intencao_matricula.selecionar_disciplinas') ? 'active' : '' }}" href="{{ route('declaracao_intencao_matricula.selecionar_disciplinas') }}">
+                                                <i class="fas fa-clipboard-list"></i> Declarar Intenção de Matrícula
+                                            </a></li>
+                                            @endif
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
                                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
