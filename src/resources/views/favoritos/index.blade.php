@@ -338,7 +338,7 @@
                                         </div>
                                         
                                         <div class="d-flex align-items-center">
-                                            <a href="{{ route('tcc.show', $tcc->id) }}" class="post-btn">
+                                            <a href="{{ route('tcc.view', $tcc->id) }}" class="post-btn">
                                                 Visualizar
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
