@@ -1,5 +1,4 @@
 <?php
-<?php
 
 namespace App\Http\Requests;
 
@@ -22,8 +21,10 @@ class IntencaoMatriculaRequest extends FormRequest
      */
     public function rules(): array
     {
+        $uniqueRule = 'unique:intencao_matricula,numero_periodo,' . ($this->intencao_matricula ? $this->intencao_matricula->id : 'NULL') . ',id,ano,' . $this->ano;
+
         return [
-            'numero_periodo' => ['required', 'integer', 'min:1', 'max:2'],
+            'numero_periodo' => ['required', 'integer', 'min:1', 'max:2', $uniqueRule],
             'ano' => ['required', 'integer', 'min:2020', 'max:' . (date('Y') + 5)],
             'disciplinas' => ['array'],
             'disciplinas.*' => ['exists:disciplina,id'],
@@ -40,6 +41,7 @@ class IntencaoMatriculaRequest extends FormRequest
             'numero_periodo.integer' => 'O número do período deve ser um número inteiro',
             'numero_periodo.min' => 'O número do período deve ser no mínimo 1',
             'numero_periodo.max' => 'O número do período deve ser no máximo 2',
+            'numero_periodo.unique' => 'Já existe uma intenção de matrícula para este período e ano',
             'ano.required' => 'O ano é obrigatório',
             'ano.integer' => 'O ano deve ser um número inteiro',
             'ano.min' => 'O ano deve ser no mínimo 2020',
