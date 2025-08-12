@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container mt-3">
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-3">
@@ -53,13 +53,79 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             @if($intencao_matricula->disciplinas->count() > 0)
-                                <ul class="list-unstyled">
-                                    @foreach($intencao_matricula->disciplinas as $disciplina)
-                                        <li>{{ $disciplina->nome }} ({{ $disciplina->periodo }}º período)</li>
-                                    @endforeach
-                                </ul>
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered">
+                                        <!-- Primeira linha: Períodos 1-5 -->
+                                        <thead class="table-light">
+                                            <tr>
+                                                @for($periodo = 1; $periodo <= 5; $periodo++)
+                                                    <th class="text-center" style="width: 20%">{{ $periodo }}º Período</th>
+                                                @endfor
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="vertical-align: top;">
+                                                @for($periodo = 1; $periodo <= 5; $periodo++)
+                                                    <td style="width: 20%; padding: 15px;">
+                                                        @php
+                                                            $disciplinasDoPeriodo = $intencao_matricula->disciplinas->where('periodo', $periodo);
+                                                        @endphp
+                                                        
+                                                        @if($disciplinasDoPeriodo->count() > 0)
+                                                            <ul class="list-unstyled mb-0">
+                                                                @foreach($disciplinasDoPeriodo as $disciplina)
+                                                                    <li class="mb-2 small">{{ $disciplina->nome }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @else
+                                                            <div class="text-muted text-center small">
+                                                                <i>Nenhuma disciplina</i>
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <!-- Segunda linha: Períodos 6-10 -->
+                                    <table class="table table-bordered" style="margin-top: 0;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                @for($periodo = 6; $periodo <= 10; $periodo++)
+                                                    <th class="text-center" style="width: 20%">{{ $periodo }}º Período</th>
+                                                @endfor
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="vertical-align: top;">
+                                                @for($periodo = 6; $periodo <= 10; $periodo++)
+                                                    <td style="width: 20%; padding: 15px;">
+                                                        @php
+                                                            $disciplinasDoPeriodo = $intencao_matricula->disciplinas->where('periodo', $periodo);
+                                                        @endphp
+                                                        
+                                                        @if($disciplinasDoPeriodo->count() > 0)
+                                                            <ul class="list-unstyled mb-0">
+                                                                @foreach($disciplinasDoPeriodo as $disciplina)
+                                                                    <li class="mb-2 small">{{ $disciplina->nome }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @else
+                                                            <div class="text-muted text-center small">
+                                                                <i>Nenhuma disciplina</i>
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             @else
-                                Nenhuma disciplina associada
+                                <div class="text-muted">
+                                    Nenhuma disciplina associada
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -84,8 +150,8 @@
                 </div>
                 <div class="card-footer">
                     <div class="d-flex gap-2">
-                        <a href="{{ route('intencao_matricula.edit', $intencao_matricula->id) }}" class="btn custom-button">
-                            <i class="fas fa-edit"></i> Editar
+                        <a href="{{ route('intencao_matricula.index') }}" class="btn custom-button custom-button-castastrar-tcc">
+                            <i class="fas fa-arrow-left"></i> Voltar
                         </a>
                         <form action="{{ route('intencao_matricula.destroy', $intencao_matricula->id) }}" method="POST">
                             @csrf
@@ -94,13 +160,38 @@
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </form>
-                        <a href="{{ route('intencao_matricula.index') }}" class="btn custom-button custom-button-castastrar-tcc">
-                            <i class="fas fa-arrow-left"></i> Voltar
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.table-responsive {
+    overflow-x: hidden; /* Removendo scroll horizontal */
+    max-height: none; /* Removendo a altura máxima para evitar cortes */
+}
+
+.table {
+    margin-bottom: 0; /* Removendo o espaço entre as tabelas */
+    table-layout: fixed; /* Garante tamanho uniforme das colunas */
+    width: 100%;
+}
+
+.table th, .table td {
+    width: 20%; /* Cada coluna ocupa exatamente 20% da largura */
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 0.85rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto; /* Permitir scroll horizontal apenas em telas muito pequenas */
+    }
+}
+</style>
 @stop
