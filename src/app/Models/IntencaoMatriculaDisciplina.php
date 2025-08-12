@@ -1,11 +1,11 @@
 <?php
-<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class IntencaoMatriculaDisciplina extends Model
 {
@@ -40,6 +40,19 @@ class IntencaoMatriculaDisciplina extends Model
     public function scopePorIntencaoMatricula($query, $intencaoMatriculaId)
     {
         return $query->where('intencao_matricula_id', $intencaoMatriculaId);
+    }
+    
+    /**
+     * Relacionamento com as declarações de intenção de matrícula que usam esta combinação
+     * de intenção de matrícula e disciplina
+     */
+    public function declaracoesIntencaoMatricula(): HasMany
+    {
+        return $this->hasMany(
+            DeclaracaoIntencaoMatriculaDisciplina::class, 
+            ['intencao_matricula_id', 'disciplina_id'],
+            ['intencao_matricula_id', 'disciplina_id']
+        );
     }
     
     /**
@@ -122,5 +135,32 @@ class IntencaoMatriculaDisciplina extends Model
                                          })
                                          ->toArray()
         ];
+    }
+    
+    /**
+     * Método para declarar esta disciplina em uma declaração de intenção de matrícula
+     * 
+     * @param int $declaracaoId ID da declaração de intenção de matrícula
+     * @return \App\Models\DeclaracaoIntencaoMatriculaDisciplina|false
+     */
+    public function declararEm($declaracaoId)
+    {
+        return DeclaracaoIntencaoMatriculaDisciplina::criarComValidacao(
+            $declaracaoId,
+            $this->intencao_matricula_id,
+            $this->disciplina_id
+        );
+    }
+    
+    /**
+     * Método para obter todas as declarações que incluem esta disciplina
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function todasDeclaracoes()
+    {
+        return DeclaracaoIntencaoMatriculaDisciplina::where('intencao_matricula_id', $this->intencao_matricula_id)
+            ->where('disciplina_id', $this->disciplina_id)
+            ->get();
     }
 }
