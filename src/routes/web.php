@@ -15,6 +15,7 @@ use App\Http\Controllers\TccController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
+use App\Http\Controllers\DisciplinaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LinkController;
 /*
@@ -163,4 +164,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::prefix('/curso/{cursoId}')->group(function () {
         Route::resource('/ppc', PpcController::class)->except(['show']);
     });
+
+    //Disciplina
+    Route::resource('disciplina', DisciplinaController::class);
 });
