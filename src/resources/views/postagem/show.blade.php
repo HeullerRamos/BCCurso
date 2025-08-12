@@ -3,28 +3,25 @@
 @section('content')
 
 <style>
-    /* Paleta de cores */
     :root {
-        --navy-primary: #1c2c4c;      /* Azul marinho primário */
-        --navy-secondary: #283f6c;    /* Azul marinho secundário */
-        --blue-medium: #4682b4;       /* Azul médio */
-        --blue-light: #6699cc;        /* Azul claro */
-        --blue-lighter: #dbe9f6;      /* Azul mais claro */
-        --text-dark: #2c3e50;         /* Texto escuro */
-        --text-light: #ffffff;        /* Texto claro */
-        --accent-color: #28a745;      /* Cor de destaque */
-        --border-radius: 12px;        /* Raio de borda padrão */
-        --shadow-standard: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra padrão */
+        --navy-primary: #1c2c4c;
+        --navy-secondary: #283f6c;
+        --blue-medium: #4682b4;
+        --blue-light: #6699cc;
+        --blue-lighter: #dbe9f6;
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --accent-color: #28a745;
+        --border-radius: 12px;
+        --shadow-standard: 0 5px 15px rgba(0, 0, 0, 0.08);
     }
     
-    /* Estilos para o container principal */
     .post-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem 1rem;
     }
     
-    /* Cabeçalho da postagem */
     .post-header {
         margin-bottom: 2rem;
         position: relative;
@@ -65,7 +62,6 @@
         font-weight: 500;
     }
     
-    /* Imagem de capa */
     .post-cover {
         width: 100%;
         border-radius: var(--border-radius);
@@ -80,7 +76,6 @@
         display: block;
     }
     
-    /* Imagem de capa dentro do conteúdo */
     .post-cover-inner {
         width: 100%;
         margin-bottom: 1.5rem;
@@ -102,7 +97,6 @@
         border-radius: 1px;
     }
     
-    /* Conteúdo principal */
     .post-content {
         background-color: white;
         border-radius: var(--border-radius);
@@ -111,7 +105,6 @@
         box-shadow: var(--shadow-standard);
     }
     
-    /* Estilos para formatação HTML no conteúdo */
     .post-text {
         color: var(--text-dark);
         line-height: 1.7;

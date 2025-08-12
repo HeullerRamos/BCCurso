@@ -3,27 +3,24 @@
 @section('content')
 
 <style>
-/* Paleta de cores institucional - tons de azul */
 .curso-page-content {
-    --primary-blue: #1e3a8a;        /* Azul escuro principal */
-    --secondary-blue: #3b82f6;      /* Azul médio */
-    --light-blue: #dbeafe;          /* Azul claro */
-    --accent-blue: #1d4ed8;         /* Azul de destaque */
-    --navy-blue: #1e40af;           /* Azul marinho */
-    --text-dark: #1f2937;           /* Cinza escuro para texto */
-    --text-light: #6b7280;          /* Cinza claro para texto */
-    --border-color: #e5e7eb;        /* Cor da borda */
-    --background-light: #f8fafc;    /* Fundo claro */
+    --primary-blue: #0f2257;
+    --secondary-blue: #2563eb;
+    --light-blue: #dbeafe;
+    --accent-blue: #1d4ed8;
+    --navy-blue: #0f2b76;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --border-color: #e5e7eb;
+    --background-light: #f8fafc;
 }
 
-/* Container principal */
 .curso-page-content .institutional-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Header da página */
 .curso-page-content .page-header {
     background: var(--primary-blue);
     color: white;
@@ -46,7 +43,6 @@
     font-weight: 300;
 }
 
-/* Navegação por seções */
 .curso-page-content .section-navigation {
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -87,7 +83,6 @@
     background-color: var(--light-blue);
 }
 
-/* Seções de conteúdo */
 .curso-page-content .content-section {
     padding: 60px 0;
     border-bottom: 1px solid var(--border-color);
@@ -115,7 +110,6 @@
     margin: 20px auto;
 }
 
-/* Cards informativos */
 .curso-page-content .info-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -160,7 +154,6 @@
     margin-bottom: 8px;
 }
 
-/* Seção de descrição do curso */
 .curso-page-content .course-description {
     background: var(--background-light);
     padding: 50px;
@@ -176,7 +169,6 @@
     text-align: justify;
 }
 
-/* Badges de qualidade */
 .curso-page-content .quality-badges {
     display: flex;
     justify-content: center;
@@ -186,13 +178,13 @@
 }
 
 .curso-page-content .quality-badge {
-    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    background: linear-gradient(135deg, #0f2257, #0f2b76);
     color: white;
     padding: 20px 30px;
     border-radius: 50px;
     font-weight: 600;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.25);
+    box-shadow: 0 4px 15px rgba(15, 34, 87, 0.25);
 }
 
 .curso-page-content .quality-badge .badge-title {
@@ -205,7 +197,6 @@
     font-weight: 700;
 }
 
-/* Documentos e links */
 .curso-page-content .document-links {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -250,7 +241,6 @@
     color: var(--text-light);
 }
 
-/* Botão principal de ação */
 .curso-page-content .primary-action {
     text-align: center;
     margin: 50px 0;
@@ -266,19 +256,18 @@
     border-radius: 50px;
     display: inline-block;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    box-shadow: 0 4px 15px rgba(15, 34, 87, 0.3);
     border: none;
 }
 
 .curso-page-content .btn-institutional:hover {
     background: linear-gradient(135deg, var(--navy-blue), var(--primary-blue));
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+    box-shadow: 0 8px 25px rgba(15, 34, 87, 0.4);
     color: white;
     text-decoration: none;
 }
 
-/* Botão voltar */
 .curso-page-content .back-section {
     text-align: center;
     margin: 40px 0;
@@ -304,7 +293,6 @@
     text-decoration: none;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .curso-page-content .page-header h1 {
         font-size: 2rem;
@@ -343,7 +331,6 @@
     }
 }
 
-/* Estilo para tabelas de dados */
 .curso-page-content .data-table {
     width: 100%;
     border-collapse: collapse;

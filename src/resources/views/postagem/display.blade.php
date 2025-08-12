@@ -3,19 +3,17 @@
 @section('content')
 
 <style>
-    /* Paleta de cores */
     :root {
-        --navy-primary: #1c2c4c;      /* Azul marinho primário */
-        --navy-secondary: #283f6c;    /* Azul marinho secundário */
-        --blue-medium: #4682b4;       /* Azul médio */
-        --blue-light: #6699cc;        /* Azul claro */
-        --blue-lighter: #dbe9f6;      /* Azul mais claro */
-        --text-dark: #2c3e50;         /* Texto escuro */
-        --text-light: #ffffff;        /* Texto claro */
-        --accent-color: #28a745;      /* Cor de destaque */
+        --navy-primary: #1c2c4c;
+        --navy-secondary: #283f6c;
+        --blue-medium: #4682b4;
+        --blue-light: #6699cc;
+        --blue-lighter: #dbe9f6;
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --accent-color: #28a745;
     }
     
-    /* Tipografia */
     .page-heading {
         font-size: 2.2rem;
         font-weight: 700;
@@ -50,7 +48,6 @@
         color: var(--blue-medium);
     }
     
-    /* Carrossel modernizado */
     .featured-carousel {
         border-radius: 12px;
         overflow: hidden;
@@ -100,7 +97,6 @@
         transform: scale(1.2);
     }
     
-    /* Cards de postagens */
     .posts-grid {
         margin-top: 2rem;
     }
@@ -127,7 +123,6 @@
         width: 100%;
         position: relative;
         overflow: hidden;
-        /* Altura fixa para todas as imagens */
         padding-top: 150px;
     }
     
@@ -137,12 +132,9 @@
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover; /* Garante que a imagem cubra todo o espaço */
+        object-fit: cover;
         transition: transform 0.5s ease;
     }
-    
-    /* Estilo para postagens sem imagem */
-    /* Removido o overlay e ícone de jornal */
     
     .post-card:hover .post-img {
         transform: scale(1.02);
@@ -206,7 +198,6 @@
         font-size: 0.8rem;
     }
     
-    /* Paginação estilizada */
     .pagination-container {
         margin: 3rem 0;
     }
@@ -243,7 +234,6 @@
         margin-top: 1rem;
     }
     
-    /* Responsividade */
     @media (max-width: 992px) {
         .carousel-item {
             height: 350px;
