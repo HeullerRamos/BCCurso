@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`Erro na resposta do servidor: ${response.status} - ${response.statusText}`);
+                throw new Error(`${response.statusText}`);
             }
             return response.json();
         })
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             loadingMessage.classList.add('d-none');
-            const errorMsg = `Ocorreu um erro ao buscar as disciplinas: ${error.message}. Por favor, tente novamente ou entre em contato com o suporte.`;
+            const errorMsg = `Ocorreu um erro ao buscar as disciplinas: Não existe Intenção de Matrícula para este ano e período especificado.`;
             showNotification('Erro', errorMsg, 'error');
             console.error('Erro detalhado:', error);
         });
