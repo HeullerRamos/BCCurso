@@ -62,4 +62,17 @@ class IntencaoMatricula extends Model
         
         $this->attributes['numero_periodo'] = $value;
     }
+    
+    /**
+     * Método para obter declarações de intenção associadas a esta intenção de matrícula
+     */
+    public function declaracoesIntencao()
+    {
+        return DeclaracaoIntencaoMatricula::whereIn('id', function($query) {
+            $query->select('declarar_intencao_matricula_id')
+                ->from('declarar_intencao_matricula_disciplina')
+                ->where('intencao_matricula_id', $this->id)
+                ->distinct();
+        });
+    }
 }
