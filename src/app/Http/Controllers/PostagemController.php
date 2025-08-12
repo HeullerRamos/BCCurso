@@ -86,37 +86,32 @@ class PostagemController extends Controller
                 }
 
                 $decodedImage = base64_decode($imageData);
+                if ($decodedImage !== false) {
+                    $directory = 'CapaPostagem/' . $postagem->id;
+                    Storage::disk('public')->makeDirectory($directory);
 
-                if (!$decodedImage) {
-                    throw new \Exception('Falha ao decodificar imagem base64');
+                    $fileName = uniqid('capa_') . '.jpg';
+                    $fullPath = $directory . '/' . $fileName;
+
+                    Storage::disk('public')->put($fullPath, $decodedImage);
+
+                    CapaPostagem::create([
+                        'postagem_id' => $postagem->id,
+                        'imagem' => $fullPath
+                    ]);
+
+                    $postagem->menu_inicial = true;
+                    $postagem->save();
                 }
-
-                $directory = 'CapaPostagem/' . $postagem->id;
-                Storage::disk('public')->makeDirectory($directory);
-
-                $fileName = uniqid('capa_') . '.jpg';
-                $fullPath = $directory . '/' . $fileName;
-
-                if (!Storage::disk('public')->put($fullPath, $decodedImage)) {
-                    throw new \Exception('Falha ao salvar arquivo de imagem');
-                }
-
-                $capaPostagem = new CapaPostagem();
-                $capaPostagem->postagem_id = $postagem->id;
-                $capaPostagem->imagem = $fullPath;
-                $capaPostagem->save();
-
-                $postagem->menu_inicial = true;
-                $postagem->save();
             }
 
             if ($request->hasFile('imagens')) {
                 foreach ($request->file('imagens') as $imagem) {
                     if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
-                        $imagemPostagem = new ImagemPostagem();
-                        $imagemPostagem->postagem_id = $postagem->id;
-                        $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
-                        $imagemPostagem->save();
+                        ImagemPostagem::create([
+                            'postagem_id' => $postagem->id,
+                            'imagem' => $imagem->store('ImagemPostagem/' . $postagem->id, 'public')
+                        ]);
                     }
                 }
             }
@@ -124,11 +119,11 @@ class PostagemController extends Controller
             if ($request->hasFile('arquivos')) {
                 foreach ($request->file('arquivos') as $arquivo) {
                     if ($arquivo->isValid()) {
-                        $arquivoPostagem = new ArquivoPostagem();
-                        $arquivoPostagem->postagem_id = $postagem->id;
-                        $arquivoPostagem->nome = $arquivo->getClientOriginalName();
-                        $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
-                        $arquivoPostagem->save();
+                        ArquivoPostagem::create([
+                            'postagem_id' => $postagem->id,
+                            'nome' => $arquivo->getClientOriginalName(),
+                            'path' => $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public')
+                        ]);
                     } else {
                         Log::warning('Arquivo inválido detectado no upload de postagem: ' . $arquivo->getClientOriginalName());
                     }
@@ -155,6 +150,14 @@ class PostagemController extends Controller
         try {
             $postagem = Postagem::findOrFail($id);
 
+            if ($request->has('remove_capa') && $request->remove_capa == 1) {
+                if ($postagem->capa) {
+                    Storage::disk('public')->delete($postagem->capa->imagem);
+                    $postagem->capa->delete();
+                }
+                $postagem->menu_inicial = false;
+            }
+
             if ($request->filled('cropped_image_data')) {
                 $imageData = $request->input('cropped_image_data');
 
@@ -163,15 +166,8 @@ class PostagemController extends Controller
                 }
 
                 $decodedImage = base64_decode($imageData);
-
                 if ($decodedImage === false) {
                     throw new \Exception('Falha ao decodificar imagem base64');
-                }
-
-                $oldCapaPostagem = $postagem->capa;
-                if ($oldCapaPostagem) {
-                    Storage::disk('public')->delete($oldCapaPostagem->imagem);
-                    $oldCapaPostagem->delete();
                 }
 
                 $directory = 'CapaPostagem/' . $postagem->id;
@@ -184,12 +180,37 @@ class PostagemController extends Controller
                     throw new \Exception('Falha ao salvar arquivo de imagem');
                 }
 
-                $capaPostagem = new CapaPostagem();
-                $capaPostagem->postagem_id = $postagem->id;
-                $capaPostagem->imagem = $fullPath;
-                $capaPostagem->save();
+                if ($postagem->capa) {
+                    Storage::disk('public')->delete($postagem->capa->imagem);
+                    $postagem->capa->update(['imagem' => $fullPath]);
+                } else {
+                    CapaPostagem::create([
+                        'postagem_id' => $postagem->id,
+                        'imagem' => $fullPath
+                    ]);
+                }
 
                 $postagem->menu_inicial = true;
+            }
+
+            if ($request->has('delete_images')) {
+                $imagesToDelete = ImagemPostagem::whereIn('id', $request->delete_images)
+                                                ->where('postagem_id', $postagem->id) // Garante que só apague imagens deste post
+                                                ->get();
+                foreach ($imagesToDelete as $imagem) {
+                    Storage::disk('public')->delete($imagem->imagem);
+                    $imagem->delete();
+                }
+            }
+
+            if ($request->has('delete_files')) {
+                $filesToDelete = ArquivoPostagem::whereIn('id', $request->delete_files)
+                                                    ->where('postagem_id', $postagem->id) // Garante que só apague arquivos deste post
+                                                    ->get();
+                foreach ($filesToDelete as $arquivo) {
+                    Storage::disk('public')->delete($arquivo->path);
+                    $arquivo->delete();
+                }
             }
 
             $config = HTMLPurifier_Config::createDefault();
@@ -206,10 +227,10 @@ class PostagemController extends Controller
             if ($request->hasFile('imagens')) {
                 foreach ($request->file('imagens') as $imagem) {
                     if ($imagem->isValid() && str_starts_with($imagem->getMimeType(), 'image/')) {
-                        $imagemPostagem = new ImagemPostagem();
-                        $imagemPostagem->postagem_id = $postagem->id;
-                        $imagemPostagem->imagem = $imagem->store('ImagemPostagem/' . $postagem->id, 'public');
-                        $imagemPostagem->save();
+                        ImagemPostagem::create([
+                            'postagem_id' => $postagem->id,
+                            'imagem' => $imagem->store('ImagemPostagem/' . $postagem->id, 'public')
+                        ]);
                     }
                 }
             }
@@ -217,11 +238,11 @@ class PostagemController extends Controller
             if ($request->hasFile('arquivos')) {
                 foreach ($request->file('arquivos') as $arquivo) {
                     if ($arquivo->isValid()) {
-                        $arquivoPostagem = new ArquivoPostagem();
-                        $arquivoPostagem->postagem_id = $postagem->id;
-                        $arquivoPostagem->nome = $arquivo->getClientOriginalName();
-                        $arquivoPostagem->path = $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public');
-                        $arquivoPostagem->save();
+                        ArquivoPostagem::create([
+                            'postagem_id' => $postagem->id,
+                            'nome' => $arquivo->getClientOriginalName(),
+                            'path' => $arquivo->store('ArquivoPostagem/' . $postagem->id, 'public')
+                        ]);
                     }
                 }
             }
