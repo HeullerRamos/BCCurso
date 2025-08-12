@@ -172,3 +172,21 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     // Intencao Matricula
     Route::resource('intencao_matricula', IntencaoMatriculaController::class);
 });
+
+// Rota para alunos declararem intenção de matrícula
+Route::get('/declarar-intencao-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'create'])
+    ->name('declaracao_intencao_matricula.create');
+Route::post('/declarar-intencao-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'store'])
+    ->name('declaracao_intencao_matricula.store');
+Route::get('/minhas-intencoes-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'index'])
+    ->name('declaracao_intencao_matricula.index');
+Route::get('/minhas-intencoes-matricula/{id}', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'show'])
+    ->name('declaracao_intencao_matricula.show');
+
+// Novas rotas para o fluxo de seleção de disciplinas
+Route::get('/selecionar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'selecionarDisciplinas'])
+    ->name('declaracao_intencao_matricula.selecionar_disciplinas');
+Route::post('/buscar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'buscarDisciplinas'])
+    ->name('declaracao_intencao_matricula.buscar_disciplinas');
+Route::post('/salvar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'salvarDisciplinas'])
+    ->name('declaracao_intencao_matricula.salvar_disciplinas');
