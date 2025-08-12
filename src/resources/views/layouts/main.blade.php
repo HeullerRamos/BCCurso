@@ -147,6 +147,10 @@
                                         <span>{{ Auth::user()->name }}</span>
                                     </a>
                                     <ul class="dropdown-menu modern-dropdown user-dropdown">
+                                        <li><a class="dropdown-item {{ request()->routeIs('favoritos.meus') ? 'active' : '' }}" href="{{ route('favoritos.meus') }}">
+                                            <i class="fas fa-heart"></i> Meus Favoritos
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                             <i class="fas fa-user-edit"></i> Perfil
                                         </a></li>
