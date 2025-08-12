@@ -158,6 +158,7 @@ class PostagemController extends Controller
                 $postagem->menu_inicial = false;
             }
 
+            // Processar nova capa (cropped image data ou upload)
             if ($request->filled('cropped_image_data')) {
                 $imageData = $request->input('cropped_image_data');
 
@@ -191,6 +192,33 @@ class PostagemController extends Controller
                 }
 
                 $postagem->menu_inicial = true;
+            } elseif ($request->hasFile('main_image')) {
+                $mainImage = $request->file('main_image');
+                if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
+                    // Apagar capaPostagem antiga
+                    $oldCapaPostagem = $postagem->capa;
+                    if ($oldCapaPostagem) {
+                        Storage::disk('public')->delete($oldCapaPostagem->imagem);
+                        $oldCapaPostagem->delete();
+                    }
+
+                    $directory = 'CapaPostagem/' . $postagem->id;
+                    Storage::disk('public')->makeDirectory($directory);
+
+                    $fileName = uniqid('capa_') . '.' . $mainImage->getClientOriginalExtension();
+                    $fullPath = $directory . '/' . $fileName;
+
+                    if (!Storage::disk('public')->putFileAs($directory, $mainImage, $fileName)) {
+                        throw new \Exception('Falha ao salvar arquivo de imagem');
+                    }
+
+                    CapaPostagem::create([
+                        'postagem_id' => $postagem->id,
+                        'imagem' => $fullPath
+                    ]);
+
+                    $postagem->menu_inicial = true;
+                }
             }
 
             if ($request->has('delete_images')) {
