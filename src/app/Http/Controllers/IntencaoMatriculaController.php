@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IntencaoMatriculaRequest;
 use App\Models\IntencaoMatricula;
 use App\Models\Disciplina;
+use App\Models\DeclaracaoIntencaoMatricula;
 use Illuminate\Http\Request;
 
 class IntencaoMatriculaController extends Controller
@@ -101,5 +102,79 @@ class IntencaoMatriculaController extends Controller
 
         return redirect()->route('intencao_matricula.index')
                          ->with('success', 'Intenção de matrícula excluída com sucesso');
+    }
+    
+    /**
+     * Display a report of the enrollment intention data.
+     */
+    public function relatorio(IntencaoMatricula $intencao_matricula)
+    {
+        // Carregar as disciplinas desta intenção de matrícula
+        $intencao_matricula->load('disciplinas');
+        
+        // Obter todas as declarações de intenção associadas a esta intenção de matrícula
+        $declaracoes = DeclaracaoIntencaoMatricula::whereIn('id', function($query) use ($intencao_matricula) {
+            $query->select('declarar_intencao_matricula_id')
+                ->from('declarar_intencao_matricula_disciplina')
+                ->where('intencao_matricula_id', $intencao_matricula->id)
+                ->distinct();
+        })->get();
+        
+        // Contar o número de alunos que responderam
+        $totalAlunos = $declaracoes->count();
+        
+        // Contar quantas vezes cada disciplina foi escolhida
+        $disciplinasEscolhidas = [];
+        $disciplinasPorPeriodo = [];
+        
+        // Inicializar array para contagem de disciplinas por período
+        for ($i = 1; $i <= 10; $i++) {
+            $disciplinasPorPeriodo[$i] = [
+                'periodo' => $i,
+                'count' => 0,
+                'disciplinas' => []
+            ];
+        }
+        
+        foreach ($intencao_matricula->disciplinas as $disciplina) {
+            $count = \DB::table('declarar_intencao_matricula_disciplina')
+                ->where('intencao_matricula_id', $intencao_matricula->id)
+                ->where('disciplina_id', $disciplina->id)
+                ->count();
+            
+            $disciplinaInfo = [
+                'nome' => $disciplina->nome,
+                'count' => $count,
+                'percentage' => $totalAlunos > 0 ? round(($count / $totalAlunos) * 100, 2) : 0
+            ];
+            
+            $disciplinasEscolhidas[] = $disciplinaInfo;
+            
+            // Adicionar à contagem por período
+            if (isset($disciplinasPorPeriodo[$disciplina->periodo])) {
+                $disciplinasPorPeriodo[$disciplina->periodo]['count'] += $count;
+                $disciplinasPorPeriodo[$disciplina->periodo]['disciplinas'][] = $disciplinaInfo;
+            }
+        }
+        
+        // Remover períodos sem disciplinas
+        $disciplinasPorPeriodo = array_filter($disciplinasPorPeriodo, function($periodo) {
+            return $periodo['count'] > 0;
+        });
+        
+        // Converter para array indexado para o JSON no JavaScript
+        $disciplinasPorPeriodo = array_values($disciplinasPorPeriodo);
+        
+        // Ordenar por período (do menor para o maior)
+        usort($disciplinasPorPeriodo, function($a, $b) {
+            return $a['periodo'] <=> $b['periodo'];
+        });
+        
+        // Ordenar por contagem (do maior para o menor)
+        usort($disciplinasEscolhidas, function($a, $b) {
+            return $b['count'] <=> $a['count'];
+        });
+        
+        return view('intencao_matricula.relatorio', compact('intencao_matricula', 'totalAlunos', 'disciplinasEscolhidas', 'disciplinasPorPeriodo'));
     }
 }
