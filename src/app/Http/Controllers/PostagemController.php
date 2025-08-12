@@ -166,8 +166,10 @@ class PostagemController extends Controller
             if ($mainImage->isValid() && str_starts_with($mainImage->getMimeType(), 'image/')) {
                 //Apagar capaPostagem antiga
                 $oldCapaPostagem = $postagem->capa;
-                Storage::disk('public')->delete($oldCapaPostagem->imagem);
-                $oldCapaPostagem->delete();
+                if ($oldCapaPostagem) {
+                    Storage::disk('public')->delete($oldCapaPostagem->imagem);
+                    $oldCapaPostagem->delete();
+                }
 
                 $capaPostagem = new CapaPostagem();
                 $capaPostagem->postagem_id = $postagem->id;
