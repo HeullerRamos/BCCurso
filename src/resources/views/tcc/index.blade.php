@@ -83,21 +83,44 @@
                                                     <i class="fas fa-check"></i>
                                                 </a>
                                             @endif
-                                            <input name="_method" type="hidden" value="DELETE">
-                                            <a href="{{ route('tcc.edit', $tcc->id) }}" class="btn-edit" title="Editar">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Deseja realmente excluir esse registro?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                </td>
-                            </tr>
-                            @include('modal.concluirTcc', ['modalId' => 'concluirTcc_' . $tcc->id])
-                        @endforeach
-                    </tbody>
-                </table>
+                                        </td>
+                                        <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top"
+                                            title="{{ $tcc->aluno->nome }}">
+                                            {{ $tcc->aluno->nome }}
+                                        </td>
+                                        <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top"
+                                        > {{ $professores->contains($tcc->professor_id) ? $professores->where('id', $tcc->professor_id)->first()->nome : '' }}
+                                        </td>
+                                        <td> {{ $tcc->status == 0 ? 'Aguardando defesa' : 'Concluido' }} </td>
+                                        <td class="text-center nowrap-td">
+
+                                            <form method="POST" action="{{ route('tcc.destroy', $tcc->id) }}">
+                                                @csrf
+                                                <a class="btn btn-success btn-sm"
+                                                    href="{{ route('tcc.view', ['id' => $tcc->id]) }}"><i
+                                                        class="fa-solid fa-eye"></i></a>
+                                                @if ($tcc->status == 0)
+                                                    <a href="" class="btn btn-success btn-sm modal-trigger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#concluirTcc_{{ $tcc->id }}"><i
+                                                            class="fas fa-check"></i></a>
+                                                @endif
+                                                <input name="_method" type="hidden" value="DELETE">
+                                                <a href="{{ route('tcc.edit', $tcc->id) }}"
+                                                    class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                                <button type="button" class="btn btn-danger btn-sm" title='Excluir'
+                                                    onclick="confirmDelete(this.form, '{{ $tcc->titulo }}')"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @include('modal.concluirTcc', ['modalId' => 'concluirTcc_' . $tcc->id])
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -116,5 +139,7 @@
         });
     });
 </script>
+
+@include('modal.confirmDelete')
 
 @endsection

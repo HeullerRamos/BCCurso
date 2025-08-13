@@ -67,7 +67,7 @@ class ProfessorController extends Controller
             // Usuário ou servidor com login ou e-mail já existente
             if ($request->contexto == 'modal') {
                 $professores = Professor::all();
-                return response()->json(['error' => 'Professor já cadastrado', 'professores' => $professores]);
+                return response()->json(['error' => 'Email já cadastrado', 'professores' => $professores]);
             } else {
                 return redirect('/professor/create');
             }
