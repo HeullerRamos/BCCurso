@@ -95,13 +95,13 @@
     }
     
     .status-ongoing {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: #fff3cd;
+        color: #856404;
     }
     
     .status-finished {
-        background-color: #d1ecf1;
-        color: #0c5460;
+        background-color: #d4edda;
+        color: #155724;
     }
     
     .keywords-container {
@@ -247,9 +247,20 @@
                 <h6 class="field-label">Status:</h6>
                 <div class="field-value">
                     @if($projeto->data_termino)
-                        <span class="status-badge status-finished">
-                            Finalizado em {{ date('d/m/Y', strtotime($projeto->data_termino)) }}
-                        </span>
+                        @php
+                            $dataTermino = \Carbon\Carbon::parse($projeto->data_termino);
+                            $hoje = \Carbon\Carbon::now();
+                        @endphp
+                        
+                        @if($hoje->lt($dataTermino))
+                            <span class="status-badge status-ongoing">
+                                Em andamento, encerra em {{ $dataTermino->format('d/m/Y') }}
+                            </span>
+                        @else
+                            <span class="status-badge status-finished">
+                                Finalizado em {{ $dataTermino->format('d/m/Y') }}
+                            </span>
+                        @endif
                     @else
                         <span class="status-badge status-ongoing">Em andamento</span>
                     @endif
