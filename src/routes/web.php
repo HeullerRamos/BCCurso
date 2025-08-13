@@ -19,6 +19,8 @@ use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\IntencaoMatriculaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LinkController;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\FavoritoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -191,3 +193,15 @@ Route::post('/buscar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatri
     ->name('declaracao_intencao_matricula.buscar_disciplinas');
 Route::post('/salvar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'salvarDisciplinas'])
     ->name('declaracao_intencao_matricula.salvar_disciplinas');
+
+// Rotas para comentários e favoritos (disponíveis para todos os usuários autenticados)
+Route::middleware('auth')->group(function () {
+    // Rotas para comentários
+    Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::put('/comentarios/{id}', [ComentarioController::class, 'update'])->name('comentarios.update');
+    Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+
+    // Rotas para favoritos
+    Route::post('/favoritos/toggle', [FavoritoController::class, 'toggle'])->name('favoritos.toggle');
+    Route::get('/meus-favoritos', [FavoritoController::class, 'meusFavoritos'])->name('favoritos.meus');
+});

@@ -23,10 +23,12 @@ class AlunoRequest extends FormRequest
     public function rules(): array
     {
         if ($this->isMethod('post')) {
+           // dd($this->all()); 
             return [
                 'nome' => 'required|string|max:100',
                 'email' => 'required|email|unique:users,email',
-                'matricula' => 'required|integer',
+                'matricula' => 'required|integer|unique:aluno,matricula',
+                //'contexto' => 'nullable|string',
             ];
         }
 
@@ -56,6 +58,7 @@ class AlunoRequest extends FormRequest
             'email.unique' => 'O email informado já está em uso por outro usuário.',
             'matricula.required' => 'A matrícula é obrigatória.',
             'matricula.integer' => 'A matrícula deve ser um número inteiro.',
+            'matricula.unique' => 'Esta matrícula já está cadastrada.',
         ];
     }
 }

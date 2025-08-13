@@ -31,6 +31,26 @@ class Postagem extends Model {
       return PinnedPosts::where('postagem_id', $this->id)->exists();
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class)->orderBy('created_at', 'asc');
+    }
+
+    public function favoritos()
+    {
+        return $this->morphMany(Favorito::class, 'favoritavel');
+    }
+
+    public function totalFavoritos()
+    {
+        return $this->favoritos()->count();
+    }
+
+    public function jaFavoritadoPor($userId)
+    {
+        return $this->favoritos()->where('user_id', $userId)->exists();
+    }
+
 
     public static function checkMainImageSize($imagem)
     {

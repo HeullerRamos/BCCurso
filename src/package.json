@@ -16,6 +16,7 @@
         "vite": "^7.0.4"
     },
     "dependencies": {
+        "cropperjs": "^2.0.1",
         "jquery": "^3.7.1",
         "summernote": "^0.9.1"
     }

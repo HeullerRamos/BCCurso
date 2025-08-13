@@ -28,4 +28,5 @@ class Servidor extends Model
     {
         return $this->hasOne(Coordenador::class, 'professor_id', 'id');
     }
+
 }
