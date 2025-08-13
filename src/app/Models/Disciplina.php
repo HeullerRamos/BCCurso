@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Disciplina extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'disciplina';
-    
+
     protected $fillable = [
         'nome',
-        'periodo'
+        'periodo',
+        'optativa'
     ];
-    
+
     /**
      * Relacionamento many-to-many com IntencaoMatricula
      */
@@ -28,7 +29,7 @@ class Disciplina extends Model
             'intencao_matricula_id'
         )->withTimestamps();
     }
-    
+
     /**
      * Relacionamento direto com a tabela pivot
      */
@@ -36,7 +37,7 @@ class Disciplina extends Model
     {
         return $this->hasMany(IntencaoMatriculaDisciplina::class, 'disciplina_id');
     }
-    
+
     /**
      * Método para verificar se está associada a uma intenção
      */
@@ -44,14 +45,19 @@ class Disciplina extends Model
     {
         return IntencaoMatriculaDisciplina::associacaoExiste($intencaoMatriculaId, $this->id);
     }
-    
-    // Validação adicional para o período
+
     public function setPeriodoAttribute($value)
     {
-        if ($value < 1 || $value > 10) {
-            throw new \InvalidArgumentException('O período deve estar entre 1 e 12');
+        if (isset($this->attributes['optativa']) && $this->attributes['optativa']) {
+            $this->attributes['periodo'] = 0;
+            return;
         }
-        
+
+        if ($value < 1 || $value > 10) {
+            throw new \InvalidArgumentException('O período deve estar entre 1 e 10');
+        }
+
         $this->attributes['periodo'] = $value;
     }
 }
+
