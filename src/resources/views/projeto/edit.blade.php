@@ -139,11 +139,7 @@
                                         @foreach ($projeto->imagens as $img)
                                             <div class="preview-item existing-image">
                                                 <img src="{{ asset('storage/' . $img->imagem) }}" alt="Imagem do Projeto" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
-                                                <form method="POST" action="{{ route('projeto.delete_imagem', $img->id) }}" id="deletar-imagens{{ $img->id }}" style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="remove-btn" type="submit" onclick="return confirm('Tem certeza que deseja remover esta imagem?')">&times;</button>
-                                                </form>
+                                                <button class="remove-btn" type="button" onclick="deletarImagem({{ $img->id }})" title="Remover imagem">&times;</button>
                                             </div>
                                         @endforeach
                                     @endif
@@ -164,7 +160,7 @@
                             <hr class="my-4">
 
                             <div class="text-center">
-                                <button type="submit" class="btn custom-button btn-default me-3">
+                                <button type="submit" class="btn custom-button btn-default me-3" id="submit-btn">
                                     <i class="fas fa-save me-2"></i>Atualizar Projeto
                                 </button>
                                 <a href="{{ route('projeto.index') }}" class="btn custom-button custom-button-castastrar-tcc btn-default">
@@ -177,6 +173,16 @@
             </div>
         </div>
     </div>
+
+    {{-- Formulários para deletar imagens (fora do formulário principal) --}}
+    @if ($projeto->imagens && count($projeto->imagens) > 0)
+        @foreach ($projeto->imagens as $img)
+            <form method="POST" action="{{ route('projeto.delete_imagem', $img->id) }}" id="delete-form-{{ $img->id }}" style="display: none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endforeach
+    @endif
 
     <div id="image-viewer-modal" class="image-modal">
         <img id="modal-image-content" class="image-modal-content">
@@ -335,7 +341,6 @@
     </style>
 
     <script type="text/javascript">
-        // Script para Select2 do professor responsável (seleção única)
         $('#professor_id').select2({
             placeholder: 'Selecione um professor',
             language: {
@@ -365,7 +370,6 @@
             }
         });
 
-        // Script para Select2 dos colaboradores (seleção múltipla)
         $('#professores').select2({
             placeholder: 'Selecione os colaboradores',
             language: {
@@ -395,7 +399,6 @@
             }
         });
 
-        // Inicializar com valores atuais
         @if($projeto->professor_id)
             $('#professor_id').append('<option value="{{ $projeto->professor_id }}" selected>{{ $projeto->professor->servidor->nome }}</option>');
         @endif
@@ -406,7 +409,6 @@
             @endforeach
         @endif
 
-        // Script para preview de imagens (baseado na página de postagem)
         let dataTransferImages;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -417,7 +419,6 @@
             const imageViewerModal = document.getElementById('image-viewer-modal');
             const modalImageContent = document.getElementById('modal-image-content');
 
-            // Função para preview de imagens
             if (imagesInput) {
                 imagesInput.addEventListener('change', function (e) {
                     const files = Array.from(e.target.files);
@@ -451,7 +452,6 @@
                 });
             }
 
-            // Fechar modal ao clicar fora da imagem
             if (imageViewerModal) {
                 imageViewerModal.addEventListener('click', function(e) {
                     if (e.target === imageViewerModal || e.target.classList.contains('close-modal')) {
@@ -460,7 +460,6 @@
                 });
             }
 
-            // Modal para imagens existentes
             document.querySelectorAll('.preview-item img').forEach(img => {
                 img.addEventListener('click', function() {
                     modalImageContent.src = this.src;
@@ -469,16 +468,25 @@
             });
         });
 
-        // Função para remover preview de imagem
         window.removeImagePreview = function(button, fileName) {
             const previewItem = button.parentElement;
             previewItem.remove();
             
-            // Remover arquivo do DataTransfer
             const newFiles = Array.from(dataTransferImages.files).filter(file => file.name !== fileName);
             dataTransferImages = new DataTransfer();
             newFiles.forEach(file => dataTransferImages.items.add(file));
             document.getElementById('imagens').files = dataTransferImages.files;
+        };
+
+        window.deletarImagem = function(imagemId) {
+            if (confirm('Tem certeza que deseja remover esta imagem?')) {
+                const form = document.getElementById('delete-form-' + imagemId);
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error('Formulário de deleção não encontrado para imagem:', imagemId);
+                }
+            }
         };
     </script>
 
