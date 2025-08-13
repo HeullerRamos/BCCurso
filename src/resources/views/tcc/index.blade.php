@@ -62,59 +62,38 @@
                                         Não há arquivo cadastrado!
                                     @endif
                                 </td>
-                                <td data-toggle="tooltip" data-placement="top" title="{{ $tcc->aluno->nome }}">
+                                <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top"
+                                    title="{{ $tcc->aluno->nome }}">
                                     {{ $tcc->aluno->nome }}
                                 </td>
-                                <td data-toggle="tooltip" data-placement="top">
+                                <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top">
                                     {{ $professores->contains($tcc->professor_id) ? $professores->where('id', $tcc->professor_id)->first()->nome : '' }}
                                 </td>
                                 <td>
-                                    <span class="data-date">{{ $tcc->status == 0 ? 'Aguardando defesa' : 'Concluido' }}</span>
+                                    {{ $tcc->status == 0 ? 'Aguardando defesa' : 'Concluído' }}
                                 </td>
-                                <td>
-                                    <form method="POST" action="{{ route('tcc.destroy', $tcc->id) }}">
+                                <td class="text-center nowrap-td">
+                                    <a class="btn btn-success btn-sm"
+                                        href="{{ route('tcc.view', ['id' => $tcc->id]) }}"><i
+                                            class="fa-solid fa-eye"></i></a>
+                                    @if ($tcc->status == 0)
+                                        <a href="" class="btn btn-success btn-sm modal-trigger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#concluirTcc_{{ $tcc->id }}"><i
+                                                class="fas fa-check"></i></a>
+                                    @endif
+                                    <a href="{{ route('tcc.edit', $tcc->id) }}"
+                                        class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                    <form method="POST" action="{{ route('tcc.destroy', $tcc->id) }}" style="display: inline;">
                                         @csrf
-                                        <div class="action-buttons">
-                                            <a class="btn-view" href="{{ route('tcc.view', ['id' => $tcc->id]) }}" title="Visualizar">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-                                            @if ($tcc->status == 0)
-                                                <a href="" class="btn-edit modal-trigger" data-bs-toggle="modal" data-bs-target="#concluirTcc_{{ $tcc->id }}" title="Concluir">
-                                                    <i class="fas fa-check"></i>
-                                                </a>
-                                            @endif
-                                        </td>
-                                        <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top"
-                                            title="{{ $tcc->aluno->nome }}">
-                                            {{ $tcc->aluno->nome }}
-                                        </td>
-                                        <td class="text-left text-wrap" data-toggle="tooltip" data-placement="top"
-                                        > {{ $professores->contains($tcc->professor_id) ? $professores->where('id', $tcc->professor_id)->first()->nome : '' }}
-                                        </td>
-                                        <td> {{ $tcc->status == 0 ? 'Aguardando defesa' : 'Concluido' }} </td>
-                                        <td class="text-center nowrap-td">
-
-                                            <form method="POST" action="{{ route('tcc.destroy', $tcc->id) }}">
-                                                @csrf
-                                                <a class="btn btn-success btn-sm"
-                                                    href="{{ route('tcc.view', ['id' => $tcc->id]) }}"><i
-                                                        class="fa-solid fa-eye"></i></a>
-                                                @if ($tcc->status == 0)
-                                                    <a href="" class="btn btn-success btn-sm modal-trigger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#concluirTcc_{{ $tcc->id }}"><i
-                                                            class="fas fa-check"></i></a>
-                                                @endif
-                                                <input name="_method" type="hidden" value="DELETE">
-                                                <a href="{{ route('tcc.edit', $tcc->id) }}"
-                                                    class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                                <button type="button" class="btn btn-danger btn-sm" title='Excluir'
-                                                    onclick="confirmDelete(this.form, '{{ $tcc->titulo }}')"><i
-                                                        class="fas fa-trash"></i></button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    @include('modal.concluirTcc', ['modalId' => 'concluirTcc_' . $tcc->id])
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm" title='Excluir'
+                                            onclick="confirmDelete(this.form, '{{ $tcc->titulo }}')"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @include('modal.concluirTcc', ['modalId' => 'concluirTcc_' . $tcc->id])
                                 @endforeach
                             </tbody>
                         </table>

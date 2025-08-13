@@ -14,7 +14,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     
     <!-- Select2 CSS -->
-    <link href="https://cdnjs./cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    
+    <!-- jQuery and Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom CSS -->
     <link href="{{ asset('css/variables.css') }}" rel="stylesheet">
@@ -117,12 +128,6 @@
                                             <li><a class="dropdown-item {{ request()->routeIs('tipo-postagem.index') ? 'active' : '' }}" href="{{ route('tipo-postagem.index') }}">
                                                 <i class="fas fa-tags"></i> Tipo Postagem
                                             </a></li>
-                                            <li><a class="dropdown-item {{ request()->routeIs('disciplina.index') ? 'active' : '' }}" href="{{ route('disciplina.index') }}">
-                                                <i class="fas fa-book"></i> Disciplinas
-                                            </a></li>
-                                            <li><a class="dropdown-item {{ request()->routeIs('intencao_matricula.index') ? 'active' : '' }}" href="{{ route('intencao_matricula.index') }}">
-                                                <i class="fas fa-clipboard-list"></i> Intenção de Matrícula
-                                            </a></li>
                                             <li><a class="dropdown-item {{ request()->routeIs('postagem.index') ? 'active' : '' }}" href="{{ route('postagem.index') }}">
                                                 <i class="fas fa-newspaper"></i> Postagens
                                             </a></li>
@@ -142,6 +147,10 @@
                                         <span>{{ Auth::user()->name }}</span>
                                     </a>
                                     <ul class="dropdown-menu modern-dropdown user-dropdown">
+                                        <li><a class="dropdown-item {{ request()->routeIs('favoritos.meus') ? 'active' : '' }}" href="{{ route('favoritos.meus') }}">
+                                            <i class="fas fa-heart"></i> Meus Favoritos
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                             <i class="fas fa-user-edit"></i> Perfil
                                         </a></li>
@@ -226,12 +235,6 @@
                                                 <li><a class="dropdown-item {{ request()->routeIs('tipo-postagem.index') ? 'active' : '' }}" href="{{ route('tipo-postagem.index') }}">
                                                     <i class="fas fa-tags"></i> Tipo Postagem
                                                 </a></li>
-                                                <li><a class="dropdown-item {{ request()->routeIs('disciplina.index') ? 'active' : '' }}" href="{{ route('disciplina.index') }}">
-                                                    <i class="fas fa-book"></i> Disciplinas
-                                                </a></li>
-                                                <li><a class="dropdown-item {{ request()->routeIs('intencao_matricula.index') ? 'active' : '' }}" href="{{ route('intencao_matricula.index') }}">
-                                                    <i class="fas fa-clipboard-list"></i> Intenção de Matrícula
-                                                </a></li>
                                                 <li><a class="dropdown-item {{ request()->routeIs('postagem.index') ? 'active' : '' }}" href="{{ route('postagem.index') }}">
                                                     <i class="fas fa-newspaper"></i> Postagens
                                                 </a></li>
@@ -289,6 +292,8 @@
     <div class="container2">
         @yield('content')
     </div>
+
+    @stack('scripts')
 
     <div class="spacer"></div>
 

@@ -17,6 +17,8 @@ use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LinkController;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\FavoritoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -163,4 +165,16 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::prefix('/curso/{cursoId}')->group(function () {
         Route::resource('/ppc', PpcController::class)->except(['show']);
     });
+});
+
+// Rotas para comentários e favoritos (disponíveis para todos os usuários autenticados)
+Route::middleware('auth')->group(function () {
+    // Rotas para comentários
+    Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::put('/comentarios/{id}', [ComentarioController::class, 'update'])->name('comentarios.update');
+    Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+
+    // Rotas para favoritos
+    Route::post('/favoritos/toggle', [FavoritoController::class, 'toggle'])->name('favoritos.toggle');
+    Route::get('/meus-favoritos', [FavoritoController::class, 'meusFavoritos'])->name('favoritos.meus');
 });
