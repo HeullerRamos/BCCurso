@@ -65,7 +65,6 @@ $(document).ready(function() {
                     $('#form_create_aluno_modal').hide();
                     $('#createAluno .modal-footer').hide();
 
-                    // Mostra a mensagem de sucesso
                     $('#modal_aluno_success').html(
                         '<strong>Sucesso!</strong> Aluno cadastrado.').show();
 
@@ -73,14 +72,12 @@ $(document).ready(function() {
                         true, true)).trigger('change');
 
                     setTimeout(function() {
-                        // Esconde a mensagem de sucesso
                         $('#modal_aluno_success').hide();
 
-                        // Reseta e mostra o formulário e os botões novamente
-                        form.trigger('reset');
-                        $('#form_create_aluno_modal').show();
-                        $('#createAluno .modal-footer').show();
-                    }, 1500);
+                        $('#createAluno').modal('hide');
+                        
+                    }, 1250);
+                    
 
                 } else {
                     $('#modal_aluno_errors').html(
