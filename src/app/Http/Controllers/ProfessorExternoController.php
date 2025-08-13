@@ -41,27 +41,16 @@ class professorExternoController extends Controller
             'filiacao' => 'required|string|max:255'
         ]);
 
-        // Log para debug
-        \Log::info('Tentativa de criar professor externo', [
-            'nome' => $request->nome,
-            'filiacao' => $request->filiacao,
-            'contexto' => $request->contexto
-        ]);
-
         // Verifica se já existe um professor externo com o mesmo nome e filiação (ignorando case e espaços)
         $professorExistente = ProfessorExterno::whereRaw('LOWER(TRIM(nome)) = ?', [strtolower(trim($request->nome))])
             ->whereRaw('LOWER(TRIM(filiacao)) = ?', [strtolower(trim($request->filiacao))])
             ->first();
 
-        \Log::info('Resultado da busca por duplicata', [
-            'encontrado' => $professorExistente ? 'sim' : 'não',
-            'id_encontrado' => $professorExistente ? $professorExistente->id : null
-        ]);
-
         if ($professorExistente) {
             // Se já existe, retorna o existente
             $novoProfessor = $professorExistente;
             $mensagem = 'Professor externo já existe e foi selecionado.';
+            $jaExistia = true;
         } else {
             // Se não existe, cria um novo (normalizando os dados)
             $novoProfessor = ProfessorExterno::create([
@@ -69,6 +58,7 @@ class professorExternoController extends Controller
                 'filiacao' => trim($request->filiacao)
             ]);
             $mensagem = 'Professor externo criado com sucesso.';
+            $jaExistia = false;
         }
 
         if ($request->contexto == 'modal') {
@@ -84,7 +74,7 @@ class professorExternoController extends Controller
             return response()->json([
                 'professor_externo' => $professorData,
                 'mensagem' => $mensagem,
-                'ja_existia' => $professorExistente ? true : false
+                'ja_existia' => $jaExistia
             ]);
         } else {
             return redirect('professor-externo')->with('success', 'Professor externo ' . $request->nome . ' Criado com Sucesso');

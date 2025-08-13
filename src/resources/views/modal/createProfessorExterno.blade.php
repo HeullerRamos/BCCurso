@@ -67,14 +67,8 @@
                 url: "{{ route('professor-externo.store') }}",
                 data: data,
                 success: function(response) {
-                    // Restaura o botão
-                    isProcessing = false;
-                    $button.prop('disabled', false).text(originalText);
-
-                    console.log('Resposta do servidor:', response);
-
                     if (response.error) {
-                        alert(response.error);
+                        showErrorMessage(response.error);
                     } else {
                         // Feche o modal
                         $('#createProfessorExterno').modal('hide');
@@ -83,13 +77,15 @@
                         $('#nome-professor-externo').val('');
                         $('#filiacao-professor-externo').val('');
 
+                        // Mostra notificação de sucesso usando o sistema existente
+                        if (typeof showSuccessMessage === 'function') {
+                            var mensagem = response.mensagem || 'Professor externo processado com sucesso!';
+                            showSuccessMessage(mensagem);
+                        }
+
                         // Força o refresh do Select2 para professores externos se existir
                         if ($('#professores_externos').length) {
                             var professor = response.professor_externo;
-                            
-                            console.log('Professor retornado:', professor);
-                            console.log('Nome:', professor.nome);
-                            console.log('Filiacao:', professor.filiacao);
                             
                             // Verifica se a opção já existe no Select2
                             var optionExists = $('#professores_externos option[value="' + professor.id + '"]').length > 0;
@@ -97,7 +93,6 @@
                             if (!optionExists) {
                                 // Só adiciona se não existir
                                 var textoOpcao = professor.nome + ' - ' + professor.filiacao;
-                                console.log('Texto da opção:', textoOpcao);
                                 
                                 var novaOpcao = new Option(
                                     textoOpcao, 
@@ -127,20 +122,16 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Restaura o botão
-                    isProcessing = false;
-                    $button.prop('disabled', false).text(originalText);
-
                     if (xhr.status === 422) {
                         // Erros de validação
                         var errors = xhr.responseJSON.errors;
-                        var errorMessage = 'Erro de validação:\n';
+                        var errorMessage = '';
                         for (var field in errors) {
-                            errorMessage += '- ' + errors[field][0] + '\n';
+                            errorMessage += errors[field][0] + '<br>';
                         }
-                        alert(errorMessage);
+                        showErrorMessage(errorMessage, 'Erro de Validação');
                     } else {
-                        alert('Erro ao cadastrar professor externo. Tente novamente.');
+                        showErrorMessage('Erro ao cadastrar professor externo. Tente novamente.');
                     }
                 }
             });
