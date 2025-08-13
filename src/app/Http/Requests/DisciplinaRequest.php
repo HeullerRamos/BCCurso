@@ -21,10 +21,18 @@ class DisciplinaRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'nome' => ['required', 'string', 'max:255'],
-            'periodo' => ['required', 'integer', 'min:1', 'max:12'],
+            'optativa' => ['sometimes', 'boolean'],
         ];
+
+        if (!$this->has('optativa') || !$this->optativa) {
+            $rules['periodo'] = ['required', 'integer', 'min:1', 'max:10'];
+        } else {
+            $rules['periodo'] = ['nullable', 'integer'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -42,3 +50,4 @@ class DisciplinaRequest extends FormRequest
         ];
     }
 }
+
