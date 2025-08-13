@@ -87,8 +87,8 @@
                                                 <input name="_method" type="hidden" value="DELETE">
                                                 <a href="{{ route('tcc.edit', $tcc->id) }}"
                                                     class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                                <button type="submit" class="btn btn-danger btn-sm" title='Delete'
-                                                    onclick="return confirm('Deseja realmente excluir esse registro?')"><i
+                                                <button type="button" class="btn btn-danger btn-sm" title='Excluir'
+                                                    onclick="confirmDelete(this.form, '{{ $tcc->titulo }}')"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -117,5 +117,7 @@
             });
         });
     </script>
+
+@include('modal.confirmDelete')
 
 @endsection
