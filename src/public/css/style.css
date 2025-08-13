@@ -20,6 +20,10 @@
   display: none;
 }
 
+.is-hidden {
+    display: none !important
+}
+
 .search-input input {
   height: 24px;
   width: 200px;
