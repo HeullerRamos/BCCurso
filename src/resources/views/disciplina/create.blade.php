@@ -41,8 +41,19 @@
                 </div>
                 
                 <div class="form-group mb-3">
-                    <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
-                    <select class="form-control @error('periodo') is-invalid @enderror" id="periodo" name="periodo" required>
+                    <label for="optativa" class="form-label">Disciplina Optativa?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="optativa" name="optativa" {{ old('optativa') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="optativa">
+                            Sim, esta é uma disciplina optativa
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">Marque esta opção caso a disciplina seja optativa. Disciplinas optativas não estão associadas a um período específico.</small>
+                </div>
+                
+                <div class="form-group mb-3" id="periodo-container">
+                    <label for="periodo" class="form-label">Período <span class="text-danger periodo-required">*</span></label>
+                    <select class="form-control @error('periodo') is-invalid @enderror" id="periodo" name="periodo">
                         <option value="">Selecione o período</option>
                         @for($i = 1; $i <= 10; $i++)
                             <option value="{{ $i }}" {{ old('periodo') == $i ? 'selected' : '' }}>{{ $i }}º Período</option>
@@ -61,4 +72,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const optativaCheckbox = document.getElementById('optativa');
+        const periodoSelect = document.getElementById('periodo');
+        const periodoContainer = document.getElementById('periodo-container');
+        const periodoRequired = document.querySelector('.periodo-required');
+        
+        function togglePeriodoField() {
+            if (optativaCheckbox.checked) {
+                periodoSelect.removeAttribute('required');
+                periodoRequired.style.display = 'none';
+                periodoContainer.classList.add('text-muted');
+            } else {
+                periodoSelect.setAttribute('required', 'required');
+                periodoRequired.style.display = 'inline';
+                periodoContainer.classList.remove('text-muted');
+            }
+        }
+        
+        // Verificar estado inicial
+        togglePeriodoField();
+        
+        // Adicionar listener para mudanças
+        optativaCheckbox.addEventListener('change', togglePeriodoField);
+    });
+</script>
 @stop
