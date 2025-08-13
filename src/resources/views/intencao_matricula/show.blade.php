@@ -121,6 +121,38 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    
+                                    <!-- Seção de Disciplinas Optativas -->
+                                    <table class="table table-bordered" style="margin-top: 20px;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center" style="width: 100%">Disciplinas Optativas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="vertical-align: top;">
+                                                <td style="padding: 15px;">
+                                                    @php
+                                                        $disciplinasOptativas = $intencao_matricula->disciplinas->where('optativa', true);
+                                                    @endphp
+                                                    
+                                                    @if($disciplinasOptativas->count() > 0)
+                                                        <ul class="list-unstyled mb-0">
+                                                            @foreach($disciplinasOptativas as $disciplina)
+                                                                <li class="mb-2">
+                                                                    <span class="small">{{ $disciplina->nome }}</span>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <div class="text-muted text-center small">
+                                                            <i>Nenhuma disciplina optativa</i>
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             @else
                                 <div class="text-muted">
