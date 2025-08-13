@@ -16,17 +16,17 @@ class IntencaoMatriculaController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->buscar;
-        
+
         if ($buscar) {
             $intencoes = IntencaoMatricula::where('numero_periodo', $buscar)
-                                        ->orWhere('ano', $buscar)
-                                        ->orderBy('ano', 'desc')
-                                        ->orderBy('numero_periodo')
-                                        ->get();
+                ->orWhere('ano', $buscar)
+                ->orderBy('ano', 'desc')
+                ->orderBy('numero_periodo')
+                ->get();
         } else {
             $intencoes = IntencaoMatricula::orderBy('ano', 'desc')
-                                         ->orderBy('numero_periodo')
-                                         ->get();
+                ->orderBy('numero_periodo')
+                ->get();
         }
 
         return view('intencao_matricula.index', compact('intencoes', 'buscar'));
@@ -47,13 +47,13 @@ class IntencaoMatriculaController extends Controller
     public function store(IntencaoMatriculaRequest $request)
     {
         $intencao = IntencaoMatricula::create($request->validated());
-        
+
         if ($request->has('disciplinas')) {
             $intencao->disciplinas()->sync($request->disciplinas);
         }
 
         return redirect()->route('intencao_matricula.index')
-                         ->with('success', 'Intenção de matrícula cadastrada com sucesso');
+            ->with('success', 'Intenção de matrícula cadastrada com sucesso');
     }
 
     /**
@@ -81,7 +81,7 @@ class IntencaoMatriculaController extends Controller
     public function update(IntencaoMatriculaRequest $request, IntencaoMatricula $intencao_matricula)
     {
         $intencao_matricula->update($request->validated());
-        
+
         if ($request->has('disciplinas')) {
             $intencao_matricula->disciplinas()->sync($request->disciplinas);
         } else {
@@ -89,7 +89,7 @@ class IntencaoMatriculaController extends Controller
         }
 
         return redirect()->route('intencao_matricula.index')
-                         ->with('success', 'Intenção de matrícula atualizada com sucesso');
+            ->with('success', 'Intenção de matrícula atualizada com sucesso');
     }
 
     /**
@@ -101,33 +101,29 @@ class IntencaoMatriculaController extends Controller
         $intencao_matricula->delete();
 
         return redirect()->route('intencao_matricula.index')
-                         ->with('success', 'Intenção de matrícula excluída com sucesso');
+            ->with('success', 'Intenção de matrícula excluída com sucesso');
     }
-    
+
     /**
      * Display a report of the enrollment intention data.
      */
     public function relatorio(IntencaoMatricula $intencao_matricula)
     {
-        // Carregar as disciplinas desta intenção de matrícula
         $intencao_matricula->load('disciplinas');
-        
-        // Obter todas as declarações de intenção associadas a esta intenção de matrícula
-        $declaracoes = DeclaracaoIntencaoMatricula::whereIn('id', function($query) use ($intencao_matricula) {
+
+        $declaracoes = DeclaracaoIntencaoMatricula::whereIn('id', function ($query) use ($intencao_matricula) {
             $query->select('declarar_intencao_matricula_id')
                 ->from('declarar_intencao_matricula_disciplina')
                 ->where('intencao_matricula_id', $intencao_matricula->id)
                 ->distinct();
         })->get();
-        
-        // Contar o número de alunos que responderam
+
         $totalAlunos = $declaracoes->count();
-        
-        // Contar quantas vezes cada disciplina foi escolhida
+
         $disciplinasEscolhidas = [];
         $disciplinasPorPeriodo = [];
-        
-        // Inicializar array para contagem de disciplinas por período
+        $disciplinasOptativas = [];
+
         for ($i = 1; $i <= 10; $i++) {
             $disciplinasPorPeriodo[$i] = [
                 'periodo' => $i,
@@ -135,46 +131,48 @@ class IntencaoMatriculaController extends Controller
                 'disciplinas' => []
             ];
         }
-        
+
         foreach ($intencao_matricula->disciplinas as $disciplina) {
             $count = \DB::table('declarar_intencao_matricula_disciplina')
                 ->where('intencao_matricula_id', $intencao_matricula->id)
                 ->where('disciplina_id', $disciplina->id)
                 ->count();
-            
+
             $disciplinaInfo = [
                 'nome' => $disciplina->nome,
                 'count' => $count,
                 'percentage' => $totalAlunos > 0 ? round(($count / $totalAlunos) * 100, 2) : 0
             ];
-            
+
             $disciplinasEscolhidas[] = $disciplinaInfo;
-            
-            // Adicionar à contagem por período
-            if (isset($disciplinasPorPeriodo[$disciplina->periodo])) {
+
+            if ($disciplina->optativa) {
+                $disciplinasOptativas[] = $disciplinaInfo;
+            } elseif (isset($disciplinasPorPeriodo[$disciplina->periodo])) {
                 $disciplinasPorPeriodo[$disciplina->periodo]['count'] += $count;
                 $disciplinasPorPeriodo[$disciplina->periodo]['disciplinas'][] = $disciplinaInfo;
             }
         }
-        
-        // Remover períodos sem disciplinas
-        $disciplinasPorPeriodo = array_filter($disciplinasPorPeriodo, function($periodo) {
+
+        $disciplinasPorPeriodo = array_filter($disciplinasPorPeriodo, function ($periodo) {
             return $periodo['count'] > 0;
         });
-        
-        // Converter para array indexado para o JSON no JavaScript
+
         $disciplinasPorPeriodo = array_values($disciplinasPorPeriodo);
-        
-        // Ordenar por período (do menor para o maior)
-        usort($disciplinasPorPeriodo, function($a, $b) {
+
+        usort($disciplinasPorPeriodo, function ($a, $b) {
             return $a['periodo'] <=> $b['periodo'];
         });
-        
-        // Ordenar por contagem (do maior para o menor)
-        usort($disciplinasEscolhidas, function($a, $b) {
+
+        usort($disciplinasEscolhidas, function ($a, $b) {
             return $b['count'] <=> $a['count'];
         });
-        
-        return view('intencao_matricula.relatorio', compact('intencao_matricula', 'totalAlunos', 'disciplinasEscolhidas', 'disciplinasPorPeriodo'));
+
+        usort($disciplinasOptativas, function ($a, $b) {
+            return $b['count'] <=> $a['count'];
+        });
+
+        return view('intencao_matricula.relatorio', compact('intencao_matricula', 'totalAlunos', 'disciplinasEscolhidas', 'disciplinasPorPeriodo', 'disciplinasOptativas'));
     }
 }
+
