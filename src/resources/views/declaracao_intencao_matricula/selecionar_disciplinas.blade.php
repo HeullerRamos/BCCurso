@@ -371,6 +371,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </tbody>
             </table>
+            
+            <!-- Seção de Disciplinas Optativas -->
+            <table class="table table-bordered" style="margin-top: 20px;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center" style="width: 100%">Disciplinas Optativas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="vertical-align: top;">
+                        <td style="padding: 15px;">
+                            <div class="list-group">
+                                ${disciplinasPorPeriodo['optativas'] && disciplinasPorPeriodo['optativas'].length > 0 
+                                    ? disciplinasPorPeriodo['optativas'].map(d => `
+                                        <div class="list-group-item border-0">
+                                            <div class="form-check">
+                                                <input type="checkbox" 
+                                                    class="form-check-input" 
+                                                    name="disciplinas[]" 
+                                                    id="disciplina_${d.id}" 
+                                                    value="${d.id}"
+                                                    data-periodo="optativa"
+                                                    ${d.selecionada ? 'checked' : ''}>
+                                                <label for="disciplina_${d.id}" class="form-check-label small">
+                                                    ${d.nome}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    `).join('')
+                                    : `<div class="col-12 text-muted text-center small"><i>Nenhuma disciplina optativa disponível</i></div>`
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         `;
         
         return html;
