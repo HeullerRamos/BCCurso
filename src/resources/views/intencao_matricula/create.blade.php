@@ -144,6 +144,48 @@
                                 </tr>
                             </tbody>
                         </table>
+                        
+                        <!-- Seção de Disciplinas Optativas -->
+                        <table class="table table-bordered" style="margin-top: 20px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center" style="width: 100%">Disciplinas Optativas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="vertical-align: top;">
+                                    <td style="padding: 15px;">
+                                        @php
+                                            $disciplinasOptativas = $disciplinas->where('optativa', true);
+                                        @endphp
+                                        
+                                        @if($disciplinasOptativas->count() > 0)
+                                            <div class="row">
+                                                @foreach($disciplinasOptativas as $disciplina)
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" 
+                                                                class="form-check-input" 
+                                                                name="disciplinas[]" 
+                                                                id="disciplina_{{ $disciplina->id }}" 
+                                                                value="{{ $disciplina->id }}" 
+                                                                {{ in_array($disciplina->id, old('disciplinas', [])) ? 'checked' : '' }}>
+                                                            <label for="disciplina_{{ $disciplina->id }}" class="form-check-label small">
+                                                                {{ $disciplina->nome }}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-muted text-center small">
+                                                <i>Nenhuma disciplina optativa cadastrada</i>
+                                            </div>
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
