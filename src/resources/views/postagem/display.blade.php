@@ -373,6 +373,20 @@ foreach ($postagens as $postagem) {
             Postagens Computação
         </h2>
     </div>
+    <div class="search-container my-5">
+        <form action="{{ route('postagem.display') }}" method="GET" class="d-flex gap-2">
+            <input 
+                type="text" 
+                name="buscar" 
+                class="form-control form-control-lg" 
+                placeholder="Pesquisar notícias..." 
+                aria-label="Pesquisar notícias"
+                value="{{ $buscar ?? '' }}">
+            <button class="btn btn-primary btn-lg" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
     
     <div class="posts-grid">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
