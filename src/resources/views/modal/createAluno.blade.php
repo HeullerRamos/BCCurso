@@ -62,46 +62,38 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 if (response && response.success) {
-                    $('#form_create_aluno_modal').hide();
-                    $('#createAluno .modal-footer').hide();
-
-                    $('#modal_aluno_success').html(
-                        '<strong>Sucesso!</strong> Aluno cadastrado.').show();
+                    // Feche o modal
+                    $('#createAluno').modal('hide');
+                    
+                    // Limpe o formulário
+                    $('#form_create_aluno_modal')[0].reset();
+                    
+                    // Mostra notificação de sucesso
+                    showSuccessMessage('Aluno cadastrado com sucesso!');
 
                     $('#aluno_id').append(new Option(response.aluno.nome, response.aluno.id,
                         true, true)).trigger('change');
-
-                    setTimeout(function() {
-                        $('#modal_aluno_success').hide();
-
-                        $('#createAluno').modal('hide');
-                        
-                    }, 1250);
                     
 
                 } else {
-                    $('#modal_aluno_errors').html(
-                            '<ul><li>A resposta do servidor não indicou sucesso.</li></ul>')
-                        .show();
+                    showErrorMessage('A resposta do servidor não indicou sucesso.');
                 }
             },
             error: function(jqXHR) {
-                var errorHtml = '<ul>';
+                var errorMessage = '';
                 if (jqXHR.status === 422) {
                     var errors = jqXHR.responseJSON.errors;
                     $.each(errors, function(key, value) {
-                        errorHtml += '<li>' + value + '</li>';
+                        errorMessage += value + '<br>';
                     });
+                    showErrorMessage(errorMessage, 'Erro de Validação');
                 } else {
                     var serverMessage = 'Por favor, tente novamente.';
                     if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
                         serverMessage = jqXHR.responseJSON.message;
                     }
-                    errorHtml += '<li>Ocorreu um erro inesperado. Detalhe: ' +
-                        serverMessage + '</li>';
+                    showErrorMessage('Ocorreu um erro inesperado. ' + serverMessage);
                 }
-                errorHtml += '</ul>';
-                $('#modal_aluno_errors').html(errorHtml).show();
             },
             complete: function() {
                 submitButton.prop('disabled', false).html('Cadastrar');
@@ -114,6 +106,12 @@ $(document).ready(function() {
         $('#modal_aluno_success').hide();
         $('#form_create_aluno_modal').trigger('reset').show();
         $('#createAluno .modal-footer').show();
+        
+        // Fix para restaurar o scroll da página
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        $('body').css('padding-right', '');
+        $('body').css('overflow', '');
     });
 });
 </script>

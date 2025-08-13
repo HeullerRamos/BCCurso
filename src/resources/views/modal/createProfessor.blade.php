@@ -83,14 +83,19 @@
                     loading();
                     if (response.error) {
                         loaded();
-                        $('#modal_professor_errors').html('<ul><li>' + response.error + '</li></ul>').show();
+                        showErrorMessage(response.error);
                         return;
                     }
                     
-                    $('#form_create_professor_content').hide();
-                    $('#buttons').hide();
+                    // Feche o modal
+                    $('#createProfessor').modal('hide');
                     
-                    $('#modal_professor_success').html('<strong>Sucesso!</strong> Professor cadastrado com sucesso.').show();
+                    // Limpe o formulário
+                    $('#nome-professor').val('');
+                    $('#email-professor').val('');
+                    
+                    // Mostra notificação de sucesso
+                    showSuccessMessage('Professor cadastrado com sucesso!');
 
                     // Atualiza os checkboxs na página colegiado em cadastrar professor
                     var professoresCheckboxHTML = '';
@@ -181,6 +186,12 @@
             $('#email-professor').val('');
             $('#form_create_professor_content').show();
             $('#buttons').show();
+            
+            // Fix para restaurar o scroll da página
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $('body').css('padding-right', '');
+            $('body').css('overflow', '');
         });
 
     });

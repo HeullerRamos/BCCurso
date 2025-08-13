@@ -116,13 +116,46 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label for="professores" class="form-label">Professores Colaboradores:</label>
                                 <select class="form-select" name="professores[]" id="professores" multiple>
                                     <option value="" disabled>Selecione os colaboradores</option>
                                 </select>
                                 <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos professores</small>
                             </div>
+                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createProfessor" title="Cadastrar professor">
+                                Cadastrar professor
+                            </button>
+
+                            <div class="mb-3">
+                                <label for="professores_externos" class="form-label">Professores Externos:</label>
+                                <select class="form-select" name="professores_externos[]" id="professores_externos" multiple>
+                                    <option value="" disabled>Selecione os professores externos participantes</option>
+                                </select>
+                                <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos professores</small>
+                            </div>
+                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createProfessorExterno" title="Cadastrar professor externo">
+                                Cadastrar professor Externo
+                            </button>
+
+                            <div class="mb-3">
+                                <label for="alunos_bolsistas" class="form-label">Alunos Bolsistas:</label>
+                                <select class="form-select" name="alunos_bolsistas[]" id="alunos_bolsistas" multiple>
+                                    <option value="" disabled>Selecione um aluno para o projeto</option>
+                                </select>
+                                <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos alunos</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="alunos_voluntarios" class="form-label">Alunos Voluntários:</label>
+                                <select class="form-select" name="alunos_voluntarios[]" id="alunos_voluntarios" multiple>
+                                    <option value="" disabled>Selecione um aluno para o projeto</option>
+                                </select>
+                                <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos alunos</small>
+                            </div>
+                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createAluno" title="Cadastrar aluno">
+                                Cadastrar aluno
+                            </button>
 
                             <hr class="my-4">
         
@@ -399,6 +432,96 @@
             }
         });
 
+        // Script para Select2 dos professores externos (seleção múltipla)
+        $('#professores_externos').select2({
+            placeholder: 'Selecione os professores externos participantes',
+            language: {
+                noResults: function() {
+                    return "Resultados não encontrados";
+                },
+                inputTooShort: function() {
+                    return "Digite 1 ou mais caracteres";
+                }
+            },
+            minimumInputLength: 1,
+            ajax: {
+                url: '/projeto/busca-professor-externo',
+                dataType: 'json',
+                delay: 250,
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                text: item.nome + ' - ' + item.filiacao,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // Script para Select2 dos alunos bolsistas (seleção múltipla)
+        $('#alunos_bolsistas').select2({
+            placeholder: 'Selecione um aluno para o projeto',
+            language: {
+                noResults: function() {
+                    return "Resultados não encontrados";
+                },
+                inputTooShort: function() {
+                    return "Digite 1 ou mais caracteres";
+                }
+            },
+            minimumInputLength: 1,
+            ajax: {
+                url: '/projeto/busca-aluno',
+                dataType: 'json',
+                delay: 250,
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                text: item.nome,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // Script para Select2 dos alunos voluntários (seleção múltipla)
+        $('#alunos_voluntarios').select2({
+            placeholder: 'Selecione um aluno para o projeto',
+            language: {
+                noResults: function() {
+                    return "Resultados não encontrados";
+                },
+                inputTooShort: function() {
+                    return "Digite 1 ou mais caracteres";
+                }
+            },
+            minimumInputLength: 1,
+            ajax: {
+                url: '/projeto/busca-aluno',
+                dataType: 'json',
+                delay: 250,
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                text: item.nome,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
         @if($projeto->professor_id)
             $('#professor_id').append('<option value="{{ $projeto->professor_id }}" selected>{{ $projeto->professor->servidor->nome }}</option>');
         @endif
@@ -406,6 +529,24 @@
         @if(count($professoresColaboradores) > 0)
             @foreach($professoresColaboradores as $professor)
                 $('#professores').append('<option value="{{ $professor->id }}" selected>{{ $professor->servidor->nome }}</option>');
+            @endforeach
+        @endif
+
+        @if($professoresExternos && count($professoresExternos) > 0)
+            @foreach($professoresExternos as $professorExterno)
+                $('#professores_externos').append('<option value="{{ $professorExterno->id }}" selected>{{ $professorExterno->nome }} - {{ $professorExterno->filiacao }}</option>');
+            @endforeach
+        @endif
+
+        @if($alunos_bolsistas && count($alunos_bolsistas) > 0)
+            @foreach($alunos_bolsistas as $aluno)
+                $('#alunos_bolsistas').append('<option value="{{ $aluno->id }}" selected>{{ $aluno->nome }}</option>');
+            @endforeach
+        @endif
+
+        @if($alunos_voluntarios && count($alunos_voluntarios) > 0)
+            @foreach($alunos_voluntarios as $aluno)
+                $('#alunos_voluntarios').append('<option value="{{ $aluno->id }}" selected>{{ $aluno->nome }}</option>');
             @endforeach
         @endif
 
@@ -488,6 +629,17 @@
                 }
             }
         };
+
+        // Correção global para problemas de scroll com modais
+        $(document).ready(function() {
+            $('.modal').on('hidden.bs.modal', function () {
+                // Remove classes e estilos que podem causar problemas de scroll
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                $('body').css('padding-right', '');
+                $('body').css('overflow', '');
+            });
+        });
     </script>
 
 @endsection

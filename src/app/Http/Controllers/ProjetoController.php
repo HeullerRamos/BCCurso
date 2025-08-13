@@ -217,8 +217,9 @@ class ProjetoController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $data = DB::table("professor_externo")
-                ->select("id", "nome")
+                ->select("id", "nome", "filiacao")
                 ->where('nome', 'LIKE', "%$search%")
+                ->orWhere('filiacao', 'LIKE', "%$search%")
                 ->get();
         }
 
