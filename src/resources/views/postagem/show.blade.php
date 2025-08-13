@@ -449,7 +449,7 @@
                                                     </small>
                                                 </div>
                                             </div>
-                                            @if(auth()->user() && (auth()->user()->id === $comentario->user_id || auth()->user()->hasRole('Coordenador')))
+                                            @if(auth()->user() && (auth()->user()->id === $comentario->user_id || auth()->user()->hasRole('coordenador')))
                                                 <div class="comentario-actions">
                                                     @if(auth()->user()->id === $comentario->user_id)
                                                     <button class="btn btn-sm btn-outline-primary me-1" 

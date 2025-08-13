@@ -165,7 +165,10 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::prefix('/curso/{cursoId}')->group(function () {
         Route::resource('/ppc', PpcController::class)->except(['show']);
     });
+});
 
+// Rotas para comentários e favoritos (disponíveis para todos os usuários autenticados)
+Route::middleware('auth')->group(function () {
     // Rotas para comentários
     Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::put('/comentarios/{id}', [ComentarioController::class, 'update'])->name('comentarios.update');
