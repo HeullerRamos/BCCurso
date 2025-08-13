@@ -34,7 +34,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Período</th>
+                            <th>Semestre</th>
                             <th>Ano</th>
                             <th>Disciplinas</th>
                             <th>Ações</th>

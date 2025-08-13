@@ -34,11 +34,11 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="numero_periodo" class="form-label">Número do Período <span class="text-danger">*</span></label>
+                            <label for="numero_periodo" class="form-label">Número do Semestre <span class="text-danger">*</span></label>
                             <select class="form-control @error('numero_periodo') is-invalid @enderror" id="numero_periodo" name="numero_periodo" required>
-                                <option value="">Selecione o período</option>
+                                <option value="">Selecione o Semestre</option>
                                 @for($i = 1; $i <= 2; $i++)
-                                    <option value="{{ $i }}" {{ old('numero_periodo') == $i ? 'selected' : '' }}>{{ $i }}º Período</option>
+                                    <option value="{{ $i }}" {{ old('numero_periodo') == $i ? 'selected' : '' }}>{{ $i }}º Semestre</option>
                                 @endfor
                             </select>
                             @error('numero_periodo')

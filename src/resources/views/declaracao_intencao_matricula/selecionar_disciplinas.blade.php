@@ -37,11 +37,11 @@
                     
                     <div class="col-md-5">
                         <div class="form-group">
-                            <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
+                            <label for="periodo" class="form-label">Semestre <span class="text-danger">*</span></label>
                             <select class="form-control" id="periodo" name="periodo" required>
-                                <option value="">Selecione o período</option>
+                                <option value="">Selecione o semestre</option>
                                 @foreach($periodos as $periodo)
-                                    <option value="{{ $periodo }}">{{ $periodo }}º Período</option>
+                                    <option value="{{ $periodo }}">{{ $periodo }}º Semestre</option>
                                 @endforeach
                             </select>
                         </div>

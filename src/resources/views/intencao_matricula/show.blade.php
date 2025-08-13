@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-header text-white div-form">
-                    Intenção de Matrícula: {{ $intencao_matricula->numero_periodo }}º Período - {{ $intencao_matricula->ano }}
+                    Intenção de Matrícula: {{ $intencao_matricula->numero_periodo }}º Semestre - {{ $intencao_matricula->ano }}
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -31,7 +31,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-sm-3">
-                            <h6 class="mb-0">Número do Período:</h6>
+                            <h6 class="mb-0">Número do Semestre:</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
                             {{ $intencao_matricula->numero_periodo }}º

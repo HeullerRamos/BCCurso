@@ -26,11 +26,11 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="info-summary mb-3">
-                        <h5><i class="fas fa-calendar-alt me-2"></i>Período e Ano</h5>
+                        <h5><i class="fas fa-calendar-alt me-2"></i>Semestre e Ano</h5>
                         <div class="d-flex justify-content-around mt-3">
                             <div class="text-center">
                                 <span class="d-block info-value">{{ $intencao_matricula->numero_periodo }}º</span>
-                                <small class="text-muted">Período</small>
+                                <small class="text-muted">Semestre</small>
                             </div>
                             <div class="text-center">
                                 <span class="d-block info-value">{{ $intencao_matricula->ano }}</span>
