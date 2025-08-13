@@ -3,60 +3,70 @@
 @section('title', 'Alunos')
 
 @section('content')
-<div class="custom-container">
-    <div>
-        <div>
-            <i class="fas fa-paste fa-2x"></i>
-            <h3 class="smaller-font">Gerenciar Alunos</h3>
+<div class="page-header">
+    <div class="container">
+        <div class="title-container">
+            <div class="page-title">
+                <i class="fas fa-paste fa-2x"></i>
+                <h2>Gerenciar Alunos</h2>
+            </div>
+            
+            <div class="row campo-busca">
+                <div class="col-md-12">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar em todos os campos" aria-label="Buscar">
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 <div class="container">
-    <div class="container">
-        <div class="row campo-busca">
-            <div class="col-md-12">
-                <input type="text" id="searchInput" class="form-control field-search" placeholder="Buscar em todos os campos" aria-label="Buscar">
-            </div>
+    <div class="content-card">
+        <div class="card-header">
+            <span>Alunos</span>
+            <a href="{{ route('aluno.create') }}" class="btn-cadastrar">
+                <i class="fas fa-plus"></i> Cadastrar
+            </a>
         </div>
-        <div>
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header text-white div-form ">
-                        Alunos
-                        <a href="{{ route('aluno.create') }}" class="btn btn-success btn-sm float-end">Cadastrar</a>
-                    </div>
-                    <div class="card-body">
-
-                        <table id="alunosTable" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Matrícula</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($alunos as $aluno)
-                                <tr>
-                                    <td>{{ $aluno->nome }}</td>
-                                    <td>{{ $aluno->user->email }}</td>
-                                    <td>{{ $aluno->matricula }}</td>
-                                    <td>
-                                        <form method="POST" action="{{ route('aluno.destroy', $aluno->id) }}">
-                                            @csrf
-                                            <input name="_method" type="hidden" value="DELETE">
-                                            <a href="{{ route('aluno.edit', $aluno->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                            <button type="submit" class="btn btn-danger btn-sm" title='Delete' onclick="return confirm('Deseja realmente excluir esse aluno?')"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="alunosTable" class="table data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Matrícula</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($alunos as $aluno)
+                        <tr>
+                            <td>
+                                <span class="data-title" data-toggle="tooltip" data-placement="top" title="{{ $aluno->nome }}">
+                                    {{ $aluno->nome }}
+                                </span>
+                            </td>
+                            <td>{{ $aluno->user->email }}</td>
+                            <td>{{ $aluno->matricula }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('aluno.destroy', $aluno->id) }}">
+                                    @csrf
+                                    <div class="action-buttons">
+                                        <input name="_method" type="hidden" value="DELETE">
+                                        <a href="{{ route('aluno.edit', $aluno->id) }}" class="btn-edit" title="Editar">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Deseja realmente excluir esse aluno?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

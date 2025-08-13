@@ -1,47 +1,60 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-black-900 dark:text-black-100">
-            {{ __('Atualizar Senha') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-black-600 dark:text-black-400">
+    <div class="mb-4">
+        <h5 class="mb-3">
+            <i class="fas fa-lock"></i> {{ __('Atualizar Senha') }}
+        </h5>
+        <p class="text-muted small">
             {{ __('Tenha certeza de que a senha utilizada seja longa e aleatória para estar seguro.') }}
         </p>
-    </header>
+    </div>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('password.update') }}">
         @csrf
         @method('put')
 
-        <div>
-            <x-input-label for="current_password" :value="__('Senha Atual')" style="color:black;"/>
-            <x-text-input id="current_password" name="current_password" type="password" class="mt-1 block w-full input-field" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label for="current_password" class="form-label">{{ __('Senha Atual') }} *</label>
+                <input id="current_password" name="current_password" type="password" 
+                       class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" 
+                       autocomplete="current-password">
+                @error('current_password', 'updatePassword')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">{{ __('Nova Senha') }} *</label>
+                <input id="password" name="password" type="password" 
+                       class="form-control @error('password', 'updatePassword') is-invalid @enderror" 
+                       autocomplete="new-password">
+                @error('password', 'updatePassword')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <div class="form-text">Mínimo 8 caracteres, incluindo maiúsculas, minúsculas e números.</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }} *</label>
+                <input id="password_confirmation" name="password_confirmation" type="password" 
+                       class="form-control @error('password_confirmation', 'updatePassword') is-invalid @enderror" 
+                       autocomplete="new-password">
+                @error('password_confirmation', 'updatePassword')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
         </div>
 
-        <div>
-            <x-input-label for="password" :value="__('Nova Senha')" style="color:black;"/>
-            <x-text-input id="password" name="password" type="password" class="mt-1 block w-full input-field" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="password_confirmation" :value="__('Confirmar Senha')" style="color:black;"/>
-            <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full input-field" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button style="background-color:black;">{{ __('Salvar') }}</x-primary-button>
+        <div class="d-flex align-items-center gap-3">
+            <button type="submit" class="btn custom-button">
+                <i class="fas fa-shield-alt"></i> {{ __('Atualizar Senha') }}
+            </button>
 
             @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-black-600 dark:text-black-400"
-                >{{ __('Salvo.') }}</p>
+                <div class="alert alert-success alert-dismissible fade show mb-0 py-2" role="alert">
+                    <small><i class="fas fa-check-circle"></i> {{ __('Senha atualizada com sucesso!') }}</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             @endif
         </div>
     </form>
