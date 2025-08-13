@@ -184,17 +184,34 @@ class DeclaracaoIntencaoMatriculaController extends Controller
         // Agrupa as disciplinas por período
         $disciplinasPorPeriodo = [];
         foreach ($disciplinas as $disciplina) {
-            $periodo = $disciplina->periodo;
-            if (!isset($disciplinasPorPeriodo[$periodo])) {
-                $disciplinasPorPeriodo[$periodo] = [];
+            if ($disciplina->optativa) {
+                // Adiciona à categoria de optativas
+                if (!isset($disciplinasPorPeriodo['optativas'])) {
+                    $disciplinasPorPeriodo['optativas'] = [];
+                }
+                $disciplinasPorPeriodo['optativas'][] = [
+                    'id' => $disciplina->id,
+                    'nome' => $disciplina->nome,
+                    'periodo' => null,
+                    'optativa' => true,
+                    'intencao_matricula_id' => $intencaoMatricula->id,
+                    'selecionada' => in_array($disciplina->id, $disciplinasSelecionadas)
+                ];
+            } else {
+                // Adiciona ao período correspondente
+                $periodo = $disciplina->periodo;
+                if (!isset($disciplinasPorPeriodo[$periodo])) {
+                    $disciplinasPorPeriodo[$periodo] = [];
+                }
+                $disciplinasPorPeriodo[$periodo][] = [
+                    'id' => $disciplina->id,
+                    'nome' => $disciplina->nome,
+                    'periodo' => $disciplina->periodo,
+                    'optativa' => false,
+                    'intencao_matricula_id' => $intencaoMatricula->id,
+                    'selecionada' => in_array($disciplina->id, $disciplinasSelecionadas)
+                ];
             }
-            $disciplinasPorPeriodo[$periodo][] = [
-                'id' => $disciplina->id,
-                'nome' => $disciplina->nome,
-                'periodo' => $disciplina->periodo,
-                'intencao_matricula_id' => $intencaoMatricula->id,
-                'selecionada' => in_array($disciplina->id, $disciplinasSelecionadas)
-            ];
         }
         
         return response()->json([
