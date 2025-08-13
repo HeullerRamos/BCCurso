@@ -54,4 +54,8 @@ class User extends Authenticatable
     public function servidor(){
         return $this->hasOne(Servidor::class);
     }
+
+    public function aluno(){
+        return $this->hasOne(Aluno::class);
+    }
 }
