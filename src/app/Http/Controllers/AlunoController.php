@@ -23,60 +23,56 @@ class AlunoController extends Controller
     }
 
     public function store(AlunoRequest $request)
-    {
-        DB::beginTransaction();
-        try {
-            $request->validate([
-                'nome' => 'required|string|max:100',
-                'email' => 'required|email|unique:users,email',
-                'matricula' => 'required|integer',
-            ]);
+{
+    DB::beginTransaction();
+    try {
+        $user = User::create([
+            'password' => Hash::make(strtolower($request->email)),
+            'name' => $request->nome,
+            'email' => strtolower($request->email),
+        ]);
 
-            $usuarioExists = User::where('email', $request->email)->exists();
+        $user->assignRole('aluno');
 
-            if ($usuarioExists) {
-                if ($request->contexto == 'modal') {
-                    $alunos = Professor::all();
-                    return response()->json(['error' => 'Aluno já cadastrado', 'alunos' => $alunos]);
-                } else {
-                    return redirect('/alunos/create');
-                }
-            }
+        $aluno = Aluno::create([
+            'nome' => $request->nome,
+            'matricula' => $request->matricula,
+            'user_id' => $user->id,
+        ]);
 
-            $user = User::create([
-                'password' => Hash::make(strtolower($request->email)),
-                'name' => $request->nome,
-                'email' => strtolower($request->email),
-            ]);
+        DB::commit();
 
-            $user->assignRole('aluno');
-
-            Aluno::create([
-                'nome' => $request->nome,
-                'matricula' => $request->matricula,
-                'user_id' => $user->id,
-            ]);
-            DB::commit();
-
-            try {
-                $email = new CredentialMail($request);
-                $email->sendMail();
-            } catch (\Exception $error) {
-                return redirect('/aluno')->with('error', "Ocorreu um erro no envio automático de email! Envie o email manualmente para: $request->email {$error->getMessage()}");
-            }
-
-            if ($request->contexto != 'modal') {
-                return redirect('/aluno')->with('success', 'Aluno cadastrado com sucesso');
-            } else {
-                $alunos = Aluno::all();
-                return response()->json(['alunos' => $alunos]);
-            }
-        } catch (\Exception $error) {
-            DB::rollBack();
-            return redirect('/aluno')->with('error', 'Erro ao cadastrar aluno!');
+    } catch (\Exception $dbError) {
+        DB::rollBack(); 
+        if ($request->input('contexto') === 'modal') {
+            return response()->json(['success' => false, 'message' => 'Erro no banco de dados: ' . $dbError->getMessage()], 500);
         }
+        return redirect('/aluno')->with('error', 'Erro ao cadastrar aluno no banco de dados!');
     }
 
+    try {
+        $email = new CredentialMail($request);
+        $email->sendMail();
+    } catch (\Exception $emailError) {
+        if ($request->input('contexto') === 'modal') {
+            return response()->json([
+                'success' => true, 
+                'aluno' => $aluno,
+                'warning' => 'Aluno cadastrado, mas o e-mail de credenciais falhou. Erro: ' . $emailError->getMessage()
+            ]);
+        }
+        return redirect('/aluno')->with('warning', "Aluno cadastrado com sucesso, mas o envio de e-mail falhou! Envie as credenciais manualmente.");
+    }
+
+    if ($request->input('contexto') === 'modal') {
+        return response()->json([
+            'success' => true,
+            'aluno' => $aluno
+        ]);
+    }
+
+    return redirect('/aluno')->with('success', 'Aluno cadastrado com sucesso e e-mail enviado!');
+}
     public function edit($id)
     {
         $aluno = Aluno::findOrFail($id);
