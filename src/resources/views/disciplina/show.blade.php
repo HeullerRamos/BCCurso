@@ -22,7 +22,11 @@
                 <div class="col-md-6">
                     <p><strong>ID:</strong> {{ $disciplina->id }}</p>
                     <p><strong>Nome:</strong> {{ $disciplina->nome }}</p>
-                    <p><strong>Período:</strong> {{ $disciplina->periodo }}º</p>
+                    @if($disciplina->optativa)
+                        <p><strong>Tipo:</strong> <span class="badge bg-info">Optativa</span></p>
+                    @else
+                        <p><strong>Período:</strong> {{ $disciplina->periodo }}º</p>
+                    @endif
                 </div>
                 <div class="col-md-6">
                     <p><strong>Criado em:</strong> {{ $disciplina->created_at->format('d/m/Y H:i:s') }}</p>
