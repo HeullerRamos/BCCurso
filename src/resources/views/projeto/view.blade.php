@@ -2,22 +2,22 @@
 @section('title', 'Lista de Projetos')
 @section('content')
 
-<div class="page-header">
-    <div class="container">
-        <div class="title-container">
-            <div class="page-title">
-                <i class="fas fa-envelopes-bulk fa-2x"></i>
-                <h2>Projetos</h2>
-            </div>
-            
-            <div class="row campo-busca">
-                <div class="col-md-12">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar nome do projeto" aria-label="Buscar">
+    <div class="page-header">
+        <div class="container">
+            <div class="title-container">
+                <div class="page-title">
+                    <i class="fas fa-envelopes-bulk fa-2x"></i>
+                    <h2>Projetos</h2>
+                </div>
+
+                <div class="row campo-busca">
+                    <div class="col-md-12">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar nome do projeto" aria-label="Buscar">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
     <br>
     <ul class="nav nav-tabs container" id="myTabs">
         <li class="nav-item nav-item-tcc">
