@@ -183,6 +183,69 @@
             </div>
         </div>
     </div>
+    
+    <!-- Seção de Disciplinas Optativas -->
+    @if(isset($disciplinasOptativas) && count($disciplinasOptativas) > 0)
+    <div class="content-card mb-4">
+        <div class="card-header">
+            <span>Disciplinas Optativas Escolhidas</span>
+            <div class="dropdown">
+                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="optativasChartTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-chart-bar me-1"></i> Tipo de Gráfico
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="optativasChartTypeDropdown">
+                    <li><a class="dropdown-item optativas-chart-type active" data-type="bar" href="#"><i class="fas fa-chart-bar me-2"></i>Gráfico de Barras</a></li>
+                    <li><a class="dropdown-item optativas-chart-type" data-type="pie" href="#"><i class="fas fa-chart-pie me-2"></i>Gráfico de Pizza</a></li>
+                    <li><a class="dropdown-item optativas-chart-type" data-type="doughnut" href="#"><i class="fas fa-circle-notch me-2"></i>Gráfico de Rosca</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="chart-container p-3 rounded" style="position: relative; height:400px;">
+                        <canvas id="optativasChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="accordion" id="accordionOptativas">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOptativas" aria-expanded="true" aria-controls="collapseOptativas">
+                                    <strong>Disciplinas Optativas</strong> <span class="badge bg-info ms-2">{{ count($disciplinasOptativas) }} disciplina(s)</span>
+                                </button>
+                            </h2>
+                            <div id="collapseOptativas" class="accordion-collapse collapse show" data-bs-parent="#accordionOptativas">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Disciplina</th>
+                                                    <th class="text-center">Escolhas</th>
+                                                    <th class="text-center">%</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($disciplinasOptativas as $disciplina)
+                                                <tr>
+                                                    <td>{{ $disciplina['nome'] }}</td>
+                                                    <td class="text-center">{{ $disciplina['count'] }}</td>
+                                                    <td class="text-center">{{ $disciplina['percentage'] }}%</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     @endif
 
 </div>
@@ -457,6 +520,132 @@ document.addEventListener('DOMContentLoaded', function() {
                     periodoChart = new Chart(ctxPeriodo, periodoChartConfig);
                 });
             });
+            
+            // Gráfico para disciplinas optativas
+            if (document.getElementById('optativasChart')) {
+                const ctxOptativas = document.getElementById('optativasChart').getContext('2d');
+                
+                // Verificar se temos dados de disciplinas optativas
+                const disciplinasOptativas = {!! isset($disciplinasOptativas) ? json_encode($disciplinasOptativas) : '[]' !!};
+                
+                if (disciplinasOptativas.length > 0) {
+                    const optativasLabels = disciplinasOptativas.map(d => d.nome);
+                    const optativasData = disciplinasOptativas.map(d => d.percentage);
+                    const optativasCounts = disciplinasOptativas.map(d => d.count);
+                    
+                    // Gerar cores para o gráfico
+                    const optativasColors = generateColors(disciplinasOptativas.length);
+                    
+                    // Configuração do gráfico
+                    let optativasChartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: optativasLabels,
+                            datasets: [{
+                                label: 'Porcentagem de Escolha',
+                                data: optativasData,
+                                backgroundColor: optativasColors,
+                                borderColor: optativasColors.map(color => color.replace('0.7', '1')),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y',
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Porcentagem (%)'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const count = optativasCounts[context.dataIndex];
+                                            return [
+                                                `${label}`,
+                                                `Alunos: ${count} (${value}%)`
+                                            ];
+                                        }
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Distribuição de Disciplinas Optativas Escolhidas',
+                                    font: {
+                                        size: 16,
+                                        weight: 'bold'
+                                    },
+                                    padding: {
+                                        top: 10,
+                                        bottom: 20
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    
+                    // Criar gráfico
+                    let optativasChart = new Chart(ctxOptativas, optativasChartConfig);
+                    
+                    // Função para atualizar o tipo de gráfico
+                    document.querySelectorAll('.optativas-chart-type').forEach(button => {
+                        button.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const chartType = this.getAttribute('data-type');
+                            
+                            // Atualizar classe ativa no dropdown
+                            document.querySelectorAll('.optativas-chart-type').forEach(btn => {
+                                btn.classList.remove('active');
+                            });
+                            this.classList.add('active');
+                            
+                            // Destruir gráfico existente
+                            optativasChart.destroy();
+                            
+                            // Atualizar configuração
+                            optativasChartConfig.type = chartType;
+                            
+                            // Ajustes específicos para cada tipo de gráfico
+                            if (chartType === 'bar') {
+                                // Configuração para gráfico de barras
+                                optativasChartConfig.options.indexAxis = 'y';
+                                optativasChartConfig.options.scales = {
+                                    x: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        title: {
+                                            display: true,
+                                            text: 'Porcentagem (%)'
+                                        }
+                                    }
+                                };
+                                optativasChartConfig.options.plugins.legend.display = false;
+                            } else {
+                                // Configuração para gráficos de pizza/rosca
+                                delete optativasChartConfig.options.indexAxis;
+                                delete optativasChartConfig.options.scales;
+                                optativasChartConfig.options.plugins.legend.display = true;
+                                optativasChartConfig.options.plugins.legend.position = 'right';
+                            }
+                            
+                            // Recriar gráfico
+                            optativasChart = new Chart(ctxOptativas, optativasChartConfig);
+                        });
+                    });
+                }
+            }
         } else {
             // Se não houver dados para períodos, exibir mensagem
             const periodoContainer = document.querySelector('#periodoChart').parentNode;
