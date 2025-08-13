@@ -41,7 +41,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
-                            <th>Período</th>
+                            <th>Tipo/Período</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
@@ -54,7 +54,15 @@
                                         {{ $disciplina->nome }}
                                     </span>
                                 </td>
-                                <td>{{ $disciplina->periodo }}º</td>
+                                <td>
+                                    <span class="badge bg-info">
+                                    @if($disciplina->optativa)
+                                        Optativa
+                                    @else
+                                        {{ $disciplina->periodo }}º Período
+                                    @endif
+                                    </span>
+                                </td>
                                 <td>
                                     <div class="action-buttons">
                                         <a href="{{ route('disciplina.show', $disciplina->id) }}" class="btn-view" title="Visualizar">
@@ -106,7 +114,18 @@
                     </div>
                     
                     <div class="form-group mb-3">
-                        <label for="modal_periodo" class="form-label">Período <span class="text-danger">*</span></label>
+                        <label for="modal_optativa" class="form-label">Disciplina Optativa?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="modal_optativa" name="optativa">
+                            <label class="form-check-label" for="modal_optativa">
+                                Sim, esta é uma disciplina optativa
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Marque esta opção caso a disciplina seja optativa. Disciplinas optativas não estão associadas a um período específico.</small>
+                    </div>
+                    
+                    <div class="form-group mb-3" id="modal_periodo_container">
+                        <label for="modal_periodo" class="form-label">Período <span class="text-danger periodo-required">*</span></label>
                         <select class="form-control" id="modal_periodo" name="periodo" required>
                             <option value="">Selecione o período</option>
                             @for($i = 1; $i <= 10; $i++)
@@ -152,7 +171,44 @@ $(document).ready(function() {
         $('.form-control').removeClass('is-invalid');
         $('#modalErrorContainer').addClass('d-none');
         $('#submitBtn').prop('disabled', false).html('<i class="fas fa-save"></i> Cadastrar');
+        
+        // Verificar estado inicial do checkbox
+        togglePeriodoField();
     });
+    
+    // Função para alternar o campo de período com base no checkbox optativa
+    function togglePeriodoField() {
+        const optativaCheckbox = document.getElementById('modal_optativa');
+        const periodoSelect = document.getElementById('modal_periodo');
+        const periodoContainer = document.getElementById('modal_periodo_container');
+        const periodoRequired = document.querySelector('.periodo-required');
+        
+        if (optativaCheckbox.checked) {
+            periodoSelect.removeAttribute('required');
+            periodoSelect.setAttribute('disabled', 'disabled');
+            periodoSelect.value = '';
+            periodoRequired.style.display = 'none';
+            periodoContainer.classList.add('text-muted');
+            // Adicionar estilo para desabilitar completamente o campo
+            periodoSelect.style.pointerEvents = 'none';
+            periodoSelect.style.backgroundColor = '#e9ecef';
+            periodoSelect.style.opacity = '0.65';
+            periodoSelect.style.cursor = 'not-allowed';
+        } else {
+            periodoSelect.removeAttribute('disabled');
+            periodoSelect.setAttribute('required', 'required');
+            periodoRequired.style.display = 'inline';
+            periodoContainer.classList.remove('text-muted');
+            // Remover estilos que desabilitam o campo
+            periodoSelect.style.pointerEvents = '';
+            periodoSelect.style.backgroundColor = '';
+            periodoSelect.style.opacity = '';
+            periodoSelect.style.cursor = '';
+        }
+    }
+    
+    // Adicionar listener para o checkbox
+    $('#modal_optativa').on('change', togglePeriodoField);
 
     // Submissão do formulário via AJAX
     $('#createDisciplinaForm').on('submit', function(e) {
@@ -161,6 +217,15 @@ $(document).ready(function() {
         const form = $(this);
         const submitBtn = $('#submitBtn');
         const formData = new FormData(this);
+        
+        // Se a disciplina for optativa, garantir que o período seja enviado mesmo que o campo esteja desabilitado
+        const optativaCheckbox = document.getElementById('modal_optativa');
+        const periodoSelect = document.getElementById('modal_periodo');
+        
+        if (optativaCheckbox.checked) {
+            // Garantir que o campo período seja enviado (com valor vazio ou 0)
+            formData.set('periodo', '0');
+        }
         
         // Desabilitar botão e mostrar loading
         submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Cadastrando...');
@@ -227,3 +292,13 @@ $(document).ready(function() {
 </script>
 
 @stop
+
+<style>
+/* Estilo para campos desabilitados */
+select:disabled, input:disabled {
+    pointer-events: none !important;
+    background-color: #e9ecef !important;
+    opacity: 0.65 !important;
+    cursor: not-allowed !important;
+}
+</style>
