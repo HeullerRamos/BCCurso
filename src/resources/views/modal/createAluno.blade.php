@@ -114,6 +114,12 @@ $(document).ready(function() {
         $('#modal_aluno_success').hide();
         $('#form_create_aluno_modal').trigger('reset').show();
         $('#createAluno .modal-footer').show();
+        
+        // Fix para restaurar o scroll da página
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        $('body').css('padding-right', '');
+        $('body').css('overflow', '');
     });
 });
 </script>

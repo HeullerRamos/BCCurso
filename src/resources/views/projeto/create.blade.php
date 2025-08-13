@@ -533,6 +533,17 @@
             newFiles.forEach(file => dataTransferImages.items.add(file));
             document.getElementById('imagens').files = dataTransferImages.files;
         };
+
+        // Correção global para problemas de scroll com modais
+        $(document).ready(function() {
+            $('.modal').on('hidden.bs.modal', function () {
+                // Remove classes e estilos que podem causar problemas de scroll
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                $('body').css('padding-right', '');
+                $('body').css('overflow', '');
+            });
+        });
     </script>
 
     @include('modal.createProfessor')

@@ -181,6 +181,12 @@
             $('#email-professor').val('');
             $('#form_create_professor_content').show();
             $('#buttons').show();
+            
+            // Fix para restaurar o scroll da página
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $('body').css('padding-right', '');
+            $('body').css('overflow', '');
         });
 
     });

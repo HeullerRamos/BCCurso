@@ -35,13 +35,57 @@ class professorExternoController extends Controller
      */
     public function store(Request $request)
     {
-        ProfessorExterno::create([
-            'nome' => $request->nome,
-            'filiacao' => $request->filiacao
+        // Validação dos campos obrigatórios
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'filiacao' => 'required|string|max:255'
         ]);
+
+        // Log para debug
+        \Log::info('Tentativa de criar professor externo', [
+            'nome' => $request->nome,
+            'filiacao' => $request->filiacao,
+            'contexto' => $request->contexto
+        ]);
+
+        // Verifica se já existe um professor externo com o mesmo nome e filiação (ignorando case e espaços)
+        $professorExistente = ProfessorExterno::whereRaw('LOWER(TRIM(nome)) = ?', [strtolower(trim($request->nome))])
+            ->whereRaw('LOWER(TRIM(filiacao)) = ?', [strtolower(trim($request->filiacao))])
+            ->first();
+
+        \Log::info('Resultado da busca por duplicata', [
+            'encontrado' => $professorExistente ? 'sim' : 'não',
+            'id_encontrado' => $professorExistente ? $professorExistente->id : null
+        ]);
+
+        if ($professorExistente) {
+            // Se já existe, retorna o existente
+            $novoProfessor = $professorExistente;
+            $mensagem = 'Professor externo já existe e foi selecionado.';
+        } else {
+            // Se não existe, cria um novo (normalizando os dados)
+            $novoProfessor = ProfessorExterno::create([
+                'nome' => trim($request->nome),
+                'filiacao' => trim($request->filiacao)
+            ]);
+            $mensagem = 'Professor externo criado com sucesso.';
+        }
+
         if ($request->contexto == 'modal') {
-            $professores = ProfessorExterno::all();
-            return response()->json(['professores_externos' => $professores]);
+            // Garantir que todos os campos estão presentes na resposta
+            $professorData = [
+                'id' => $novoProfessor->id,
+                'nome' => $novoProfessor->nome,
+                'filiacao' => $novoProfessor->filiacao,
+                'created_at' => $novoProfessor->created_at,
+                'updated_at' => $novoProfessor->updated_at
+            ];
+
+            return response()->json([
+                'professor_externo' => $professorData,
+                'mensagem' => $mensagem,
+                'ja_existia' => $professorExistente ? true : false
+            ]);
         } else {
             return redirect('professor-externo')->with('success', 'Professor externo ' . $request->nome . ' Criado com Sucesso');
         }

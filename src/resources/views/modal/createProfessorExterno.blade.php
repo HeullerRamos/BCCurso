@@ -12,8 +12,8 @@
                 <div class="form-group">
                     <label for="nome">Nome</label>
                     <input type="text" name="nome-professor-externo" id="nome-professor-externo" class="form-control" placeholder="Nome do professor externo">
-                    <label for="filiacao">Filiação</label>
-                    <input type="text" name="filiacao" id="filiacao" class="form-control" placeholder="Nome da instituição de filiação">
+                    <label for="filiacao-professor-externo">Filiação</label>
+                    <input type="text" name="filiacao" id="filiacao-professor-externo" class="form-control" placeholder="Nome da instituição de filiação">
                 </div>
             </div>
             <div class="modal-footer">
@@ -26,14 +26,27 @@
 
 <script>
     $(document).ready(function() {
+        var isProcessing = false; // Flag para evitar múltiplas requisições
+
         $('#cadastrarProfessoExternoButton').click(function() {
+            // Previne múltiplos cliques
+            if (isProcessing) {
+                return;
+            }
+
             var nome = $('#nome-professor-externo').val();
-            var filiacao = $('#filiacao').val();
+            var filiacao = $('#filiacao-professor-externo').val();
 
             if (nome.trim() === '' || filiacao.trim() === '') {
                 alert('Por favor, preencha todos os campos.');
                 return;
             }
+
+            // Desabilita o botão e mostra loading
+            isProcessing = true;
+            var $button = $(this);
+            var originalText = $button.text();
+            $button.prop('disabled', true).text('Cadastrando...');
 
             var professoresSelecionadosAntes = [];
             $('input[name="professores_externos[]"]:checked').each(function() {
@@ -54,8 +67,11 @@
                 url: "{{ route('professor-externo.store') }}",
                 data: data,
                 success: function(response) {
-                    $('#createProfessorExterno').modal('hide');
-                    atualizarProfessoresExternos();
+                    // Restaura o botão
+                    isProcessing = false;
+                    $button.prop('disabled', false).text(originalText);
+
+                    console.log('Resposta do servidor:', response);
 
                     if (response.error) {
                         alert(response.error);
@@ -63,48 +79,79 @@
                         // Feche o modal
                         $('#createProfessorExterno').modal('hide');
 
-                        // Atualiza os checkboxs no modal
-                        var professoresCheckboxHTML = '';
-                        $.each(response.professores_externos, function(index, professor) {
-                            var checkboxId = 'professor_externo_' + professor.id;
-                            var isChecked = professoresSelecionadosAntes.includes(professor.id.toString()) ? 'checked' : '';
-                            professoresCheckboxHTML +=
-                            '<div class="form-check">' +
-                            '<input type="checkbox" class="form-check-input" name="professores_externos[]" id="' +
-                                checkboxId + '" value="' + professor.id +'" ' + isChecked + '>' +
-                            '   <label for= "' + checkboxId + '" class="form-check-label">' + professor.nome + ' - '  + professor.filiacao + '</label>' +
-                            '</div>';
-                        });
+                        // Limpa o formulário para evitar duplicações
+                        $('#nome-professor-externo').val('');
+                        $('#filiacao-professor-externo').val('');
 
-                        $('#professores_externos .form-check').remove();
-                        $('#professores_externos').append(professoresCheckboxHTML);
+                        // Força o refresh do Select2 para professores externos se existir
+                        if ($('#professores_externos').length) {
+                            var professor = response.professor_externo;
+                            
+                            console.log('Professor retornado:', professor);
+                            console.log('Nome:', professor.nome);
+                            console.log('Filiacao:', professor.filiacao);
+                            
+                            // Verifica se a opção já existe no Select2
+                            var optionExists = $('#professores_externos option[value="' + professor.id + '"]').length > 0;
+                            
+                            if (!optionExists) {
+                                // Só adiciona se não existir
+                                var textoOpcao = professor.nome + ' - ' + professor.filiacao;
+                                console.log('Texto da opção:', textoOpcao);
+                                
+                                var novaOpcao = new Option(
+                                    textoOpcao, 
+                                    professor.id, 
+                                    true, 
+                                    true
+                                );
+                                $('#professores_externos').append(novaOpcao);
+                            } else {
+                                // Se já existe, apenas seleciona
+                                $('#professores_externos').val(function(index, currentVal) {
+                                    if (Array.isArray(currentVal)) {
+                                        return currentVal.includes(professor.id.toString()) ? currentVal : [...currentVal, professor.id.toString()];
+                                    } else {
+                                        return [professor.id.toString()];
+                                    }
+                                });
+                            }
+                            
+                            $('#professores_externos').trigger('change');
+                        }
 
                         var returnToModalSelector = $('#cadastrarProfessorExternoModal').data('return-to-modal');
                         if (returnToModalSelector) {
                             $(returnToModalSelector).modal('show');  // Mostrar o modal de retorno
                         }
-
-                        // Atualize o <select> na página de edição
-                        // var $selectProfessor = $('#professor_id');
-                        // $selectProfessor.empty(); // Limpe todas as opções
-
-                        // // Adicione as opções atualizadas com base na resposta do servidor
-                        // $.each(response.professores, function(index, professor) {
-                        //     $selectProfessor.append($('<option>', {
-                        //         value: professor.id,
-                        //         text: professor.nome
-                        //     }));
-                        // });
                     }
                 },
+                error: function(xhr, status, error) {
+                    // Restaura o botão
+                    isProcessing = false;
+                    $button.prop('disabled', false).text(originalText);
+
+                    if (xhr.status === 422) {
+                        // Erros de validação
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = 'Erro de validação:\n';
+                        for (var field in errors) {
+                            errorMessage += '- ' + errors[field][0] + '\n';
+                        }
+                        alert(errorMessage);
+                    } else {
+                        alert('Erro ao cadastrar professor externo. Tente novamente.');
+                    }
+                }
             });
         });
 
-        function atualizarProfessoresExternos() {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('professor-externo.index', ['contexto' => 'modal']) }}",
-            });
-        }
+        // Fix para restaurar o scroll da página quando modal for fechado
+        $('#createProfessorExterno').on('hidden.bs.modal', function () {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $('body').css('padding-right', '');
+            $('body').css('overflow', '');
+        });
     });
 </script>
