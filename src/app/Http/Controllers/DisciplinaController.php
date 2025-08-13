@@ -14,17 +14,17 @@ class DisciplinaController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->buscar;
-        
+
         if ($buscar) {
             $disciplinas = Disciplina::where('nome', 'like', '%' . $buscar . '%')
-                                     ->orWhere('periodo', $buscar)
-                                     ->orderBy('periodo')
-                                     ->orderBy('nome')
-                                     ->get();
+                ->orWhere('periodo', $buscar)
+                ->orderBy('periodo')
+                ->orderBy('nome')
+                ->get();
         } else {
             $disciplinas = Disciplina::orderBy('periodo')
-                                     ->orderBy('nome')
-                                     ->get();
+                ->orderBy('nome')
+                ->get();
         }
 
         return view('disciplina.index', compact('disciplinas', 'buscar'));
@@ -43,10 +43,16 @@ class DisciplinaController extends Controller
      */
     public function store(DisciplinaRequest $request)
     {
-        Disciplina::create($request->validated());
+        $validated = $request->validated();
+
+        if (isset($validated['optativa']) && $validated['optativa']) {
+            $validated['periodo'] = 0;
+        }
+
+        Disciplina::create($validated);
 
         return redirect()->route('disciplina.index')
-                         ->with('success', 'Disciplina cadastrada com sucesso');
+            ->with('success', 'Disciplina cadastrada com sucesso');
     }
 
     /**
@@ -70,10 +76,16 @@ class DisciplinaController extends Controller
      */
     public function update(DisciplinaRequest $request, Disciplina $disciplina)
     {
-        $disciplina->update($request->validated());
+        $validated = $request->validated();
+
+        if (isset($validated['optativa']) && $validated['optativa']) {
+            $validated['periodo'] = 0;
+        }
+
+        $disciplina->update($validated);
 
         return redirect()->route('disciplina.index')
-                         ->with('success', 'Disciplina atualizada com sucesso');
+            ->with('success', 'Disciplina atualizada com sucesso');
     }
 
     /**
@@ -84,6 +96,7 @@ class DisciplinaController extends Controller
         $disciplina->delete();
 
         return redirect()->route('disciplina.index')
-                         ->with('success', 'Disciplina excluída com sucesso');
+            ->with('success', 'Disciplina excluída com sucesso');
     }
 }
+
