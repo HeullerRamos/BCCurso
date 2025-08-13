@@ -50,6 +50,11 @@ class User extends Authenticatable
     public function fotos(){
         return $this->hasMany(FotoUser::class);
     }
+    
+    public function aluno()
+    {
+        return $this->hasOne(Aluno::class, 'user_id');
+    }
 
     public function servidor(){
         return $this->hasOne(Servidor::class);
