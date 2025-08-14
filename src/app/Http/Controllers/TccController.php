@@ -158,7 +158,15 @@ class TccController extends Controller
 
     public function destroy($id)
     {
+        // Verificar se o usuário é coordenador (middleware já garante isso, mas por segurança)
+        if (!auth()->user()->hasRole('coordenador')) {
+            abort(403, 'Acesso negado. Apenas coordenadores podem excluir TCCs.');
+        }
+
         $tcc = Tcc::findOrFail($id);
+
+        // Excluir favoritos relacionados primeiro
+        $tcc->favoritos()->delete();
 
         $tcc->delete();
 

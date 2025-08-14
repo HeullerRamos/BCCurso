@@ -284,7 +284,15 @@ class PostagemController extends Controller
 
     public function destroy(string $id)
     {
+        // Verificar se o usuário é coordenador (middleware já garante isso, mas por segurança)
+        if (!auth()->user()->hasRole('coordenador')) {
+            abort(403, 'Acesso negado. Apenas coordenadores podem excluir postagens.');
+        }
+
         $postagem = Postagem::findOrFail($id);
+
+        // Excluir favoritos relacionados primeiro
+        $postagem->favoritos()->delete();
 
         foreach ($postagem->imagens as $imagem) {
             Storage::disk('public')->delete($imagem->imagem);
