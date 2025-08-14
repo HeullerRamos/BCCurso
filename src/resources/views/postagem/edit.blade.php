@@ -266,6 +266,41 @@ function removeExistingFile(button) {
 </script>
 
 @push('scripts')
+<!-- Fallback Summernote CDN in case Vite assets don't load -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.9.1/summernote-lite.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.9.1/summernote-lite.min.css" rel="stylesheet">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if Summernote is available and textarea exists
+    if (typeof $.fn.summernote !== 'undefined' && $('#texto').length) {
+        // Initialize Summernote
+        $('#texto').summernote({
+            lang: 'pt-BR',
+            placeholder: 'Digite o conteúdo da sua postagem aqui...',
+            tabsize: 2,
+            height: 300,
+            disableDragAndDrop: true,
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Lucida Grande', 'Tahoma', 'Times New Roman', 'Verdana'],
+            fontNamesIgnoreCheck: ['Arial Black', 'Comic Sans MS', 'Lucida Grande', 'Times New Roman'],
+            toolbar: [
+                ['style', ['style']],
+                ['text', ['bold', 'italic', 'underline', 'strikethrough']],
+                ['font', ['superscript', 'subscript', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+                ['view', ['fullscreen', 'codeview', 'help']],
+            ]
+        });
+    } else {
+        console.log('Summernote not loaded or textarea not found');
+    }
+});
+</script>
+
 <script>
     let cropper = null;
     let originalFile = null;
