@@ -52,6 +52,7 @@
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        border: 2px solid rgba(70, 130, 180, 0.15);
         margin-bottom: 3rem;
     }
     
