@@ -71,7 +71,7 @@
                                         <form action="{{ route('disciplina.destroy', $disciplina->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta disciplina?')">
+                                            <button type="button" class="btn-delete" title="Excluir" onclick="confirmDeleteGeneric(this.form, 'Deseja realmente excluir esta disciplina?', '{{ $disciplina->nome }}')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -290,6 +290,8 @@ $(document).ready(function() {
     });
 });
 </script>
+
+@include('modal.confirmDeleteGeneric')
 
 @stop
 

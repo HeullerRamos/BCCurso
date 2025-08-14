@@ -79,7 +79,7 @@
                                         <form action="{{ route('intencao_matricula.destroy', $intencao->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta intenção de matrícula?')">
+                                            <button type="button" class="btn-delete" title="Excluir" onclick="confirmDeleteGeneric(this.form, 'Deseja realmente excluir esta intenção de matrícula?', 'ID: {{ $intencao->id }} - {{ $intencao->numero_periodo }}º semestre de {{ $intencao->ano }}')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -109,4 +109,7 @@
         });
     });
 </script>
+
+@include('modal.confirmDeleteGeneric')
+
 @stop
