@@ -74,7 +74,7 @@
                                         <form method="POST" action="{{ route('banca.destroy', $banca->id) }}" style="display: inline;">
                                             @csrf
                                             <input name="_method" type="hidden" value="DELETE">
-                                            <button type="submit" class="btn-delete" title='Delete' onclick="return confirm('Deseja realmente excluir essa banca?')"><i class="fas fa-trash"></i></button>
+                                            <button type="button" class="btn-delete" title='Delete' onclick="confirmDeleteGeneric(this.form, 'Deseja realmente excluir esta banca?', 'Banca do TCC: {{ $banca->tcc->titulo ?? "N/A" }}')"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
@@ -104,4 +104,7 @@
         });
     });
 </script>
+
+@include('modal.confirmDeleteGeneric')
+
 @stop

@@ -60,7 +60,7 @@
                                         <a class="btn-edit" href="{{ route('professor.edit', $servidor->id) }}" title="Editar">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
-                                        <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Deseja realmente excluir esse registro?')">
+                                        <button type="button" class="btn-delete" title="Excluir" onclick="confirmDeleteGeneric(this.form, 'Deseja realmente excluir este professor?', '{{ $servidor->nome }}')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -87,4 +87,7 @@
         });
     });
 </script>
+
+@include('modal.confirmDeleteGeneric')
+
 @stop
