@@ -15,8 +15,12 @@ use App\Http\Controllers\TccController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\PpcController;
 use App\Http\Controllers\CoordenadorController;
+use App\Http\Controllers\DisciplinaController;
+use App\Http\Controllers\IntencaoMatriculaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LinkController;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\FavoritoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -167,4 +171,41 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
     Route::prefix('/curso/{cursoId}')->group(function () {
         Route::resource('/ppc', PpcController::class)->except(['show']);
     });
+
+    //Disciplina
+    Route::resource('disciplina', DisciplinaController::class);
+
+    // Intencao Matricula
+    Route::resource('intencao_matricula', IntencaoMatriculaController::class);
+    Route::get('intencao_matricula/{intencao_matricula}/relatorio', [IntencaoMatriculaController::class, 'relatorio'])->name('intencao_matricula.relatorio');
+});
+
+// Rota para alunos declararem intenção de matrícula
+Route::get('/declarar-intencao-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'create'])
+    ->name('declaracao_intencao_matricula.create');
+Route::post('/declarar-intencao-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'store'])
+    ->name('declaracao_intencao_matricula.store');
+Route::get('/minhas-intencoes-matricula', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'index'])
+    ->name('declaracao_intencao_matricula.index');
+Route::get('/minhas-intencoes-matricula/{id}', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'show'])
+    ->name('declaracao_intencao_matricula.show');
+
+// Novas rotas para o fluxo de seleção de disciplinas
+Route::get('/selecionar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'selecionarDisciplinas'])
+    ->name('declaracao_intencao_matricula.selecionar_disciplinas');
+Route::post('/buscar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'buscarDisciplinas'])
+    ->name('declaracao_intencao_matricula.buscar_disciplinas');
+Route::post('/salvar-disciplinas', [App\Http\Controllers\DeclaracaoIntencaoMatriculaController::class, 'salvarDisciplinas'])
+    ->name('declaracao_intencao_matricula.salvar_disciplinas');
+
+// Rotas para comentários e favoritos (disponíveis para todos os usuários autenticados)
+Route::middleware('auth')->group(function () {
+    // Rotas para comentários
+    Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::put('/comentarios/{id}', [ComentarioController::class, 'update'])->name('comentarios.update');
+    Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+
+    // Rotas para favoritos
+    Route::post('/favoritos/toggle', [FavoritoController::class, 'toggle'])->name('favoritos.toggle');
+    Route::get('/meus-favoritos', [FavoritoController::class, 'meusFavoritos'])->name('favoritos.meus');
 });

@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container mt-4">
     <div class="row">
         <div class="col-12">
             <div class="space-y-6">
@@ -49,7 +49,7 @@
                 <!-- Excluir Conta -->
                 <div class="card mt-4">
                     <div class="card-header text-white" style="background-color: #dc3545;">
-                        <i class="fas fa-exclamation-triangle"></i> Zona Perigosa
+                        <i class="fas fa-exclamation-triangle"></i> Exclusão de Conta
                     </div>
                     <div class="card-body">
                         @include('profile.partials.delete-user-form')

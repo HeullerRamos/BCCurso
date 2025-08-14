@@ -50,6 +50,8 @@ class User extends Authenticatable
     public function fotos(){
         return $this->hasMany(FotoUser::class);
     }
+    
+  
 
     public function servidor(){
         return $this->hasOne(Servidor::class);
@@ -57,5 +59,34 @@ class User extends Authenticatable
 
     public function aluno(){
         return $this->hasOne(Aluno::class);
+    }
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
+
+    public function favoritos()
+    {
+        return $this->hasMany(Favorito::class);
+    }
+
+    public function postagensFavoritas()
+    {
+        return $this->favoritos()->where('favoritavel_type', Postagem::class)
+            ->with('favoritavel');
+    }
+
+    public function tccsFavoritos()
+    {
+        return $this->favoritos()->where('favoritavel_type', Tcc::class)
+            ->with('favoritavel');
+    }
+
+    public function jaFavoritou($modelo)
+    {
+        return $this->favoritos()
+            ->where('favoritavel_type', get_class($modelo))
+            ->where('favoritavel_id', $modelo->id)
+            ->exists();
     }
 }

@@ -3,9 +3,11 @@
         <h5 class="mb-3 text-danger">
             <i class="fas fa-exclamation-triangle"></i> {{ __('Excluir Conta') }}
         </h5>
+
         <p class="text-muted small mb-0">
             {{ __('Esta ação é irreversível. Clique no botão abaixo apenas se você realmente deseja excluir sua conta.') }}
         </p>
+
     </div>
 
     <!-- Botão para abrir modal -->

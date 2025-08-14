@@ -14,6 +14,7 @@ class Aluno extends Model
         'nome',
         'matricula',
         'user_id',
+        'email',
     ];
 
     public function projetos()
@@ -24,5 +25,10 @@ class Aluno extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+    
+    public function declaracoesIntencaoMatricula()
+    {
+        return $this->hasMany(DeclaracaoIntencaoMatricula::class, 'aluno_id');
     }
 }

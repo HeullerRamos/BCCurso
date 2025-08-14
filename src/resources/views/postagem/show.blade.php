@@ -372,6 +372,156 @@
                     
                     <div class="post-text">{!! $postagem->texto !!}</div>
                 </div>
+                
+                @auth
+                <!-- Seção de Comentários -->
+                <div class="sidebar-card mt-3">
+                    <div class="sidebar-header">
+                        <i class="fas fa-comments"></i> Comentários ({{ $postagem->comentarios->count() }})
+                    </div>
+                    <div class="sidebar-body">
+                        <!-- Mensagem quando não há comentários -->
+                        @if($postagem->comentarios->count() === 0)
+                            <div class="empty-state text-center py-4">
+                                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">Ainda não há comentários nesta postagem.</p>
+                                <small class="text-muted">Seja o primeiro a comentar!</small>
+                            </div>
+                        @endif
+
+                        <!-- Formulário para Novo Comentário -->
+                        <div class="comment-form-container mb-4">
+                            <form id="comentario-form" method="POST" action="{{ route('comentarios.store') }}">
+                                @csrf
+                                <input type="hidden" name="postagem_id" value="{{ $postagem->id }}">
+                                <div class="mb-3">
+                                    <label for="conteudo" class="form-label fw-bold">
+                                        <i class="fas fa-edit"></i> Adicionar comentário:
+                                    </label>
+                                    <textarea 
+                                        class="form-control form-control-lg border-2" 
+                                        id="conteudo" 
+                                        name="conteudo" 
+                                        rows="4" 
+                                        maxlength="1000" 
+                                        placeholder="Compartilhe sua opinião sobre esta postagem..."
+                                        style="resize: vertical; min-height: 100px;"
+                                        required></textarea>
+                                    <div class="d-flex justify-content-end mt-1">
+                                        <small class="text-muted fw-bold">
+                                            <span id="char-count">0</span>/1000
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user-circle text-primary"></i> Comentando como <strong>{{ auth()->user()->name }}</strong>
+                                    </small>
+                                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                                        <i class="fas fa-paper-plane me-2"></i> Enviar Comentário
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Lista de Comentários -->
+                        @if($postagem->comentarios->count() > 0)
+                            <div id="comentarios-lista">
+                                <hr class="my-4">
+                                <h6 class="text-muted mb-3">
+                                    <i class="fas fa-comments me-2"></i>
+                                    Todos os comentários
+                                </h6>
+                                @foreach($postagem->comentarios as $comentario)
+                                    <div class="comentario-item mb-4 p-3 bg-light rounded border-start border-primary border-4" data-id="{{ $comentario->id }}">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="comentario-header">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-user-circle text-primary me-2 fa-lg"></i>
+                                                    <strong class="text-dark">{{ $comentario->user->name }}</strong>
+                                                    <small class="text-muted ms-2">
+                                                        {{ $comentario->created_at->format('d/m/Y H:i') }}
+                                                        @if($comentario->foiEditado())
+                                                            <span class="badge bg-secondary ms-1">
+                                                                <i class="fas fa-edit"></i> Editado
+                                                            </span>
+                                                        @endif
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            @if(auth()->user() && (auth()->user()->id === $comentario->user_id || auth()->user()->hasRole('coordenador')))
+                                                <div class="comentario-actions">
+                                                    @if(auth()->user()->id === $comentario->user_id)
+                                                    <button class="btn btn-sm btn-outline-primary me-1" 
+                                                            onclick="editarComentario({{ $comentario->id }}, '{{ addslashes($comentario->conteudo) }}')"
+                                                            title="Editar comentário">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    @endif
+                                                    <form method="POST" action="{{ route('comentarios.destroy', $comentario->id) }}" style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                onclick="return confirm('Tem certeza que deseja deletar este comentário?')"
+                                                                title="Excluir comentário">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="comentario-conteudo" id="comentario-{{ $comentario->id }}">
+                                            <p class="mb-0 text-dark">{{ $comentario->conteudo }}</p>
+                                        </div>
+                                        
+                                        <!-- Formulário de edição (oculto) -->
+                                        <div class="comentario-edit-form mt-2" id="edit-form-{{ $comentario->id }}" style="display: none;">
+                                            <form method="POST" action="{{ route('comentarios.update', $comentario->id) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="mb-3">
+                                                    <textarea name="conteudo" 
+                                                              class="form-control edit-textarea" 
+                                                              rows="3" 
+                                                              required 
+                                                              maxlength="1000"
+                                                              data-comment-id="{{ $comentario->id }}">{{ $comentario->conteudo }}</textarea>
+                                                    <div class="d-flex justify-content-end mt-1">
+                                                        <small class="text-muted fw-bold">
+                                                            <span id="edit-char-count-{{ $comentario->id }}">{{ strlen($comentario->conteudo) }}</span>/1000
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-save"></i> Salvar
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-secondary btn-sm" 
+                                                            onclick="cancelarEdicao({{ $comentario->id }})">
+                                                        <i class="fas fa-times"></i> Cancelar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @else
+                <div class="sidebar-card mt-3">
+                    <div class="sidebar-body text-center py-5">
+                        <i class="fas fa-sign-in-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Faça login para interagir</h5>
+                        <p class="text-muted mb-3">Para comentar e favoritar esta postagem, você precisa estar logado.</p>
+                        <a href="{{ route('login') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                        </a>
+                    </div>
+                </div>
+                @endauth
             </article>
         </div>
         
@@ -423,9 +573,151 @@
                         @endif
                     </div>
                 </div>
+
+                @auth
+                <!-- Botão de Favoritar -->
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <i class="fas fa-heart"></i> Favoritar Postagem
+                    </div>
+                    <div class="sidebar-body text-center">
+                        <form method="POST" action="{{ route('favoritos.toggle') }}" id="favoritoForm">
+                            @csrf
+                            <input type="hidden" name="type" value="postagem">
+                            <input type="hidden" name="id" value="{{ $postagem->id }}">
+                            <button type="submit" 
+                                    class="btn {{ Auth::user()->jaFavoritou($postagem) ? 'btn-danger' : 'btn-outline-danger' }} btn-lg w-100 mb-3">
+                                <i class="fas fa-heart"></i>
+                                {{ Auth::user()->jaFavoritou($postagem) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}
+                            </button>
+                        </form>
+                        <small class="text-muted">
+                            <i class="fas fa-heart text-danger"></i> {{ $postagem->totalFavoritos() }} pessoa(s) favoritaram esta postagem
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Botão Meus Favoritos -->
+                <div class="sidebar-card">
+                    <div class="sidebar-body text-center">
+                        <a href="{{ route('favoritos.meus') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-star me-2"></i>Ver Meus Favoritos
+                        </a>
+                        <small class="text-muted d-block mt-2">Acesse todas as suas postagens e TCCs favoritos</small>
+                    </div>
+                </div>
+                @endauth
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Favoritos -->
+    <div class="row mt-2">
+        <div class="col-lg-8">
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="post-sidebar">
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Contador de caracteres em tempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.getElementById('conteudo');
+        const charCount = document.getElementById('char-count');
+        
+        if (textarea && charCount) {
+            textarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                charCount.textContent = currentLength;
+                
+                // Mudança de cor baseada na quantidade de caracteres
+                if (currentLength > 900) {
+                    charCount.style.color = '#dc3545'; // Vermelho
+                } else if (currentLength > 700) {
+                    charCount.style.color = '#fd7e14'; // Laranja
+                } else {
+                    charCount.style.color = '#6c757d'; // Cinza normal
+                }
+            });
+        }
+
+        // Contador para formulários de edição
+        const editTextareas = document.querySelectorAll('.edit-textarea');
+        editTextareas.forEach(function(textarea) {
+            textarea.addEventListener('input', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                const charCountElement = document.getElementById('edit-char-count-' + commentId);
+                
+                if (charCountElement) {
+                    const currentLength = this.value.length;
+                    charCountElement.textContent = currentLength;
+                    
+                    // Mudança de cor baseada na quantidade de caracteres
+                    if (currentLength > 900) {
+                        charCountElement.style.color = '#dc3545'; // Vermelho
+                    } else if (currentLength > 700) {
+                        charCountElement.style.color = '#fd7e14'; // Laranja
+                    } else {
+                        charCountElement.style.color = '#6c757d'; // Cinza normal
+                    }
+                }
+            });
+        });
+    });
+    
+    function editarComentario(id, conteudo) {
+        // Ocultar o conteúdo original
+        document.getElementById('comentario-' + id).style.display = 'none';
+        // Mostrar o formulário de edição
+        document.getElementById('edit-form-' + id).style.display = 'block';
+    }
+    
+    function cancelarEdicao(id) {
+        // Mostrar o conteúdo original
+        document.getElementById('comentario-' + id).style.display = 'block';
+        // Ocultar o formulário de edição
+        document.getElementById('edit-form-' + id).style.display = 'none';
+    }
+    
+    // Modal para imagens
+    document.addEventListener('DOMContentLoaded', function() {
+        // Criar modal para visualização de imagens
+        const modalHTML = `
+            <div id="image-viewer-modal" class="image-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;">
+                <img id="modal-image-content" class="image-modal-content" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                <span class="close-modal" style="position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+        `;
+        
+        // Adicionar modal ao body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        const modal = document.getElementById('image-viewer-modal');
+        const modalImg = document.getElementById('modal-image-content');
+        const closeBtn = modal.querySelector('.close-modal');
+        
+        // Fechar modal quando clicar no X ou fora da imagem
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal || e.target === closeBtn) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Adicionar evento de clique para as imagens da galeria
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imgSrc = this.getAttribute('href');
+                modalImg.src = imgSrc;
+                modal.style.display = 'flex';
+            });
+        });
+    });
+</script>
 
 @endsection
