@@ -1,11 +1,11 @@
 <div class="modal fade" id="createAluno" tabindex="-1" aria-labelledby="createAlunoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <div class="modal-header">
+            <div class="modal-header div-form text-white">
                 <h5 class="modal-title" id="createAlunoLabel">
                     <i class="fas fa-user-plus"></i> Cadastrar Novo Aluno
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="modal_aluno_success" class="alert alert-success rounded-3" style="display:none;"></div>
@@ -32,9 +32,13 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="submit_button_aluno"
-                    form="form_create_aluno_modal">Cadastrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn custom-button" id="submit_button_aluno"
+                    form="form_create_aluno_modal">
+                    <i class="fas fa-save"></i> Cadastrar
+                </button>
             </div>
         </div>
     </div>

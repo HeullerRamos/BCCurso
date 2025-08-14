@@ -21,9 +21,9 @@
                             @csrf
 
                             {{-- INFORMAÇÕES GERAIS --}}
-                            <h5 class="card-title mb-3">Informações Gerais</h5>
+                            <h6 class="mb-3"><i class="fas fa-info-circle"></i> Informações Gerais</h6>
                             <div class="mb-3">
-                                <label for="titulo" class="form-label">Título*:</label>
+                                <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
                                 <textarea name="titulo" id="titulo" placeholder="Título do projeto" required
                                     class="form-control @error('titulo') is-invalid @enderror">{{ old('titulo') }}</textarea>
                                 @error('titulo')
@@ -32,7 +32,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="descricao" class="form-label">Descrição*:</label>
+                                <label for="descricao" class="form-label">Descrição <span class="text-danger">*</span></label>
                                 <textarea name="descricao" id="descricao" placeholder="Descrição do projeto" required
                                     class="form-control @error('descricao') is-invalid @enderror" rows="4">{{ old('descricao') }}</textarea>
                                 @error('descricao')
@@ -43,10 +43,10 @@
                             <hr class="my-4">
 
                             {{-- DATAS E CRONOGRAMA --}}
-                            <h5 class="card-title mb-3">Cronograma</h5>
+                            <h6 class="mb-3"><i class="fas fa-calendar-alt"></i> Cronograma</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="data_inicio" class="form-label">Data de Início*:</label>
+                                    <label for="data_inicio" class="form-label">Data de Início <span class="text-danger">*</span></label>
                                     <input type="date" name="data_inicio" id="data_inicio" value="{{ old('data_inicio') }}"
                                         class="form-control @error('data_inicio') is-invalid @enderror" required>
                                     @error('data_inicio')
@@ -55,7 +55,7 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="data_termino" class="form-label">Data de Término:</label>
+                                    <label for="data_termino" class="form-label">Data de Término</label>
                                     <input type="date" name="data_termino" id="data_termino" value="{{ old('data_termino') }}"
                                         class="form-control @error('data_termino') is-invalid @enderror">
                                     @error('data_termino')
@@ -67,9 +67,9 @@
                             <hr class="my-4">
 
                             {{-- DETALHES ADICIONAIS --}}
-                            <h5 class="card-title mb-3">Detalhes Adicionais</h5>
+                            <h6 class="mb-3"><i class="fas fa-clipboard-list"></i> Detalhes Adicionais</h6>
                             <div class="mb-3">
-                                <label for="resultados" class="form-label">Resultados:</label>
+                                <label for="resultados" class="form-label">Resultados</label>
                                 <input type="text" name="resultados" id="resultados" value="{{ old('resultados') }}"
                                     class="form-control @error('resultados') is-invalid @enderror" placeholder="Resultados do projeto">
                                 @error('resultados')
@@ -78,7 +78,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="palavras_chave" class="form-label">Palavras-Chave*:</label>
+                                <label for="palavras_chave" class="form-label">Palavras-Chave <span class="text-danger">*</span></label>
                                 <input type="text" name="palavras_chave" id="palavras_chave" value="{{ old('palavras_chave') }}"
                                     class="form-control @error('palavras_chave') is-invalid @enderror" placeholder="Palavras Chave">
                                 @error('palavras_chave')
@@ -87,7 +87,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="fomento" class="form-label">Fomento:</label>
+                                <label for="fomento" class="form-label">Fomento</label>
                                 <input type="text" name="fomento" id="fomento" value="{{ old('fomento') }}"
                                     class="form-control @error('fomento') is-invalid @enderror" placeholder="Fomento">
                                 @error('fomento')
@@ -96,7 +96,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="link" class="form-label">Link:</label>
+                                <label for="link" class="form-label">Link</label>
                                 <input type="url" name="link" id="link" value="{{ old('link') }}"
                                     class="form-control @error('link') is-invalid @enderror" placeholder="Link">
                                 @error('link')
@@ -107,9 +107,9 @@
                             <hr class="my-4">
 
                             {{-- RESPONSÁVEIS E COLABORADORES --}}
-                            <h5 class="card-title mb-3">Responsáveis e Colaboradores</h5>
+                            <h6 class="mb-3"><i class="fas fa-users"></i> Responsáveis e Colaboradores</h6>
                             <div class="mb-3">
-                                <label for="professor_id" class="form-label">Professor Responsável*:</label>
+                                <label for="professor_id" class="form-label">Professor Responsável <span class="text-danger">*</span></label>
                                 <select name="professor_id" id="professor_id"
                                     class="form-select @error('professor_id') is-invalid @enderror" required>
                                     <option value="" disabled selected>Selecione um professor</option>
@@ -117,53 +117,69 @@
                                 @error('professor_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <div class="mt-2">
+                                    <a href="#" class="btn btn-info modal-trigger" data-bs-toggle="modal" data-bs-target="#createProfessor">
+                                        Cadastrar professor
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="professores" class="form-label">Professores Colaboradores:</label>
+                                <label for="professores" class="form-label">Professores Colaboradores</label>
                                 <select class="form-select" name="professores[]" id="professores" multiple>
                                     <option value="" disabled>Selecione os colaboradores</option>
                                 </select>
                                 <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos professores</small>
+                                <div class="mt-2">
+                                    <a href="#" class="btn btn-info modal-trigger" data-bs-toggle="modal" data-bs-target="#createProfessor">
+                                        Cadastrar professor
+                                    </a>
+                                </div>
                             </div>
-                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createProfessor" title="Cadastrar professor">
-                                Cadastrar professor
-                            </button>
 
                             <div class="mb-3">
-                                <label for="professores_externos" class="form-label">Professores Externos:</label>
+                                <label for="professores_externos" class="form-label">Professores Externos</label>
                                 <select class="form-select" name="professores_externos[]" id="professores_externos" multiple>
                                     <option value="" disabled>Selecione os professores externos participantes</option>
                                 </select>
                                 <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos professores</small>
+                                <div class="mt-2">
+                                    <a href="#" class="btn btn-info modal-trigger" data-bs-toggle="modal" data-bs-target="#createProfessorExterno">
+                                        Cadastrar professor externo
+                                    </a>
+                                </div>
                             </div>
-                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createProfessorExterno" title="Cadastrar professor externo">
-                                Cadastrar professor Externo
-                            </button>
 
                             <div class="mb-3">
-                                <label for="alunos_bolsistas" class="form-label">Alunos Bolsistas:</label>
+                                <label for="alunos_bolsistas" class="form-label">Alunos Bolsistas</label>
                                 <select class="form-select" name="alunos_bolsistas[]" id="alunos_bolsistas" multiple>
                                     <option value="" disabled>Selecione um aluno para o projeto</option>
                                 </select>
                                 <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos alunos</small>
+                                <div class="mt-2">
+                                    <a href="#" class="btn btn-info modal-trigger" data-bs-toggle="modal" data-bs-target="#createAluno">
+                                        Cadastrar aluno
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="alunos_voluntarios" class="form-label">Alunos Voluntários:</label>
+                                <label for="alunos_voluntarios" class="form-label">Alunos Voluntários</label>
                                 <select class="form-select" name="alunos_voluntarios[]" id="alunos_voluntarios" multiple>
                                     <option value="" disabled>Selecione um aluno para o projeto</option>
                                 </select>
                                 <small class="form-text text-muted">Use Ctrl+clique para selecionar múltiplos alunos</small>
+                                <div class="mt-2">
+                                    <a href="#" class="btn btn-info modal-trigger" data-bs-toggle="modal" data-bs-target="#createAluno">
+                                        Cadastrar aluno
+                                    </a>
+                                </div>
                             </div>
-                            <button type="button" class="btn custom-button fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#createAluno" title="Cadastrar aluno">
-                                Cadastrar aluno
-                            </button>
 
                             <hr class="my-4">
         
                             {{-- ANEXOS E IMAGENS --}}
-                            <h5 class="card-title mb-3">Anexos e Imagens</h5>
+                            <h6 class="mb-3"><i class="fas fa-images"></i> Anexos e Imagens</h6>
                             
                             <div class="mb-4">
                                 <h6 class="text-muted mb-3">Imagens do Projeto</h6>
@@ -173,7 +189,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label class="form-label">Adicionar Imagens:</label>
+                                <label class="form-label">Adicionar Imagens</label>
                                 <div class="upload-section">
                                     <label for="imagens" class="custom-file-button">
                                         <i class="fas fa-images me-2"></i>Procurar Imagens
@@ -187,8 +203,8 @@
 
                             <hr class="my-4">
 
-                            <div class="text-center">
-                                <button type="submit" class="btn custom-button btn-default me-3">
+                            <div class="d-flex mt-4">
+                                <button type="submit" class="btn custom-button custom-button-castastrar-tcc btn-default me-2">
                                     <i class="fas fa-save me-2"></i>Cadastrar Projeto
                                 </button>
                                 <a href="{{ route('projeto.index') }}" class="btn custom-button custom-button-castastrar-tcc btn-default">

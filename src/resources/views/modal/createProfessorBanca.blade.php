@@ -2,11 +2,11 @@
 <div class="modal fade" id="createProfessorBanca" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Cadastrar professor</h5>
-                <button type="button" class="close btn btn-lg" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-header div-form text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                    <i class="fas fa-user-tie"></i> Cadastrar professor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
@@ -20,11 +20,13 @@
 
             </div>
             <div class="modal-footer" id="buttons">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="buttonCancel">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="buttonCancel">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
                 <button type="button" class="btn custom-button" data-dismiss="modal" id="cadastrarProfessorButtonBanca">
                     <span id="iconLoadingB" class="spinner-border spinner-border-sm"
                         data-bs-dismiss="modal" aria-hidden="true" hidden></span>
-                    <span id="textCadastrar"> Cadastrar </span>
+                    <i class="fas fa-save"></i> <span id="textCadastrar"> Cadastrar </span>
                 </button>
             </div>
         </div>
