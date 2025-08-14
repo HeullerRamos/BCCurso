@@ -47,7 +47,11 @@ class AlunoController extends Controller
         if ($request->input('contexto') === 'modal') {
             return response()->json(['success' => false, 'message' => 'Erro no banco de dados: ' . $dbError->getMessage()], 500);
         }
-        return redirect('/aluno')->with('error', 'Erro ao cadastrar aluno no banco de dados!');
+        // Use JavaScript alert instead of session flash message to avoid duplicates
+        return redirect('/aluno')->with('js_alert', [
+            'type' => 'error',
+            'message' => 'Erro ao cadastrar aluno no banco de dados!'
+        ]);
     }
 
     try {
@@ -61,7 +65,11 @@ class AlunoController extends Controller
                 'warning' => 'Aluno cadastrado, mas o e-mail de credenciais falhou. Erro: ' . $emailError->getMessage()
             ]);
         }
-        return redirect('/aluno')->with('warning', "Aluno cadastrado com sucesso, mas o envio de e-mail falhou! Envie as credenciais manualmente.");
+        // Use JavaScript alert instead of session flash message to avoid duplicates
+        return redirect('/aluno')->with('js_alert', [
+            'type' => 'warning',
+            'message' => 'Aluno cadastrado com sucesso, mas o envio de e-mail falhou! Envie as credenciais manualmente.'
+        ]);
     }
 
     if ($request->input('contexto') === 'modal') {
@@ -71,7 +79,11 @@ class AlunoController extends Controller
         ]);
     }
 
-    return redirect('/aluno')->with('success', 'Aluno cadastrado com sucesso e e-mail enviado!');
+    // Use JavaScript alert instead of session flash message to avoid duplicates
+    return redirect('/aluno')->with('js_alert', [
+        'type' => 'success',
+        'message' => 'Aluno cadastrado com sucesso e e-mail enviado!'
+    ]);
 }
     public function edit($id)
     {

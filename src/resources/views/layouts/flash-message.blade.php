@@ -58,6 +58,24 @@
     @endif
 </div>
 
+{{-- JavaScript notifications to avoid duplicates --}}
+@if (session('js_alert'))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const alertData = @json(session('js_alert'));
+    
+    if (typeof window[`show${alertData.type.charAt(0).toUpperCase()}${alertData.type.slice(1)}Message`] === 'function') {
+        window[`show${alertData.type.charAt(0).toUpperCase()}${alertData.type.slice(1)}Message`](alertData.message);
+    } else {
+        // Fallback for missing function types
+        if (typeof showSuccessMessage === 'function') {
+            showSuccessMessage(alertData.message, alertData.type.charAt(0).toUpperCase() + alertData.type.slice(1) + '!');
+        }
+    }
+});
+</script>
+@endif
+
 @if (session('warning'))
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
     <div class="alert-icon">
