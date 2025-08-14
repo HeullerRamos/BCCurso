@@ -53,7 +53,7 @@
                                         <a href="{{ route('tipo-postagem.edit', $tipo_postagem->id) }}" class="btn-edit" title="Editar">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
-                                        <button type="submit" class="btn-delete" title="Excluir" onclick="return confirm('Deseja realmente excluir esse registro?')">
+                                        <button type="button" class="btn-delete" title="Excluir" onclick="confirmDeleteGeneric(this.form, 'Deseja realmente excluir este tipo de postagem?', '{{ $tipo_postagem->nome }}')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -81,4 +81,7 @@
         });
     });
 </script>
+
+@include('modal.confirmDeleteGeneric')
+
 @stop
