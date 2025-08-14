@@ -35,7 +35,13 @@
         <div class="mb-3">
             <label for="biografia" class="form-label">{{ __('Biografia') }}</label>
             <textarea id="biografia" name="biografia" class="form-control @error('biografia') is-invalid @enderror" 
-                      rows="4">{{ old('biografia', $professor->biografia ?? '') }}</textarea>
+                      rows="8" maxlength="5000" 
+                      placeholder="Descreva sua biografia profissional (máximo 5000 caracteres)">{{ old('biografia', $professor->biografia ?? '') }}</textarea>
+            <div class="form-text">
+                <small class="text-muted">
+                    <span id="biografia-counter">0</span>/5000 caracteres
+                </small>
+            </div>
             @error('biografia')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -194,5 +200,29 @@ document.addEventListener('DOMContentLoaded', function () {
             event.target.closest('.link-input-group-new').remove();
         }
     });
+
+    // Contador de caracteres para biografia
+    const biografiaTextarea = document.getElementById('biografia');
+    const biografiaCounter = document.getElementById('biografia-counter');
+    
+    function updateBiografiaCounter() {
+        const currentLength = biografiaTextarea.value.length;
+        biografiaCounter.textContent = currentLength;
+        
+        // Muda cor do contador conforme aproxima do limite
+        if (currentLength > 4500) {
+            biografiaCounter.style.color = '#dc3545'; // vermelho
+        } else if (currentLength > 4000) {
+            biografiaCounter.style.color = '#fd7e14'; // laranja
+        } else {
+            biografiaCounter.style.color = '#6c757d'; // cinza padrão
+        }
+    }
+    
+    // Atualiza contador ao carregar a página
+    updateBiografiaCounter();
+    
+    // Atualiza contador quando o usuário digita
+    biografiaTextarea.addEventListener('input', updateBiografiaCounter);
 });
 </script>
