@@ -16,7 +16,7 @@
             <div class="col-md-4 mb-3">
                 <label for="titulacao" class="form-label">{{ __('Titulação') }}</label>
                 <input id="titulacao" name="titulacao" type="text" class="form-control @error('titulacao') is-invalid @enderror" 
-                       value="{{ old('titulacao', $user->titulacao) }}" autocomplete="titulacao">
+                       value="{{ old('titulacao', $professor->titulacao ?? '') }}" autocomplete="titulacao">
                 @error('titulacao')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -25,7 +25,7 @@
             <div class="col-md-8 mb-3">
                 <label for="area" class="form-label">{{ __('Área de Atuação') }}</label>
                 <input id="area" name="area" type="text" class="form-control @error('area') is-invalid @enderror" 
-                       value="{{ old('area', $user->area) }}" autocomplete="area">
+                       value="{{ old('area', $professor->area ?? '') }}" autocomplete="area">
                 @error('area')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,7 +35,7 @@
         <div class="mb-3">
             <label for="biografia" class="form-label">{{ __('Biografia') }}</label>
             <textarea id="biografia" name="biografia" class="form-control @error('biografia') is-invalid @enderror" 
-                      rows="4">{{ old('biografia', $user->biografia) }}</textarea>
+                      rows="4">{{ old('biografia', $professor->biografia ?? '') }}</textarea>
             @error('biografia')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

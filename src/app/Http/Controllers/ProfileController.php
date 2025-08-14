@@ -94,9 +94,6 @@ class ProfileController extends Controller
         
         $user->update([
             'curriculo_lattes' => $request->curriculo_lattes,
-            'titulacao' => $request->titulacao,
-            'biografia' => $request->biografia,
-            'area' => $request->area,
         ]);
 
 
@@ -108,6 +105,7 @@ class ProfileController extends Controller
             $professor->update([
                 'titulacao'=> $request->titulacao,
                 'biografia'=> $request->biografia,
+                'area'=> $request->area,
                 'foto' => $fotos[0]->store('FotoUser/' . $user->id),
             ]);
             //$professor->save();
@@ -115,12 +113,12 @@ class ProfileController extends Controller
             $professor->update([
                 'titulacao'=> $request->titulacao,
                 'biografia'=> $request->biografia,
+                'area'=> $request->area,
             ]);
         }
 
-        AreaProfessor::updateOrCreate(
-        ['professor_id' => $professor->id],
-        ['area' => $request->area]   );
+        // Removido: AreaProfessor::updateOrCreate - agora o campo area está na tabela professor
+        
         //nova forma de salvar os links na nova tabela LINK
         $curriculo = CurriculoProfessor::firstOrCreate(
         ['professor_id' => $professor->id]);
