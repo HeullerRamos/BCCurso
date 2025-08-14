@@ -51,15 +51,15 @@ class User extends Authenticatable
         return $this->hasMany(FotoUser::class);
     }
     
-    public function aluno()
-    {
-        return $this->hasOne(Aluno::class, 'user_id');
-    }
+  
 
     public function servidor(){
         return $this->hasOne(Servidor::class);
     }
 
+    public function aluno(){
+        return $this->hasOne(Aluno::class);
+    }
     public function comentarios()
     {
         return $this->hasMany(Comentario::class);

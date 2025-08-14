@@ -94,14 +94,18 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-//CRUDs
-Route::middleware('auth', 'role:professor')->group(function () {
-
-    //Usuário
+// Rotas de perfil - acessíveis para professor e aluno
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::delete('/profile/delete_foto/{id}', [ProfileController::class, 'deleteFoto'])->name('profile.delete_foto');
+});
+
+//CRUDs
+Route::middleware('auth', 'role:professor')->group(function () {
+
+
 });
 
 Route::middleware('auth', 'role:coordenador')->group(function () {

@@ -28,6 +28,18 @@ class ProfileController extends Controller
         $user = $request->user();
         $servidor = $user->servidor;
         $professor = $servidor ? $servidor->professor : null;
+        
+        // Específico para aluno
+        if ($user->hasRole('aluno')) {
+            $aluno = $user->aluno;
+            
+            return view('profile.edit-aluno', [
+                'user' => $user,
+                'aluno' => $aluno ?? null, // Garantir que não será undefined
+            ]);
+        }
+        
+        // Para professores e outros usuários
         return view('profile.edit', [
             'user' => $user,
             'professor' => $professor,
@@ -38,6 +50,40 @@ class ProfileController extends Controller
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        
+        // Se for aluno, usar lógica simplificada
+        if ($user->hasRole('aluno')) {
+            return $this->updateAlunoProfile($request);
+        }
+        
+        // Lógica original para professores
+        return $this->updateProfessorProfile($request);
+    }
+
+    /**
+     * Update aluno profile information
+     */
+    private function updateAlunoProfile(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Update professor profile information  
+     */
+    private function updateProfessorProfile(ProfileUpdateRequest $request): RedirectResponse
     {
         
         $request->user()->fill($request->validated());

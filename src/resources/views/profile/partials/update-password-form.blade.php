@@ -15,32 +15,52 @@
         <div class="row">
             <div class="col-12 mb-3">
                 <label for="current_password" class="form-label">{{ __('Senha Atual') }} *</label>
-                <input id="current_password" name="current_password" type="password" 
-                       class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" 
-                       autocomplete="current-password">
+                <div class="input-group">
+                    <input id="current_password" name="current_password" type="password" 
+                           class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" 
+                           autocomplete="current-password" placeholder="Digite sua senha atual">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('current_password')">
+                        <i class="fas fa-eye" id="current_password_icon"></i>
+                    </button>
+                </div>
                 @error('current_password', 'updatePassword')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">{{ __('Nova Senha') }} *</label>
-                <input id="password" name="password" type="password" 
-                       class="form-control @error('password', 'updatePassword') is-invalid @enderror" 
-                       autocomplete="new-password">
+                <div class="input-group">
+                    <input id="password" name="password" type="password" 
+                           class="form-control @error('password', 'updatePassword') is-invalid @enderror" 
+                           autocomplete="new-password" placeholder="Digite a nova senha">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                        <i class="fas fa-eye" id="password_icon"></i>
+                    </button>
+                </div>
                 @error('password', 'updatePassword')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
-                <div class="form-text">Mínimo 8 caracteres, incluindo maiúsculas, minúsculas e números.</div>
+                <div class="form-text">
+                    <small>
+                        <i class="fas fa-info-circle"></i> 
+                        Mínimo 8 caracteres.
+                    </small>
+                </div>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }} *</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" 
-                       class="form-control @error('password_confirmation', 'updatePassword') is-invalid @enderror" 
-                       autocomplete="new-password">
+                <label for="password_confirmation" class="form-label">{{ __('Confirmar Nova Senha') }} *</label>
+                <div class="input-group">
+                    <input id="password_confirmation" name="password_confirmation" type="password" 
+                           class="form-control @error('password_confirmation', 'updatePassword') is-invalid @enderror" 
+                           autocomplete="new-password" placeholder="Confirme a nova senha">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_confirmation')">
+                        <i class="fas fa-eye" id="password_confirmation_icon"></i>
+                    </button>
+                </div>
                 @error('password_confirmation', 'updatePassword')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
         </div>
@@ -59,3 +79,20 @@
         </div>
     </form>
 </section>
+
+<script>
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '_icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
