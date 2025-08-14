@@ -1,5 +1,4 @@
 
-
 @extends('layouts.main')
 @section('title', 'Professor - ' . $servidor->nome)
 @section('content')

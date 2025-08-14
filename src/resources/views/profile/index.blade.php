@@ -41,13 +41,17 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($users as $user)
+                                        @php
+                                            $servidor = $user->servidor;
+                                            $professor = $servidor ? $servidor->professor : null;
+                                        @endphp
                                         <tr>
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->curriculo_lattes }}</td>
-                                            <td>{{ $user->titulacao }}</td>
-                                            <td>{{ $user->biografia }}</td>
-                                            <td>{{ $user->area }}</td>
+                                            <td>{{ $professor ? $professor->titulacao : 'N/A' }}</td>
+                                            <td>{{ $professor ? $professor->biografia : 'N/A' }}</td>
+                                            <td>{{ $professor ? $professor->area : 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

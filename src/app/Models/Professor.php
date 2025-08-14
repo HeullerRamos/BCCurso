@@ -13,6 +13,7 @@ class Professor extends Model
     protected $fillable = [
         'titulacao',
         'biografia',
+        'area',
         'servidor_id',
         'foto',
     ];

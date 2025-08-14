@@ -16,7 +16,7 @@
             <div class="col-md-4 mb-3">
                 <label for="titulacao" class="form-label">{{ __('Titulação') }}</label>
                 <input id="titulacao" name="titulacao" type="text" class="form-control @error('titulacao') is-invalid @enderror" 
-                       value="{{ old('titulacao', $user->titulacao) }}" autocomplete="titulacao">
+                       value="{{ old('titulacao', $professor->titulacao ?? '') }}" autocomplete="titulacao">
                 @error('titulacao')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -25,7 +25,7 @@
             <div class="col-md-8 mb-3">
                 <label for="area" class="form-label">{{ __('Área de Atuação') }}</label>
                 <input id="area" name="area" type="text" class="form-control @error('area') is-invalid @enderror" 
-                       value="{{ old('area', $user->area) }}" autocomplete="area">
+                       value="{{ old('area', $professor->area ?? '') }}" autocomplete="area">
                 @error('area')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,7 +35,13 @@
         <div class="mb-3">
             <label for="biografia" class="form-label">{{ __('Biografia') }}</label>
             <textarea id="biografia" name="biografia" class="form-control @error('biografia') is-invalid @enderror" 
-                      rows="4">{{ old('biografia', $user->biografia) }}</textarea>
+                      rows="8" maxlength="5000" 
+                      placeholder="Descreva sua biografia profissional (máximo 5000 caracteres)">{{ old('biografia', $professor->biografia ?? '') }}</textarea>
+            <div class="form-text">
+                <small class="text-muted">
+                    <span id="biografia-counter">0</span>/5000 caracteres
+                </small>
+            </div>
             @error('biografia')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -194,5 +200,29 @@ document.addEventListener('DOMContentLoaded', function () {
             event.target.closest('.link-input-group-new').remove();
         }
     });
+
+    // Contador de caracteres para biografia
+    const biografiaTextarea = document.getElementById('biografia');
+    const biografiaCounter = document.getElementById('biografia-counter');
+    
+    function updateBiografiaCounter() {
+        const currentLength = biografiaTextarea.value.length;
+        biografiaCounter.textContent = currentLength;
+        
+        // Muda cor do contador conforme aproxima do limite
+        if (currentLength > 4500) {
+            biografiaCounter.style.color = '#dc3545'; // vermelho
+        } else if (currentLength > 4000) {
+            biografiaCounter.style.color = '#fd7e14'; // laranja
+        } else {
+            biografiaCounter.style.color = '#6c757d'; // cinza padrão
+        }
+    }
+    
+    // Atualiza contador ao carregar a página
+    updateBiografiaCounter();
+    
+    // Atualiza contador quando o usuário digita
+    biografiaTextarea.addEventListener('input', updateBiografiaCounter);
 });
 </script>
