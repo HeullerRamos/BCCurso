@@ -234,6 +234,204 @@
         margin-top: 1rem;
     }
     
+    /* Search Component Styles - Inline Version com design completo */
+    .search-container-inline {
+        display: flex;
+        align-items: center;
+    }
+    
+    .search-form-inline {
+        display: flex;
+        align-items: stretch;
+        box-shadow: 0 8px 25px rgba(28, 44, 76, 0.1);
+        border-radius: 50px;
+        background: white;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        min-width: 320px;
+    }
+    
+    .search-form-inline:focus-within {
+        border-color: var(--blue-light);
+        box-shadow: 0 8px 30px rgba(70, 130, 180, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .search-input-wrapper-inline {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 0 1.2rem;
+        background: white;
+        border-radius: 50px 0 0 50px;
+        cursor: text;
+    }
+    
+    .search-icon-inline {
+        color: var(--blue-medium);
+        font-size: 1rem;
+        margin-right: 0.6rem;
+        opacity: 0.7;
+        pointer-events: none;
+        flex-shrink: 0;
+    }
+    
+    .search-input-inline {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 0.95rem;
+        padding: 0.8rem 0;
+        color: var(--text-dark);
+        background: transparent;
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .search-input-inline:focus {
+        outline: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .search-input-inline::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+    }
+    
+    .clear-search-inline {
+        color: #9ca3af;
+        text-decoration: none;
+        padding: 0.3rem;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        margin-left: 0.4rem;
+        flex-shrink: 0;
+    }
+    
+    .clear-search-inline:hover {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+    
+    .search-btn-inline {
+        background: var(--navy-primary);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        border-radius: 0 50px 50px 0;
+        flex-shrink: 0;
+    }
+    
+    .search-btn-inline:hover {
+        background: var(--blue-medium);
+        transform: translateX(2px);
+    }
+    
+    .search-btn-inline:active {
+        transform: translateX(1px);
+        background: var(--navy-secondary);
+    }
+    
+    .search-btn-inline span {
+        font-weight: 500;
+    }
+    
+    .search-results-info-inline {
+        padding: 0.8rem 1.2rem;
+        background: rgba(70, 130, 180, 0.1);
+        border-radius: 12px;
+        color: var(--navy-secondary);
+        font-size: 0.9rem;
+        text-align: center;
+        border-left: 4px solid var(--blue-medium);
+    }
+    
+    .search-results-info-inline i {
+        color: var(--blue-medium);
+        margin-right: 0.5rem;
+    }
+    
+    .results-count {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+        }
+        
+        .search-container-inline {
+            width: 100%;
+        }
+        
+        .search-form-inline {
+            min-width: 100%;
+            flex-direction: column;
+            border-radius: 16px;
+            gap: 0;
+        }
+        
+        .search-input-wrapper-inline {
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .search-btn-inline {
+            border-radius: 0 0 16px 16px;
+            margin: 0;
+            padding: 0.8rem 1.5rem;
+            justify-content: center;
+            background: var(--navy-primary);
+        }
+        
+        .search-btn-inline:hover {
+            background: var(--blue-medium);
+            transform: translateY(-1px);
+        }
+        
+        .search-results-info-inline {
+            font-size: 0.85rem;
+            text-align: left;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .search-input-wrapper-inline {
+            padding: 0.6rem 1rem;
+        }
+        
+        .search-input-inline {
+            font-size: 0.9rem;
+            padding: 0.7rem 0;
+        }
+        
+        .search-btn-inline {
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        .search-form-inline {
+            min-width: 380px;
+        }
+    }
+    
     @media (max-width: 992px) {
         .carousel-item {
             height: 350px;
@@ -367,26 +565,45 @@ foreach ($postagens as $postagem) {
         </div>
     </div>
     
-    <div class="mt-5 mb-3">
-        <h2 class="section-heading">
+    <div class="mt-5 mb-3 d-flex justify-content-between align-items-center">
+        <h2 class="section-heading mb-0">
             <i class="fas fa-newspaper"></i>
             Postagens Computação
         </h2>
+        <div class="search-container-inline">
+            <form action="{{ route('postagem.display') }}" method="GET" class="search-form-inline" role="search">
+                <div class="search-input-wrapper-inline">
+                    <i class="fas fa-search search-icon-inline"></i>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        name="buscar" 
+                        class="search-input-inline" 
+                        placeholder="Pesquisar postagens..." 
+                        aria-label="Pesquisar postagens"
+                        value="{{ $buscar ?? '' }}"
+                        autocomplete="off"
+                        spellcheck="false">
+                    @if($buscar ?? false)
+                        <a href="{{ route('postagem.display') }}" class="clear-search-inline" title="Limpar busca" aria-label="Limpar busca">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    @endif
+                </div>
+                <button class="search-btn-inline" type="submit" aria-label="Realizar busca">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </button>
+            </form>
+        </div>
     </div>
-    <div class="search-container my-5">
-        <form action="{{ route('postagem.display') }}" method="GET" class="d-flex gap-2">
-            <input 
-                type="text" 
-                name="buscar" 
-                class="form-control form-control-lg" 
-                placeholder="Pesquisar notícias..." 
-                aria-label="Pesquisar notícias"
-                value="{{ $buscar ?? '' }}">
-            <button class="btn btn-primary btn-lg" type="submit">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
-    </div>
+    @if($buscar ?? false)
+        <div class="search-results-info-inline mb-3">
+            <i class="fas fa-info-circle"></i>
+            Resultados para: <strong>"{{ $buscar }}"</strong>
+            <span class="results-count">({{ $postagens_9->total() }} {{ $postagens_9->total() === 1 ? 'resultado' : 'resultados' }})</span>
+        </div>
+    @endif
     
     <div class="posts-grid">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
@@ -443,28 +660,100 @@ foreach ($postagens as $postagem) {
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
     // Inicializar tooltips do Bootstrap
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-        
-        // Adicionar animações de entrada aos cards quando ficam visíveis
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-        
-        document.querySelectorAll('.post-card').forEach(card => {
-            observer.observe(card);
-        });
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
     });
+    
+    // Adicionar animações de entrada aos cards quando ficam visíveis
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.post-card').forEach(card => {
+        observer.observe(card);
+    });
+    
+    // Funcionalidade de busca completa
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.querySelector('.search-btn-inline');
+    const searchForm = document.querySelector('.search-form-inline');
+    const searchWrapper = document.querySelector('.search-input-wrapper-inline');
+    
+    if (searchInput && searchBtn && searchForm) {
+        // Focar no input quando clicar no wrapper
+        searchWrapper.addEventListener('click', function(e) {
+            if (e.target !== searchInput) {
+                searchInput.focus();
+            }
+        });
+        
+        // Permitir busca ao pressionar Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.submit();
+            }
+        });
+        
+        // Limpar campo de busca com Escape
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                this.blur();
+            }
+        });
+        
+        // Feedback visual ao submeter
+        searchForm.addEventListener('submit', function(e) {
+            if (searchInput.value.trim() === '') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.classList.add('shake');
+                setTimeout(() => {
+                    searchInput.classList.remove('shake');
+                }, 500);
+                return false;
+            }
+            
+            // Loading no botão
+            const btnText = searchBtn.querySelector('span');
+            const btnIcon = searchBtn.querySelector('i');
+            if (btnText && btnIcon) {
+                btnIcon.className = 'fas fa-spinner fa-spin';
+                btnText.textContent = 'Buscando...';
+                searchBtn.disabled = true;
+            }
+        });
+    }
+});
 </script>
+
+<style>
+    /* Animações e efeitos visuais */
+    @keyframes shake {
+        0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+    }
+    
+    .shake { animation: shake 0.5s ease-in-out; }
+    
+    /* Garantir funcionalidade do input */
+    .search-input-inline {
+        cursor: text !important;
+    }
+    
+    .search-input-wrapper-inline {
+        cursor: text !important;
+    }
+</style>
 @endsection
