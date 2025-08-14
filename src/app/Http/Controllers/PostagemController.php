@@ -330,12 +330,24 @@ class PostagemController extends Controller
         return back()->with('success', 'Arquivo excluído com sucesso.');
     }
 
-    public function display()
+    public function display(Request $request)
     {
-        $postagens = Postagem::orderBy('created_at', 'desc')->get();
-        $postagens_9 = Postagem::orderBy('created_at', 'desc')->paginate(9);
+        $buscar = $request->buscar;
 
-        return view('postagem.display', ['postagens' => $postagens, 'postagens_9' => $postagens_9]);
+        $postagens = Postagem::orderBy('created_at', 'desc')->get();
+
+        $query = Postagem::query();
+
+        $query->when($buscar, function ($q, $buscar) {
+            return $q->where(function ($subQuery) use ($buscar){
+                $subQuery->where('titulo', 'like', '%' . $buscar . '%')
+                         ->orWhere('texto', 'like', '%' . $buscar . '%');
+            });
+        });
+
+        $postagens_9 = $query->orderBy('created_at', 'desc')->paginate(9)->appends(['buscar' => $buscar]);
+
+        return view('postagem.display', ['postagens' => $postagens, 'postagens_9' => $postagens_9, 'buscar' => $buscar]);
     }
 
     public function show(string $id)
