@@ -44,7 +44,7 @@
                 <div class="form-text">
                     <small>
                         <i class="fas fa-info-circle"></i> 
-                        Mínimo 8 caracteres, incluindo maiúsculas, minúsculas e números.
+                        Mínimo 8 caracteres.
                     </small>
                 </div>
             </div>
