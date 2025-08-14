@@ -147,7 +147,7 @@ Route::middleware('auth', 'role:coordenador')->group(function () {
 
     //Professor Externo
     Route::resource('professor-externo', ProfessorExternoController::class)->parameter('professor-externo', 'id')
-        ->only(['index', 'store', 'create']);
+        ->only(['index', 'store', 'create', 'destroy']);
 
     // Curso
     Route::resource('curso', CursoController::class)->parameter('curso', 'id')->except(['show']);

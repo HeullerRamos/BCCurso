@@ -80,4 +80,37 @@ class professorExternoController extends Controller
             return redirect('professor-externo')->with('success', 'Professor externo ' . $request->nome . ' Criado com Sucesso');
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $professorExterno = ProfessorExterno::findOrFail($id);
+            
+            // Verifica se o professor está sendo usado em alguma banca
+            $bancasCount = $professorExterno->bancas()->count();
+            
+            if ($bancasCount > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Não é possível excluir este professor pois ele está sendo usado em ' . $bancasCount . ' banca(s).'
+                ], 422);
+            }
+            
+            $professorExterno->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Professor externo excluído com sucesso!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao excluir professor externo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
